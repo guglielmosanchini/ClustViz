@@ -235,7 +235,7 @@ class birch:
         @param[in] diameter_multiplier (double): Multiplier that is used for increasing diameter when entry_size_limit is exceeded.
         @param[in] ccore (bool): If True than CCORE (C++ part of the library) will be used for solving the problem.
 
-        @remark Despite eight arguments only the first two is mandatory, others can be ommitted. In this case default values are used for instance creation.
+        @remark Despite eight arguments only the first two are mandatory, others can be ommitted. In this case default values are used for instance creation.
 
         """
 
@@ -256,7 +256,7 @@ class birch:
         self.__noise = []
 
 
-    def process(self):
+    def process(self, plotting=False):
         """!
         @brief Performs cluster analysis in line with rules of BIRCH algorithm.
 
@@ -266,7 +266,7 @@ class birch:
 
         """
 
-        self.__insert_data()
+        self.__insert_data(plotting=plotting)
         self.__extract_features()
 
         # in line with specification modify hierarchical algorithm should be used for further clustering
@@ -370,7 +370,7 @@ class birch:
             self.__clusters[cluster_index].append(index_point)
 
 
-    def __insert_data(self):
+    def __insert_data(self, plotting=False):
         """!
         @brief Inserts input data to the tree.
 
@@ -379,7 +379,7 @@ class birch:
         """
 
         for index_point in range(0, len(self.__pointer_data)):
-            if index_point!=0:
+            if (index_point != 0) and (plotting == True):
                 plot_tree_fin(self.__tree)
                 plot_birch_leaves(self.__tree, data = self.__pointer_data, limit_plot=index_point)
 
