@@ -7,18 +7,22 @@ from collections import Counter
 
 def plot2d_graph(graph, print_clust=True):
     pos = nx.get_node_attributes(graph, 'pos')
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-               4:'pink', 5:'turquoise', 6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-               11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
+               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
+               11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki",
+               16:"gainsboro", 17:"peachpuff", 18:"lime", 19:"peru",
+               20:"dodgerblue", 21:"teal", 22:"royalblue", 23:"tomato",
+               24:"bisque", 25:"palegreen"}
 
     el = nx.get_node_attributes(graph, 'cluster').values()
     cmc = Counter(el).most_common()
-    c = [colors[i%17] for i in el]
+    c = [colors[i%len(colors)] for i in el]
 
     if print_clust == True:
         print("clusters: ", cmc)
 
     if len(el) != 0:  # is set
+        #print(pos)
         nx.draw(graph, pos, node_color=c, node_size=60, edgecolors="black")
     else:
         nx.draw(graph, pos, node_size=60, edgecolors="black")
