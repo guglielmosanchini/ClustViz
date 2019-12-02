@@ -9,9 +9,14 @@ The following algorithms have been examined:
 - HDBSCAN
 - SPECTRAL CLUSTERING
 - HIERARCHICAL AGGLOMERATIVE CLUSTERING
+  - single linkage
+  - complete linkage
+  - average linkage
+  - Ward's method
 - CURE
 - BIRCH
 - PAM
 - CLARA
 - CLARANS
 - CHAMELEON
+- CHAMELEON2
