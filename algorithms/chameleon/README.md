@@ -1,31 +1,13 @@
 # CHAMELEON_CLUSTER
 
-Python 3.5+ implementation of the clustering algorithm CHAMELEON[1].
+Python 3.5+ implementation of the clustering algorithm CHAMELEON[1] and of CHAMELEON2[].
 
-This repository is a modification and improvement
-of https://github.com/giovannipcarvalho/PyCHAMELEON.git
-
-Fixed lots of bugs and accorded with the results in the paper.
+This repository is a modification and improvement of https://github.com/Moonpuck/chameleon_cluster, which itself is a modification and improvement of https://github.com/giovannipcarvalho/PyCHAMELEON.git
 
 Depends on METIS for Python.
-
-## Installing
-
-1. Install requirements.
-
-```
-pip install -r requirements.txt
-```
-
-2. Run sample code
-
-```
-python -i main.py
-```
-
-
 
 ## References
 
 [1] Karypis, George, Eui-Hong Han, and Vipin Kumar. "Chameleon: Hierarchical clustering using dynamic modeling." *Computer* 32.8 (1999): 68-75.
 http://ieeexplore.ieee.org/abstract/document/781637/
+[2] Tomas Barton, Tomas Bruna, and Pavel Kordik. 2019. Chameleon 2: An Improved Graph-Based Clustering Algorithm. ACM Trans. Knowl. Discov. Data 13, 1, Article 10 (January 2019), 27 pages. DOI: https://doi.org/10.1145/3299876 
