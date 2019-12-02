@@ -1,6 +1,6 @@
 # CHAMELEON_CLUSTER
 
-Python implementation of the clustering algorithm CHAMELEON[1] and of CHAMELEON2[].
+Python implementation of the clustering algorithm CHAMELEON[1] of 1999 and of CHAMELEON2[2] of 2019.
 
 This repository is a modification and improvement of https://github.com/Moonpuck/chameleon_cluster, which itself is a modification and improvement of https://github.com/giovannipcarvalho/PyCHAMELEON.git
 
