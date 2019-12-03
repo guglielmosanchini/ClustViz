@@ -104,15 +104,17 @@ def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
         print("No Merging")
         print("score: ", max_score)
         print("early stopping")
+        print("increase k of k-NN if you want to perform each merging step")
 
     return (df, max_score, ci)
 
 
 
-def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3, verbose=True, verbose2=True, plot=True):
+def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
+             verbose=True, verbose2=True, plot=True, auto_extract=False):
 
     if knn is None:
-        knn = round(2*np.log(len(df)))
+        knn = int(round(2*np.log(len(df))))
 
     if k is None:
         k = 1
@@ -126,26 +128,35 @@ def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3, verbose=
 
     print("flood fill...")
 
-    graph_ff = flood_fill(graph_pp, graph_knn, df)
+    graph_ff, increased_m = flood_fill(graph_pp, graph_knn, df)
+
+    m = increased_m
+
+    print("new m: ", m )
 
     plot2d_graph(graph_ff, print_clust=False)
 
-    dendr_height = []
+    dendr_height = {}
     iterm = tqdm(enumerate(range(m - k)), total=m-k) if verbose else enumerate(range(m-k))
 
-    for i in iterm:
+    for i, _ in iterm:
 
-        df, m, ci = merge_best2(graph_ff, df, alpha, beta, m_fact, k, False, verbose2)
+        df, ms, ci = merge_best2(graph_ff, df, alpha, beta, m_fact, k, False, verbose2)
 
-        if m == 0:
+        if ms == 0:
             break
 
-        dendr_height.append(m)
+        dendr_height[m-(i+1)] = ms
 
         if plot:
             plot2d_data(df, ci)
 
+    print("dendr_height", dendr_height)
     res = rebuild_labels(df)
+
+    if auto_extract == True:
+
+        extract_optimal_n_clust(dendr_height, m)
 
     return (res, dendr_height)
 
@@ -216,7 +227,7 @@ def flood_fill(graph, knn_gr, df):
         else:
             #skip the first
             for component in cc_list[1:]:
-                print("comp e ind: ", new_cl_ind)
+                print("new index for the component: ", new_cl_ind)
                 for el in component:
                     cl_dict[el] = new_cl_ind
                 new_cl_ind += 1
@@ -226,4 +237,60 @@ def flood_fill(graph, knn_gr, df):
     for i in range(len(graph)):
         graph.node[i]["cluster"] = cl_dict[i]
 
-    return graph
+    increased_m = max(cl_dict.values()) + 1
+
+    return (graph, increased_m)
+
+def tree_height(h, m):
+    sim = {}
+    sim[m-1] = (1/h[m-1])
+    for i in list(h.keys())[:-1]:
+        sim[i-1] = (sim[i] + 1/h[i-1])
+    return sim
+
+
+def find_bigger_jump(th, jump):
+    lower = list(th.values())[int(len(th)/2)+1]
+    for i in list(range(int(len(th)/2),len(th))):
+        upper = list(th.values())[i]
+        if upper - lower > jump:
+            return lower + (upper - lower)/2
+        lower = upper
+    return 0
+
+
+def first_jump_cutoff(th, mult, factor, m):
+    half = int(round(len(th)/2))
+    l = reversed(range(m-1-half, m-1))
+    half_dict = {j:th[j] for j in l}
+    avg = np.mean(list(half_dict.values()))
+    res = 0
+
+    while mult > 0:
+        res = find_bigger_jump(th, mult*avg)
+        if res != 0:
+            return res
+        else:
+            mult = mult/factor
+
+def find_nearest_height(th,value):
+    idx = np.searchsorted(list(th.values()), value, side="left")
+    el = list(th.values())[idx]
+    key_list = [k for (k, v) in th.items() if v == el]
+    return key_list[0]
+
+def extract_optimal_n_clust(h, m, f=1000, eta=2):
+
+    th = tree_height(h, m)
+
+    if len(th) <= 3:
+
+        print("insufficient merging steps to perform auto_extract; decrease k and/or increase m")
+
+        return
+
+    fjc = first_jump_cutoff(th, f, eta, m)
+
+    opt_n_clust = find_nearest_height(th, fjc)
+
+    print("Optimal number of clusters: ", opt_n_clust)

@@ -115,17 +115,17 @@ def cluster(df, k, knn=10, m=30, alpha=2.0, verbose=True, verbose2=True, plot=Tr
 
     graph = pre_part_graph(graph, m, df, verbose, plotting=plot)
 
-    dendr_height = []
+    dendr_height = {}
     iterm = tqdm(enumerate(range(m - k)), total=m-k) if verbose else enumerate(range(m-k))
 
-    for i in iterm:
+    for i, _ in iterm:
 
-        df, m, ci = merge_best(graph, df, alpha, k, False, verbose2)
+        df, ms, ci = merge_best(graph, df, alpha, k, False, verbose2)
 
-        if m == 0:
+        if ms == 0:
             break
 
-        dendr_height.append(m)
+        dendr_height[m-(i+1)] = ms
 
         if plot:
             plot2d_data(df, ci)

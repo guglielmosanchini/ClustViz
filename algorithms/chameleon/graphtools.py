@@ -39,7 +39,6 @@ def knn_graph_sym(df, k, verbose=False):
             distances2 = list(map(lambda x: euclidean_distance(points[c], x), points))
             closests2 = np.argsort(distances2)[1:k+1]
             if i in closests2:
-
                 g.add_edge(i, c, weight=1.0 / distances[c], similarity=int(1.0 / distances[c] * 1e4))
         g.node[i]['pos'] = p
     g.graph['edge_weight_attr'] = 'similarity'
