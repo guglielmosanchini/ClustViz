@@ -1,5 +1,5 @@
 # CLUSTERING VISUALIZATION
-Visualising clustering algorithms step by step
+Visualizing clustering algorithms step by step
 
 The aim of this project is to visualize every step of each clustering algorithm, in the case of 2D input data.
 
@@ -20,3 +20,14 @@ The following algorithms have been examined:
 - CLARANS
 - CHAMELEON
 - CHAMELEON2
+
+
+The repository is organized as follows:
+
+1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general
+
+2) The folder **algorithms** contains the scripts necessary to run the algorithms
+
+3) The folder **metis-5.1.0** contains the Metis library (https://metis.readthedocs.io/en/latest/)
+
+4) The notebook **Clustering_visualization_notebook** lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms
