@@ -81,7 +81,7 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
 
     plt.gcf().gca().add_patch(Rectangle((rect_min[0] - xx_rect, rect_min[1] - xx_rect),
                                         rect_diff[0]+yy_rect, rect_diff[1]+yy_rect, fill=True,
-                                        color=colors[ind%14], alpha=0.1, linewidth=3,
+                                        color=colors[ind%18], alpha=0.1, linewidth=3,
                                         ec="black"))
     plt.gcf().gca().add_patch(Rectangle((rect_min[0] - xx_rect, rect_min[1] - xx_rect),
                                         rect_diff[0]+yy_rect, rect_diff[1]+yy_rect, fill=None,

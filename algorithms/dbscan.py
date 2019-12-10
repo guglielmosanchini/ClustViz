@@ -5,8 +5,6 @@ from algorithms.optics import dist1
 import random
 
 
-
-
 # modification that takes also the point itself into account
 def scan_neigh1_mod(data, point, eps):
 
@@ -36,7 +34,7 @@ def point_plot_mod(X, X_dict, x,y, eps, ClustDict, clust_id):
     plt.scatter(X[:,0], X[:,1], s=300, color="lime", edgecolor="black")
 
     for i in ClustDict:
-        plt.scatter(X_dict[i][0],X_dict[i][1], color=colors[ClustDict[i]], s=300 )
+        plt.scatter(X_dict[i][0],X_dict[i][1], color=colors[ClustDict[i]%12], s=300 )
 
     plt.scatter(x=x,y=y,s=400, color="black", alpha=0.4)
 
@@ -93,7 +91,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, Noise_circle=True):
     for lab in lista_lab:
 
         df_sub = df[df.label == lab]
-        plt.scatter(df_sub.x, df_sub.y, color = colors[lab], s=300, edgecolor="black")
+        plt.scatter(df_sub.x, df_sub.y, color = colors[lab%12], s=300, edgecolor="black")
 
     if Noise_circle == True:
 

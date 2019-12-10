@@ -55,7 +55,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
         point = a.iloc[i].name.replace("(","").replace(")","").split("-")
         point = [int(i) for i in point]
         for j in range(len(point)):
-            plt.scatter(X[point[j],0], X[point[j],1], s=350, color=colors[ind%14])
+            plt.scatter(X[point[j],0], X[point[j],1], s=350, color=colors[ind%17])
 
     point = a.iloc[-1].name.replace("(","").replace(")","").split("-")
     point = [int(i) for i in point]

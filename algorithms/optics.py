@@ -268,7 +268,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
     grouped = df.groupby('label')
     for key, group in grouped:
-        group.plot(ax=ax1, kind='scatter', x='x', y='y', label=key, color=colors[key], s=300, edgecolor="black")
+        group.plot(ax=ax1, kind='scatter', x='x', y='y', label=key, color=colors[key%12], s=300, edgecolor="black")
 
     ax1.set_xlabel("")
     ax1.set_ylabel("")
@@ -289,9 +289,6 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
         else:
             ax1.annotate(txt, (X[:,0][i]-xw2, X[:,1][i]-yw2), fontsize=8, size=10)
 
-
-    #plt.show()
-
     plot_dic = {}
 
     for key, value in ClustDist.items():
@@ -310,11 +307,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
     ax2.axhline(eps, color="black", linewidth=3)
 
-    #plt.annotate("\u03B5", (0.920,0.79), xycoords='figure fraction')
-
     ax2.axhline(eps_db, color="black", linewidth=3)
-
-    #plt.annotate("\u03B5"+"\'", (438,eps_db*103), xycoords='axes points')
 
     ax3 = ax2.twinx()
     ax3.set_ylim(ax2.get_ylim())
