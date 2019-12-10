@@ -20,6 +20,7 @@ The following algorithms have been examined:
 - CLARANS
 - CHAMELEON
 - CHAMELEON2
+- DENCLUE
 
 
 The repository is organized as follows:
