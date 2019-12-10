@@ -1,7 +1,0 @@
-numpy
-pandas
-networkx
-seaborn
-matplotlib
-metis
-tqdm
