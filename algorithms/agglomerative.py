@@ -7,14 +7,14 @@ from matplotlib.patches import Rectangle
 
 def update_mat(mat,i,j, linkage):
     """
-    Updates the input matrix in position (i,j), according to the provided
+    Updates the input distance matrix in the position (i,j), according to the provided
     linkage method.
 
-    :param mat: input matrix as array.
+    :param mat: input matrix as dataframe.
     :param i: row index.
     :param j: column indexes.
     :param linkage: linkage method; can be single, complete, average or ward.
-    :return mat: updated matrix.
+    :return mat: updated matrix as dataframe.
 
     """
 
@@ -67,8 +67,8 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     a = a.dropna(1, how="all")
 
     colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-              4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
-             11:'tan', 12: 'plum', 13:'red', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+               4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
+               11:'tan', 12: 'plum', 13:'red', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
 
     len_ind = [len(i.split("-")) for i in list(a.index)]
     start = np.min([i for i in range(len(len_ind)) if len_ind[i]>1])

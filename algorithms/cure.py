@@ -192,7 +192,6 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
 
         diz["(" + u + ")" + "-" + "(" + u_cl + ")"] = len(diz)
         list_keys_diz = list(diz.keys())
-        #diz = dict(zip(list_new,[i for i in range(len(list_new))]))
 
         return list_keys_diz
 
@@ -449,9 +448,15 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data = None,
 
 
 
-def plot_results_cure(clust, k):
+def plot_results_cure(clust):
+    """
+    Scatter plot of data points, colored according to the cluster they belong to, after performing
+    CURE algorithm.
+
+    :param clust: output of CURE algorithm, dictionary of the form cluster_labels+point_indices: coords of points
+    """
     cl_list = []
-    for num_clust in range(k):
+    for num_clust in range(len(clust)):
         cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
         try:
             plt.scatter(cl_list[-1][:,0], cl_list[-1][:,1])
@@ -460,13 +465,22 @@ def plot_results_cure(clust, k):
     plt.show()
 
 
-# u_min: size of the smallest cluster u, f: percentage of cluster points (0 <= f <= 1), N: total size, s: sample size, d: 0 <= d <= 1
-# the probability that the sample contains less than f*|u| points of cluster u is less than d
 
-# if one uses as |u| the minimum cluster size we are interested in, the result is the minimum sample size that guarantees that for k clusters
-# the probability of selecting fewer than f*|u| points from any one of the clusters u is less than k*d.
 
 def Chernoff_Bounds(u_min, f, N, d, k):
+    """
+    u_min: size of the smallest cluster u,
+    f: percentage of cluster points (0 <= f <= 1),
+    N: total size,
+    s: sample size,
+    d: 0 <= d <= 1
+    the probability that the sample contains less than f*|u| points of cluster u is less than d
+
+    if one uses as |u| the minimum cluster size we are interested in, the result is
+    the minimum sample size that guarantees that for k clusters
+    the probability of selecting fewer than f*|u| points from any one of the clusters u is less than k*d.
+
+    """
 
     l = np.log(1/d)
     res = f*N + N/u_min * l + N/u_min * np.sqrt(l**2 + 2*f*u_min*l)
@@ -597,6 +611,8 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
 
 
 def demo_parameters():
+    """Four plots showing the effects on the sample size of various parameters"""
+
     plt.figure(figsize=(12,10))
     plt.suptitle("Effects on sample size from different parameters")
 
