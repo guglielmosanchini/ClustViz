@@ -43,3 +43,13 @@ https://hdbscan.readthedocs.io/en/latest/
 http://dx.doi.org/10.1007/s11222-007-9033-z
 - BIRCH
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/birch.py
+- PAM
+https://github.com/SachinKalsi/kmedoids/blob/master/KMedoids.py
+- CLARA
+https://github.com/akalino/Clustering/blob/master/clara.py
+- CLARANS
+https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/clarans.py
+- CHAMELEON
+https://github.com/Moonpuck/chameleon_cluster
+
+The other algorithms have been implemented from scratch following the relative papers.
