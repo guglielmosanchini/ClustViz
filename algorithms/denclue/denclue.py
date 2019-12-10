@@ -314,26 +314,26 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
 
             plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, edgecolor="black", color="yellow", alpha=0.6)
             #plt.gca().set_aspect('square')
-            xmin, xmax, ymin, ymax = plt.axis()
-            xwidth = xmax - xmin
-            ywidth = ymax - ymin
+            #xmin, xmax, ymin, ymax = plt.axis()
+            #xwidth = xmax - xmin
+            #ywidth = ymax - ymin
 
-            xw1 = xwidth*0.01
-            yw1 = ywidth*0.01
+            #xw1 = xwidth*0.01
+            #yw1 = ywidth*0.01
 
-            xw2 = xwidth*0.005
-            yw2 = ywidth*0.01
+            #xw2 = xwidth*0.005
+            #yw2 = ywidth*0.01
 
-            xw3 = xwidth*0.01
-            yw3 = ywidth*0.01
+            #xw3 = xwidth*0.01
+            #yw3 = ywidth*0.01
 
-            for i, txt in enumerate(range(len(data))):
-                    if len(str(txt))==2:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw1, np.array(data)[i,1]-yw1), fontsize=12, size=12)
-                    elif len(str(txt))==1:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw2, np.array(data)[i,1]-yw2), fontsize=12, size=12)
-                    else:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw3, np.array(data)[i,1]-yw3), fontsize=9, size=9)
+            #for i, txt in enumerate(range(len(data))):
+            #        if len(str(txt))==2:
+            #            ax.annotate(txt, (np.array(data)[i,0]-xw1, np.array(data)[i,1]-yw1), fontsize=12, size=12)
+            #        elif len(str(txt))==1:
+            #            ax.annotate(txt, (np.array(data)[i,0]-xw2, np.array(data)[i,1]-yw2), fontsize=12, size=12)
+            #        else:
+            #            ax.annotate(txt, (np.array(data)[i,0]-xw3, np.array(data)[i,1]-yw3), fontsize=9, size=9)
 
 
         plt.show()
