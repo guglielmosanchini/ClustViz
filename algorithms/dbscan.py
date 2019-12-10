@@ -5,11 +5,19 @@ from algorithms.optics import dist1
 import random
 
 
-# modification that takes also the point itself into account
 def scan_neigh1_mod(data, point, eps):
+    """
+    Neighborhood search for a point of a given dataset-dictionary (data)
+    with a fixed eps; it returns also the point itself, differently from
+    scan_neigh1 of OPTICS.
+
+    :param data: input dictionary.
+    :param point: point whose neighborhood is to be examined.
+    :param eps: radius of search.
+    :return: dictionary of neighborhood points.
+    """
 
     neigh = {}
-    distances = {}
 
     for i, element in enumerate(data.values()):
 
@@ -23,7 +31,20 @@ def scan_neigh1_mod(data, point, eps):
 
 
 
-def point_plot_mod(X, X_dict, x,y, eps, ClustDict, clust_id):
+def point_plot_mod(X, X_dict, x,y, eps, ClustDict):
+    """
+    Plots a scatter plot of points, where the point (x,y) is light black and
+    surrounded by a red circle of radius eps, where already processed point are plotted
+    according to ClustDict and without edgecolor, whereas still-to-process points are green
+    with black edgecolor.
+
+    :param X: input array.
+    :param X_dict: input dictionary version of X.
+    :param x: x-coordinate of the point that is currently inspected.
+    :param y: y-coordinate of the point that is currently inspected.
+    :param eps: radius of the circle to plot around the point (x,y).
+    :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
+    """
 
     colors = {-1:'red', 0:'lightblue', 1:'beige', 2:'yellow', 3:'grey',
               4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
@@ -51,17 +72,36 @@ def point_plot_mod(X, X_dict, x,y, eps, ClustDict, clust_id):
     xw2 = xwidth*0.005
     yw2 = ywidth*0.01
 
+    xw3 = xwidth*0.01
+    yw3 = ywidth*0.01
+
     for i, txt in enumerate([i for i in range(len(X))]):
         if len(str(txt))==2:
             ax.annotate(txt, (X[:,0][i]-xw1, X[:,1][i]-yw1), fontsize=12, size=12)
-        else:
+        elif len(str(txt))==1:
             ax.annotate(txt, (X[:,0][i]-xw2, X[:,1][i]-yw2), fontsize=12, size=12)
+        else:
+            ax.annotate(txt, (X[:,0][i]-xw3, X[:,1][i]-yw3), fontsize=9, size=9)
 
     plt.show()
 
 
 
-def plot_clust_DB(X, ClustDict, eps, circle_class=None, Noise_circle=True):
+def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
+    """
+    Scatter plot of the data points, colored according to the cluster they belong to; circle_class Plots
+    circles around some or all points, with a radius of eps; if Noise_circle is True, circle are also plotted
+    around noise points.
+
+    :param X: input array.
+    :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN.
+    :param eps: radius of the circles to plot around the points.
+    :param circle_class: if == "true", plots circles around every non-noise point, else plots circles
+                         only around points belonging to certain clusters, e.g. circle_class = [1,2] will
+                         plot circles around points belonging to clusters 1 and 2.
+    :param noise_circle: if True, plots circles around noise points
+
+    """
 
     X_dict = dict(zip([str(i) for i in range(len(X))], X))
 
@@ -77,14 +117,9 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, Noise_circle=True):
               4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
              11:'tan', 12: 'lime'}
 
-    #fig, ax = plt.subplots(figsize=(14,6))
     fig, ax1 = plt.subplots(1, 1, figsize=(18,6))
 
     grouped = df.groupby('label')
-
-        #for key, group in grouped:
-
-            #group.plot(ax=ax1, kind='scatter', x='x', y='y', label=key, color=colors[key], s=300, edgecolor="black")
 
     lista_lab = list(df.label.value_counts().index)
 
@@ -93,7 +128,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, Noise_circle=True):
         df_sub = df[df.label == lab]
         plt.scatter(df_sub.x, df_sub.y, color = colors[lab%12], s=300, edgecolor="black")
 
-    if Noise_circle == True:
+    if noise_circle == True:
 
         df_noise = df[df.label == -1]
 
@@ -133,17 +168,35 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, Noise_circle=True):
     xw2 = xwidth*0.0025
     yw2 = ywidth*0.01
 
+    xw3 = xwidth*0.01
+    yw3 = ywidth*0.01
+
     for i, txt in enumerate([i for i in range(len(X))]):
         if len(str(txt))==2:
             ax1.annotate(txt, (X[:,0][i]-xw1, X[:,1][i]-yw1), fontsize=8, size=10)
-        else:
+        elif len(str(txt))==1:
             ax1.annotate(txt, (X[:,0][i]-xw2, X[:,1][i]-yw2), fontsize=8, size=10)
+        else:
+            ax1.annotate(txt, (X[:,0][i]-xw3, X[:,1][i]-yw3), fontsize=6, size=8)
 
 
     plt.show()
 
 
 def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
+    """
+    DBSCAN algorithm.
+
+    :param data: input array.
+    :param eps: radius of a point within which to search for minPTS points.
+    :param minPTS: minimum number of neighbors for a point to be considered a core point.
+    :param plotting: if True, executes point_plot_mod, plotting every time a points is
+                     added to a clusters
+    :param print_details: if True, prints the length of the "external" NearestNeighborhood
+                          and of the "internal" one (in the while loop).
+    :return ClustDict: dictionary of the form point_index:cluster_label.
+
+    """
 
     ClustDict = {}
 
@@ -187,7 +240,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
                 if plotting == True:
 
-                    point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict, clust_id)
+                    point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict)
 
                 processed_list = [point]
 
@@ -233,6 +286,6 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
                     if plotting == True:
 
-                            point_plot_mod(data, X_dict, X_dict[n][0], X_dict[n][1], eps, ClustDict, clust_id)
+                            point_plot_mod(data, X_dict, X_dict[n][0], X_dict[n][1], eps, ClustDict)
 
     return ClustDict
