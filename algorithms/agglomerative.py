@@ -6,6 +6,17 @@ from matplotlib.patches import Rectangle
 
 
 def update_mat(mat,i,j, linkage):
+    """
+    Updates the input matrix in position (i,j), according to the provided
+    linkage method.
+
+    :param mat: input matrix as array.
+    :param i: row index.
+    :param j: column indexes.
+    :param linkage: linkage method; can be single, complete, average or ward.
+    :return mat: updated matrix.
+
+    """
 
     a1 = mat.iloc[i]
     b1 = mat.iloc[j]
@@ -25,7 +36,7 @@ def update_mat(mat,i,j, linkage):
         l_a1 = len(a1.name.replace("(","").replace(")","").split("-"))
         l_b1 = len(b1.name.replace("(","").replace(")","").split("-"))
         vec = [(l_a1*a1[k]+l_b1*b1[k])/(l_a1+l_b1) for k in range(len(a1))]
-        #vec = [np.mean([p,q]) for p,q in zip(a1.values,b1.values)]
+
 
     mat.loc["("+a1.name+")"+"-"+"("+b1.name+")",:] = vec
     mat["("+a1.name+")"+"-"+"("+b1.name+")"] = vec + [np.inf]
@@ -37,6 +48,17 @@ def update_mat(mat,i,j, linkage):
 
 
 def point_plot_mod(X, a, level_txt, level2_txt=None):
+    """
+    Scatter plot of data points, colored according to the cluster they belong to. The most recently
+    merged cluster is enclosed in a rectangle of the same color as its points, with red borders.
+    In the top right corner, the total distance is shown, along with the current number of clusters.
+    When using Ward linkage, also the increment in distance is shown.
+
+    :param X: input data as array.
+    :param a: distance matrix built by agg_clust/agg_clust_mod.
+    :param level_txt: dist_tot displayed.
+    :param level2_txt: dist_incr displayed.
+    """
 
     fig, ax = plt.subplots(figsize=(14,6))
 
@@ -86,11 +108,16 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     xw2 = xwidth*0.005
     yw2 = ywidth*0.01
 
+    xw3 = xwidth*0.01
+    yw3 = ywidth*0.01
+
     for i, txt in enumerate([i for i in range(len(X))]):
         if len(str(txt))==2:
             ax.annotate(txt, (X[:,0][i]-xw1, X[:,1][i]-yw1), fontsize=12, size=12)
-        else:
+        elif len(str(txt))==1:
             ax.annotate(txt, (X[:,0][i]-xw2, X[:,1][i]-yw2), fontsize=12, size=12)
+        else:
+            ax.annotate(txt, (X[:,0][i]-xw3, X[:,1][i]-yw3), fontsize=9, size=9)
 
     ax.annotate("dist_tot: " + str(round(level_txt,5)), (xmax*0.75,ymax*0.9), fontsize=12, size=12)
 
@@ -103,18 +130,29 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
 
 
-def dist_mat(mat, linkage):
+def dist_mat(df, linkage):
+    """
+    Takes as input the dataframe created by agg_clust/agg_clust_mod and outputs
+    the distance matrix; it is actually an upper triangular matrix, the symmetrical
+    values are replaced with  np.inf.
 
-    even_num = [i for i in range(2,len(mat)+1) if i%2==0]
+    :param df: input dataframe, with first column corresponding to x-coordinates and
+               second column corresponding to y-coordinates of data points.
+    :param linkage: linkage method; can be single, complete, average or ward.
+    :return D: distance matrix.
+
+    """
+
+    even_num = [i for i in range(2,len(df)+1) if i%2==0]
     D = pd.DataFrame()
-    ind = list(mat.index)
+    ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
             if i!=j:
 
-                a = mat.loc[i].values
-                b = mat.loc[j].values
+                a = df.loc[i].values
+                b = df.loc[j].values
                 z1 = [i for i in even_num if i<=len(a)]
                 z2 = [i for i in even_num if i<=len(b)]
                 a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
@@ -138,18 +176,20 @@ def dist_mat(mat, linkage):
 
 
 
-def dist_mat_full(mat, linkage):
+#DEPRECATED
+def dist_mat_full(df, linkage):
+    """Variation of dist_mat, outputs the full distance matrix instead of an upper triangular one"""
 
-    even_num = [i for i in range(2,len(mat)+1) if i%2==0]
+    even_num = [i for i in range(2,len(df)+1) if i%2==0]
     D = pd.DataFrame()
-    ind = list(mat.index)
+    ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
             if i!=j:
 
-                a = mat.loc[i].values
-                b = mat.loc[j].values
+                a = df.loc[i].values
+                b = df.loc[j].values
                 z1 = [i for i in even_num if i<=len(a)]
                 z2 = [i for i in even_num if i<=len(b)]
                 a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
@@ -175,18 +215,19 @@ def dist_mat_full(mat, linkage):
     return D
 
 
-def dist_mat_gen(mat):
+def dist_mat_gen(df):
+    """Variation of dist_mat, uses only single_linkage method"""
 
-    even_num = [i for i in range(2,len(mat)+1) if i%2==0]
+    even_num = [i for i in range(2,len(df)+1) if i%2==0]
     D = pd.DataFrame()
-    ind = list(mat.index)
+    ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
             if i!=j:
 
-                a = mat.loc[i].values
-                b = mat.loc[j].values
+                a = df.loc[i].values
+                b = df.loc[j].values
                 z1 = [i for i in even_num if i<=len(a)]
                 z2 = [i for i in even_num if i<=len(b)]
                 a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
@@ -206,8 +247,19 @@ def dist_mat_gen(mat):
 
 
 
-def compute_var(X, mat):
-    cleaned_index = [i.replace("(","").replace(")","").split("-") for i in mat.index]
+def compute_var(X, df):
+    """
+    Compute total intra-cluster variance of the cluster configuration inferred
+    from df.
+
+    :param X: input data as array.
+    :param df: input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+                coordinates of each point.
+    :return: centroids dataframe with their coordinates and the single variances of the corresponding
+             clusters, and the total intra-cluster variance.
+    """
+
+    cleaned_index = [i.replace("(","").replace(")","").split("-") for i in df.index]
     cent_x_tot = []
     for li in cleaned_index:
         cent_x = []
@@ -221,11 +273,11 @@ def compute_var(X, mat):
             cent_y.append(X[int(el)][1])
         cent_y_tot.append(np.mean(cent_y))
 
-    centroids = pd.DataFrame(index=mat.index)
+    centroids = pd.DataFrame(index=df.index)
     centroids["cx"] = cent_x_tot
     centroids["cy"] = cent_y_tot
 
-    var_int = compute_var_sing(mat, centroids)
+    var_int = compute_var_sing(df, centroids)
 
     centroids["var"] = var_int
 
@@ -233,43 +285,62 @@ def compute_var(X, mat):
 
 
 
-def compute_var_sing(mat, centroids):
-    even_num = [i for i in range(2,len(mat)+1) if i%2==0]
+def compute_var_sing(df, centroids):
+    """
+    Compute every internal variance in clusters; clusters are found in df,
+    whereas centroids are saved in centroids.
+
+    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+                coordinates of each point.
+    :param centroids: dataframe of the centroids of clusters, with their x and y coordinates.
+    :return var_int: list of intra-cluster variances.
+
+    """
+    even_num = [i for i in range(2,len(df)+1) if i%2==0]
     var_int = []
-    for i in list(mat.index):
-        az = mat.loc[i].values
+    for i in list(df.index):
+        az = df.loc[i].values
         z1 = [i for i in even_num if i<=len(az)]
         az = [az[:z1[0]]]+[az[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
         az = [az[i] for i in range(len(az)) if np.isinf(az[i]).sum()!=2]
 
-        var_int_par = []
+        internal_dist = []
         for el in az:
             distance = (dist1(el,centroids.loc[i,["cx","cy"]].values))**2
-            var_int_par.append(distance)
-        var_int.append(np.sum(var_int_par))
+            internal_dist.append(distance)
+        var_int.append(np.sum(internal_dist))
 
     return var_int
 
 
+def compute_ward_ij(X, df):
+    """
+    Compute difference in total within-cluster variance, with squared euclidean
+    distance, and finds the best cluster according to Ward criterion.
 
-#computes difference in total within-cluster variance, with squared euclidean distance
-def compute_ward_ij(X, mat):
+    :param X: input data array.
+    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+                coordinates of each point.
+    :return: (i,j) indices of best cluster (the one for which the increase in intra-cluster variance is minimum)
+             new_summ: new total intra-cluster variance
+             par_var: increment in total intra-cluster variance, i.e. minimum increase in total intra-cluster variance
+    """
 
     even_num = [i for i in range(2,len(X)+1) if i%2==0]
 
-    (centroids, summ) = compute_var(X, mat)
+    (centroids, summ) = compute_var(X, df)
     variances = {}
     D = pd.DataFrame()
     k = 0
-    ind = list(mat.index)
+    ind = list(df.index)
 
     partial_var = {}
 
     for i in ind:
         for j in ind[k:]:
             if i!=j:
-                az = mat.loc[i].values
-                bz = mat.loc[j].values
+                az = df.loc[i].values
+                bz = df.loc[j].values
                 z1 = [i for i in even_num if i<=len(az)]
                 z2 = [i for i in even_num if i<=len(bz)]
                 az = [az[:z1[0]]]+[az[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
@@ -299,6 +370,7 @@ def compute_ward_ij(X, mat):
 
 
 def sl_dist(a, b):
+    """Distance for single_linkage method, i.e. min[dist(x,y)] for x in a & y in b """
     distances = []
     for i in a:
         for j in b:
@@ -308,6 +380,7 @@ def sl_dist(a, b):
 
 
 def cl_dist(a, b):
+    """Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a & y in b """
     distances = []
     for i in a:
         for j in b:
@@ -317,17 +390,24 @@ def cl_dist(a, b):
 
 
 def avg_dist(a, b):
+    """Distance for average_linkage method, i.e. mean[dist(x,y)] for x in a & y in b """
     distances = []
     for i in a:
         for j in b:
             distances.append(dist1(i,j))
-    #print(distances)
     distances = [i for i in distances if (np.isnan(i)==False) and (np.isinf(i)==False)]
-    #print(distances)
     return np.mean(distances)
 
 
+#DEPRECATED, agg_clust_mod is faster
 def agg_clust(X, linkage):
+    """
+    Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
+    of cluster aggregation.
+
+    :param X: input data array
+    :param linkage: linkage method; can be single, complete, average or ward.
+    """
     levels = []
     levels2 = []
     ind_list = []
@@ -398,6 +478,14 @@ def agg_clust(X, linkage):
 
 
 def agg_clust_mod(X, linkage):
+    """
+    Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
+    of cluster aggregation.
+
+    :param X: input data array
+    :param linkage: linkage method; can be single, complete, average or ward.
+    """
+
     levels = []
     levels2 = []
     ind_list = []
@@ -438,7 +526,7 @@ def agg_clust_mod(X, linkage):
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
 
-            X_dist1 = update_mat(X_dist1,i,j, linkage)
+            X_dist1 = update_mat(X_dist1, i, j, linkage)
 
         a = a.drop([new_clust.iloc[0].name],0)
         a = a.drop([new_clust.iloc[1].name],0)
