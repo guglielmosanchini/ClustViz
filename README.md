@@ -23,7 +23,7 @@ The following algorithms have been examined:
 - DENCLUE
 
 
-The repository is organized as follows:
+## The repository is organized as follows:
 
 1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general
 
@@ -34,5 +34,5 @@ The repository is organized as follows:
 4) The notebook **Clustering_visualization_notebook** lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms
 
 
-<h1> Credits for some algorithms </h1>
+## Credits for some algorithms
 I did not start from scratch to write the scripts for each algorithm; here I quote all the sources
