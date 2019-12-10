@@ -22,6 +22,9 @@ The following algorithms have been examined:
 - CHAMELEON2
 - DENCLUE
 
+## Instructions
+Just open the notebook **Clustering_visualization_notebook** and run whatever section you like, using 2D datasets (for visualization purposes, the cardinality of the datasets should be <= 250 points), to see each algorithm in action
+
 
 ## Repository structure
 
