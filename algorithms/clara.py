@@ -54,8 +54,7 @@ class ClaraClustering(object):
 
             #create the sample dataframe
             sampled_df = pd.DataFrame(sampling_data, index=sampling_idx)
-            #print(sampled_df)
-            #print(sampled_df)
+
             #return total cost, medoids and clusters of sampled_df
             pre_cost, pre_choice, pre_medoids = self.k_medoids(sampled_df, _k, _fn, niter)
             plot_pam_mod(sampled_df, pre_medoids, _df)
@@ -64,31 +63,18 @@ class ClaraClustering(object):
             print("pre_choice: ", pre_choice)
             print("pre_medoids: ", pre_medoids)
 
-            #meds_for_plotting = [prov_dic[i] for i in pre_choice]
-            #clusts_for_plotting = []
-            #for count in range(_k):
-            #    memb_list = list(pre_medoids.values())[count]
-            #    clusts_for_plotting.append([prov_dic[i] for i in memb_list])
-
-            #pre_medoids_for_plotting = dict(zip(meds_for_plotting, clusts_for_plotting))
-            #print("medoids CONVERTED: ", pre_medoids_for_plotting)
-
-            #plot_pam_mod(sampled_df, pre_medoids_for_plotting, _df)
             #compute average cost and clusters of whole input dataframe
             tmp_avg_cost, tmp_medoids = self.average_cost(_df, _fn, pre_choice)
-            #tmp_avg_cost, tmp_medoids = self.average_cost(_df, _fn, meds_for_plotting)
+
             print("RESULTS OF WHOLE DATASET EVALUATION")
             print("tmp_avg_cost: ", tmp_avg_cost)
             print("tmp_medoids: ", tmp_medoids)
-            #plot_pam_mod(_df, tmp_medoids, _df)
             # if the new cost is lower
             if tmp_avg_cost < min_avg_cost:
                 print("new_cost is lower, from {0} to {1}".format(round(min_avg_cost,4), round(tmp_avg_cost,4)))
                 min_avg_cost = tmp_avg_cost
                 best_choices = list(pre_choice)
-                #print("best_choices: ", best_choices)
                 best_results = dict(tmp_medoids)
-                #print("best_results: ", best_results)
 
             elif tmp_avg_cost == min_avg_cost:
                 print("new_cost is equal")
@@ -118,13 +104,11 @@ class ClaraClustering(object):
                 2. If global cost increased, swap back.
         """
 
-        #print('K-medoids starting')
         # Do some smarter setting of initial cost configuration
         pc1, medoids_sample = self.cheat_at_sampling(_df, _k, _fn, 17)
         print("initial medoids sample: ", medoids_sample)
         prior_cost, medoids = self.compute_cost(_df, _fn, medoids_sample)
-        #print("so called medoids after compute cost: ", medoids)
-        #plot_pam_mod(_df, medoids, _df)
+
         current_cost = prior_cost
         print("current_cost: ", current_cost)
         iter_count = 0
@@ -134,8 +118,6 @@ class ClaraClustering(object):
         #print('Running with {m} iterations'.format(m=_niter))
         while iter_count < _niter:
             for m in medoids:
-                #print("m: ", m)
-                #print("bc: ", best_choices)
                 clust_iter = 0
                 for item in medoids[m]:
                     if item != m:
@@ -146,12 +128,12 @@ class ClaraClustering(object):
 
                         if (tmp_cost < current_cost) & (clust_iter < 1):
                             best_choices = list(medoids_sample)
-                            #print("change: ", best_choices)
+
                             best_results = dict(tmp_medoids)
                             current_cost = tmp_cost
                             clust_iter += 1
                         else:
-                            #print("else")
+
                             best_choices = best_choices
                             best_results = best_results
                             current_cost = current_cost
@@ -172,7 +154,7 @@ class ClaraClustering(object):
                 medoids_sample = best_choices
 
             print("new_medoids: ", best_choices)
-        #plot_pam_mod(_df, best_results, _df)
+
         return current_cost, best_choices, best_results
 
     def compute_cost(self, _df, _fn, _cur_choice, cache_on=False):
@@ -189,7 +171,6 @@ class ClaraClustering(object):
         for idx in _cur_choice:
             medoids[idx] = []
 
-        #print(medoids)
         for i in list(_df.index):
             choice = -1
             min_cost = np.inf
@@ -306,19 +287,37 @@ class ClaraClustering(object):
 
 
 def plot_pam_mod(data, cl, full, equal_axis_scale=False):
+    """
+    Scatterplot of data points, with colors according to cluster labels. Only sampled
+    points are plotted, the others are only displayed with theri indexes; moreover,
+    centers of mass of the clusters are marked with an X.
+
+    :param data: input data sample as dataframe.
+    :param cl: cluster dictionary.
+    :param full: full input dataframe.
+    :param equal_axis_scale: if True, axis are plotted with the same scaling.
+
+    """
 
     fig,ax = plt.subplots(figsize=(14,6))
+
+    #just as a habit, it actually doesnt plot anything because points are white with thite edgecolor
     plt.scatter(full.iloc[:,0], full.iloc[:,1], s=300, color="white", edgecolor="white")
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-                   4:'pink', 5:'turquoise', 6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-                   11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
 
+    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
+               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown', 11:'tan',
+               12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+
+
+    #plot the sampled point, with colors according to the cluster they belong to
     for i,el in enumerate(list(cl.values())):
-        plt.scatter(data.loc[el,0], data.loc[el,1], s=300, color=colors[i%17], edgecolor="black")
+        plt.scatter(data.loc[el,0], data.loc[el,1], s=300, color=colors[i%18], edgecolor="black")
 
+    #plot centers of mass, marked with an X
     for i,el in enumerate(list(cl.keys())):
         plt.scatter(data.loc[el,0], data.loc[el,1], s=500, color="red", marker="X", edgecolor="black")
 
+    #plot indexes of points in plot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin

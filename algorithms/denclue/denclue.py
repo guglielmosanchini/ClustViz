@@ -10,6 +10,7 @@ from collections import OrderedDict, Counter
 
 
 def euclidean_distance(a, b):
+    """Returns Euclidean distance of two arrays"""
     return np.linalg.norm(np.array(a) - np.array(b))
 
 def gauss_infl_function(x, y, s, dist="euclidean"):
@@ -19,12 +20,9 @@ def gauss_infl_function(x, y, s, dist="euclidean"):
 def gauss_dens(x, D, s, dist="euclidean"):
     N = len(D)
     res = 0
-    #comp = []
     for i in range(N):
-        #comp.append(gauss_infl_function(x, D[i], s, dist))
         res += gauss_infl_function(x, D[i], s, dist)
 
-    #print(comp)
     return res
 
 def grad_gauss_dens(x, D, s, dist="euclidean"):
@@ -313,28 +311,6 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
         if (scatter == True) and (three==False):
 
             plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, edgecolor="black", color="yellow", alpha=0.6)
-            #plt.gca().set_aspect('square')
-            #xmin, xmax, ymin, ymax = plt.axis()
-            #xwidth = xmax - xmin
-            #ywidth = ymax - ymin
-
-            #xw1 = xwidth*0.01
-            #yw1 = ywidth*0.01
-
-            #xw2 = xwidth*0.005
-            #yw2 = ywidth*0.01
-
-            #xw3 = xwidth*0.01
-            #yw3 = ywidth*0.01
-
-            #for i, txt in enumerate(range(len(data))):
-            #        if len(str(txt))==2:
-            #            ax.annotate(txt, (np.array(data)[i,0]-xw1, np.array(data)[i,1]-yw1), fontsize=12, size=12)
-            #        elif len(str(txt))==1:
-            #            ax.annotate(txt, (np.array(data)[i,0]-xw2, np.array(data)[i,1]-yw2), fontsize=12, size=12)
-            #        else:
-            #            ax.annotate(txt, (np.array(data)[i,0]-xw3, np.array(data)[i,1]-yw3), fontsize=9, size=9)
-
 
         plt.show()
 
@@ -423,7 +399,7 @@ def plot_3d_both(data, s, xi=None, prec=3):
             z[i,j] = gauss_dens(x=np.array([xx[i][a],yy[i][b]]), D=data, s=s)
             if xi is not None:
                 if z[i,j] >= xi:
-                    z_xi[i,j] = z[i,j] #- xi
+                    z_xi[i,j] = z[i,j]
                 else:
                     z_xi[i,j] = xi
 
@@ -457,9 +433,9 @@ def plot_3d_both(data, s, xi=None, prec=3):
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
 
     ax.set_xlabel('X')
-    #ax.set_xlim(-5, 5)
+
     ax.set_ylabel('Y')
-    #ax.set_ylim(-5, 5)
+
     ax.set_zlabel('Z')
     ax.set_zlim(offset, np.max(z))
     #ax.set_title('3D surface with 2D contour plot projections')
@@ -512,7 +488,6 @@ def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_ite
             else:
                 res = (attractor, False)
 
-            #print(other_points)
             other_points.sort()
             other_points = list(k for k,_ in groupby(other_points))
 

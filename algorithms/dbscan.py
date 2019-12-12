@@ -52,16 +52,20 @@ def point_plot_mod(X, X_dict, x,y, eps, ClustDict):
 
     fig, ax = plt.subplots(figsize=(14,6))
 
+    #plot scatter points in color lime
     plt.scatter(X[:,0], X[:,1], s=300, color="lime", edgecolor="black")
 
+    #plot colors according to clusters
     for i in ClustDict:
         plt.scatter(X_dict[i][0],X_dict[i][1], color=colors[ClustDict[i]%12], s=300 )
 
+    #plot the last added point bigger and black, with a red circle surrounding it
     plt.scatter(x=x,y=y,s=400, color="black", alpha=0.4)
 
     circle1 = plt.Circle((x, y), eps, color='r', fill=False, linewidth=3, alpha=0.7)
     plt.gcf().gca().add_artist(circle1)
 
+    #add indexes to points in the scatterplot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
@@ -102,9 +106,10 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     :param noise_circle: if True, plots circles around noise points
 
     """
-
+    #create dictionary of X
     X_dict = dict(zip([str(i) for i in range(len(X))], X))
 
+    ##create new dictionary of X, adding the cluster label
     new_dict = {key: (val1, ClustDict[key]) for key,val1 in zip(list(X_dict.keys()),list(X_dict.values())) }
 
     new_dict = OrderedDict((k, new_dict[k]) for k in list(ClustDict.keys()))
@@ -123,11 +128,13 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
 
     lista_lab = list(df.label.value_counts().index)
 
+    #plot points colored according to the cluster they belong to
     for lab in lista_lab:
 
         df_sub = df[df.label == lab]
         plt.scatter(df_sub.x, df_sub.y, color = colors[lab%12], s=300, edgecolor="black")
 
+    #plot circles around noise, colored according to the cluster they belong to
     if noise_circle == True:
 
         df_noise = df[df.label == -1]
@@ -137,8 +144,9 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
             ax1.add_artist(plt.Circle((df_noise["x"].iloc[i],
                                        df_noise["y"].iloc[i]), eps, color='r', fill=False, linewidth=3, alpha=0.7))
 
+    #plot circles around points, colored according to the cluster they belong to
     if circle_class is not None:
-
+        #around every points or only around specified clusters
         if circle_class != "true":
 
             lista_lab = circle_class
@@ -157,7 +165,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     ax1.set_xlabel("")
     ax1.set_ylabel("")
 
-
+    # plot labels of points
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
@@ -198,6 +206,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
     """
 
+    #initialize dictionary of clusters
     ClustDict = {}
 
     clust_id = -1
@@ -208,22 +217,20 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
     processed_list = []
 
-    #unprocessed = list(set(list(X_dict.keys())) - set(processed))
-
+    #for every point in the dataset
     for point in X_dict:
 
+        # if it hasnt been visited
         if point not in processed:
-
+            #mark it as visited
             processed.append(point)
-
-            #print(processed)
-
+            # scan its neighborhood
             N = scan_neigh1_mod(X_dict, X_dict[point], eps)
 
             if print_details == True:
 
                 print("len(N): ", len(N))
-
+            #if there are less than minPTS in its neighborhood, classify it as noise
             if len(N) < minPTS:
 
                 ClustDict.update({point: -1})
@@ -231,55 +238,57 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 if plotting == True:
 
                     point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict, -1)
-
+            # else if it is a Core point
             else:
-
+                #increase current id of cluster
                 clust_id+=1
-
+                #put it in the cluster dictionary
                 ClustDict.update({point: clust_id})
 
                 if plotting == True:
 
                     point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict)
-
+                #add it to the temporary processed list
                 processed_list = [point]
-
+                #remove it from the neighborhood N
                 del N[point]
-
+                # until the neighborhood is empty
                 while len(N)>0:
 
                     if print_details == True:
 
                         print("len(N) in while loop: ", len(N))
-
+                    #take a random point in neighborhood
                     n = random.choice(list(N.keys()))
-
+                    #but the point must not be in processed_list aka already visited
                     while (n in processed_list):
 
                         n = random.choice(list(N.keys()))
-
+                    #put it in processed_list
                     processed_list.append(n)
-
+                    #remove it from the neighborhood
                     del N[n]
-
+                    #if it hasnt been visited
                     if n not in processed:
-
+                        #mark it as visited
                         processed.append(n)
-
+                        #scan its neighborhood
                         N_2 = scan_neigh1_mod(X_dict, X_dict[n], eps)
 
                         if print_details == True:
 
                             print("len N2: ", len(N_2))
-
+                        #if it is a core point
                         if len(N_2) >= minPTS:
-
+                            #add each element of its neighborhood to the neighborhood N
                             for element in N_2:
 
                                 if element not in processed_list:
 
                                     N.update({element: X_dict[element]})
 
+                    #if n has not been inserted into cluster dictionary or if it has previously been
+                    #classified as noise, update the cluster dictionary
                     if (n not in ClustDict) or (ClustDict[n] == -1):
 
                         ClustDict.update({n: clust_id})

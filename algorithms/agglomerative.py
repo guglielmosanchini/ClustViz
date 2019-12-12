@@ -249,8 +249,7 @@ def dist_mat_gen(df):
 
 def compute_var(X, df):
     """
-    Compute total intra-cluster variance of the cluster configuration inferred
-    from df.
+    Compute total intra-cluster variance of the cluster configuration inferred from df.
 
     :param X: input data as array.
     :param df: input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
@@ -490,6 +489,7 @@ def agg_clust_mod(X, linkage):
     levels2 = []
     ind_list = []
 
+    # build matrix a, used to store points of clusters with their coordinates
     l = [[i,i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
     col = [str(el)+"x" if i%2==0 else str(el)+"y" for i, el in enumerate(flat_list)]
@@ -501,15 +501,17 @@ def agg_clust_mod(X, linkage):
 
     b = a.dropna(axis=1, how="all")
 
+    #initial distance matrix
     X_dist1 = dist_mat_gen(b)
     var_sum = 0
     levels.append(var_sum)
     levels2.append(var_sum)
 
+    #until the desired number of clusters is reached
     while len(a) > 1:
 
         if linkage == "ward":
-
+            #find indexes corresponding to the minimum increase in total intra-cluster variance
             b = a.dropna(axis=1, how="all")
             b = b.fillna(np.inf)
             ((i,j), var_sum, par_var) = compute_ward_ij(X, b)
@@ -520,12 +522,13 @@ def agg_clust_mod(X, linkage):
             new_clust = a.loc[[i, j], :]
 
         else:
-            #find indexes of minimum
+            #find indexes corresponding to the minimum distance
             (i, j) = np.unravel_index(np.array(X_dist1).argmin(), np.array(X_dist1).shape)
             levels.append(np.min(np.array(X_dist1)))
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
 
+            #update distance matrix
             X_dist1 = update_mat(X_dist1, i, j, linkage)
 
         a = a.drop([new_clust.iloc[0].name],0)
@@ -533,8 +536,9 @@ def agg_clust_mod(X, linkage):
 
         dim1 = int(new_clust.iloc[0].notna().sum())
 
-        a.loc["("+new_clust.iloc[0].name+")"+"-"+"("+new_clust.iloc[1].name+")",:] = \
-                new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        new_cluster_name = "("+new_clust.iloc[0].name+")"+"-"+"("+new_clust.iloc[1].name+")"
+
+        a.loc[new_cluster_name,:] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
         if linkage != "ward":
             point_plot_mod(X, a, levels[-1])

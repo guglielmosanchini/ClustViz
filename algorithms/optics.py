@@ -24,17 +24,21 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
 
     fig, ax = plt.subplots(figsize=(14,6))
 
+    #plot every point in color lime
     plt.scatter(X[:,0], X[:,1], s=300, color="lime", edgecolor="black")
 
+    # plot clustered points according to appropriate colors
     if processed is not None:
         for i in processed:
             plt.scatter(X_dict[i][0],X_dict[i][1], color=col, s=300 )
 
+    #plot last added point in black and surround it with a red circle
     plt.scatter(x=x,y=y,s=400, color="black", alpha=0.4)
 
     circle1 = plt.Circle((x, y), eps, color='r', fill=False, linewidth=3, alpha=0.7)
     plt.gcf().gca().add_artist(circle1)
 
+    #add indexes to points in plot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
@@ -58,11 +62,7 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
 
     plt.show()
 
-
-
-
 #point_plot(X, dict(zip([str(i) for i in range(len(X))], X)), X[0,0], X[0,1], eps=0.3)
-
 
 def dist1(x, y):
     """Original euclidean distance"""
@@ -74,7 +74,6 @@ def dist2(data, x, y):
     return np.sqrt(np.sum((data[x]-data[y])**2))
 
 
-# neighborhood search for a point of a given dataset-dictionary (data) with a fixed eps
 def scan_neigh1(data, point, eps):
     """
     Neighborhood search for a point of a given dataset-dictionary (data)
@@ -181,6 +180,8 @@ def Reach_plot(data, ClustDist, eps):
 
     plot_dic = {}
 
+    #create dictionary for reachability plot, keys will be the bar labels and the value will be the height
+    #if the value is infinity, the height will be eps*1.15 by default
     for key, value in ClustDist.items():
 
         if np.isinf(value) == True:
@@ -195,16 +196,19 @@ def Reach_plot(data, ClustDist, eps):
 
     tick_list = list(ClustDist.keys()) + [' ']*(len(missing_keys))
 
+    #add the necessary zeroes for points that are still to be processed
     for m_k in missing_keys:
 
         plot_dic[m_k] = 0
 
     fig, ax = plt.subplots(1, 1, figsize=(12,5))
 
+    #bar plot of reachability
     ax.bar(plot_dic.keys(),plot_dic.values())
 
     ax.set_xticks(tick_list)
 
+    #plot horizontal line for eps
     ax.axhline(eps, color="red", linewidth=3)
 
     ax1 = ax.twinx()
@@ -218,7 +222,7 @@ def Reach_plot(data, ClustDist, eps):
 
 def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
     """
-    Executes the OPTICS algorithm
+    Executes the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.
 
     :param X: input array
     :param eps: radius of a point within which to search for minPTS points.
@@ -237,22 +241,26 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
     # create dictionary
     X_dict = dict(zip([str(i) for i in range(len(X))], X))
 
+    # until all points have been processed
     while len(processed) != len(X):
 
+        # if queue is empty take a random point
         if len(Seed) == 0:
 
                 unprocessed = list(set(list(X_dict.keys())) - set(processed))
 
                 (o, r) = (random.choice(unprocessed), np.inf)
 
+        #else take the minimum and delete it from the queue
         else:
 
             (o, r) = (min(Seed, key=Seed.get), Seed[min(Seed, key=Seed.get)])
 
             del Seed[o]
 
+        #scan the neighborhood of the point
         N = scan_neigh1(X_dict, X_dict[o], eps)
-
+        #update the cluster dictionary and the core distance dictionary
         ClustDist.update({o:r})
 
         CoreDist.update({o: minPTSdist(X_dict, o, minPTS, eps)})
@@ -265,11 +273,12 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
 
                 Reach_plot(X_dict, ClustDist, eps)
 
-
+        #mark o as processed
         processed.append(o)
 
+        #if the point is core
         if len(N) >= minPTS-1 :
-
+            # for each unprocessed point in the neighborhood
             for n in N:
 
                 if n in processed:
@@ -277,14 +286,15 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
                     continue
 
                 else:
-
+                    #compute its reach_dist from o
                     p = reach_dist(X_dict, n, o, minPTS, eps)
-
+                    #if it is in Seed, update its reach_dist if it is lower
                     if n in Seed:
 
                         if p < Seed[n]:
 
                             Seed[n] = p
+                    #else, insert it into the Seed
                     else:
 
                         Seed.update({n:p})
@@ -293,7 +303,6 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
 
 
 
-#extracts cluster in a DBSCAN fashion; one can use any eps_db <= eps of OPTICS
 def ExtractDBSCANclust(ClustDist, CoreDist, eps_db):
     """
     Extracts cluster in a DBSCAN fashion; one can use any eps_db <= eps of OPTICS
@@ -312,19 +321,19 @@ def ExtractDBSCANclust(ClustDist, CoreDist, eps_db):
     clust_id = -1
 
     for key, value in ClustDist.items():
-
+        #new cluster
         if value > eps_db:
-
+            #if it is a core point
             if CoreDist[key] <= eps_db:
 
                 clust_id += 1
 
                 Clust_Dict[key] = clust_id
-
+            #else, mark it as noise
             else:
 
                 Clust_Dict[key] = noise
-
+        #same cluster
         else:
 
             Clust_Dict[key] = clust_id
@@ -347,7 +356,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     """
 
     X_dict = dict(zip([str(i) for i in range(len(X))], X))
-
+    #extract the cluster dictionary using DBSCAN
     cl = ExtractDBSCANclust(ClustDist, CoreDist, eps_db)
 
     new_dict = {key: (val1, cl[key]) for key,val1 in zip(list(X_dict.keys()),list(X_dict.values())) }
@@ -362,7 +371,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
               4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
              11:'tan', 12: 'lime'}
 
-    #fig, ax = plt.subplots(figsize=(14,6))
+    #first plot: scatter plot of points colored according to the cluster they belong to
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18,6))
 
     grouped = df.groupby('label')
@@ -393,6 +402,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
         else:
             ax1.annotate(txt, (X[:,0][i]-xw3, X[:,1][i]-yw3), fontsize=6, size=8)
 
+    #second plot: reachability plot, with colors corresponding to clusters
     plot_dic = {}
 
     for key, value in ClustDist.items():

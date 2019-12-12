@@ -220,19 +220,34 @@ class KMedoids:
 
 
 def plot_pam(data, cl, equal_axis_scale = False):
+    """
+    Scatterplot of data points, with colors according to cluster labels.
+    Centers of mass of the clusters are marked with an X.
+
+    :param data: input data sample as dataframe.
+    :param cl: cluster dictionary.
+    :param equal_axis_scale: if True, axis are plotted with the same scaling.
+
+    """
 
     fig,ax = plt.subplots(figsize=(14,6))
+
+    #all points are plotted in white
     plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, color="white", edgecolor="black")
+
     colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-                   4:'pink', 5:'turquoise', 6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-                   11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+               4:'pink', 5:'turquoise', 6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
+               11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
 
+    #plot the points with colors according to the cluster they belong to
     for i,el in enumerate(list(cl.values())):
-        plt.scatter(np.array(data)[el,0], np.array(data)[el,1], s=300, color=colors[i%17], edgecolor="black")
+        plt.scatter(np.array(data)[el,0], np.array(data)[el,1], s=300, color=colors[i%18], edgecolor="black")
 
+    #plot centers of mass, marked with an X
     for i,el in enumerate(list(cl.keys())):
         plt.scatter(np.array(data)[el,0], np.array(data)[el,1], s=500, color="red", marker="X", edgecolor="black")
 
+    #plot indexes of points in plot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin

@@ -365,7 +365,12 @@ def compute_cost_clarans(data, _cur_choice):
 
 
 def plot_tree_clarans(data, k):
-    """function that plots G_k,n as in the paper of CLARANS; only to use with small input data"""
+    """
+    Plots G_{k,n} as in the paper of CLARANS; only to use with small input data.
+
+    :param data: input DataFrame.
+    :param k: number of points in each combination (possible set of medoids).
+    """
 
     n = len(data)
     num_points = int(scipy.special.binom(n,k))
@@ -375,22 +380,25 @@ def plot_tree_clarans(data, k):
         print("Either graph nodes are more than 50 or neighbors are more than 10, the graph would be too big")
         return
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-               4:'pink', 5:'turquoise', 6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
+    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
+               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
                11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
 
+    #all possibile combinations of k elements from input data
     name_nodes = list(itertools.combinations(list(data.index),k))
 
     dot = graphviz.Digraph(comment='Clustering')
 
     name_list = [i for i in range(num_points)]
 
+    #draw nodes, also adding the configuration cost
     for i in range(num_points):
         tot_cost, meds = compute_cost_clarans(data, list(name_nodes[i]))
         tc = round(tot_cost,3)
 
         dot.node(str(name_nodes[i]), str(name_nodes[i])+": "+str(tc) )
 
+    #only connect nodes if they have k-1 common elements
     for i in range(num_points):
         for j in range(num_points):
             if i!=j:
