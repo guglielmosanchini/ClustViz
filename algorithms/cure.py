@@ -14,6 +14,37 @@ import math
 def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
                     par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,
                     not_sampled=None, not_sampled_ind=None, n_rep_fin=None):
+    """
+    Scatter-plot of input data points, colored according to the cluster they belong to.
+    A rectangle with red borders is displayed around the last merged cluster; representative points
+    of last merged cluster are also plotted in red, along with the center of mass, plotted as a
+    red cross. The current number of clusters and current distance are also displayed in the right
+    upper corner.
+    In the last phase of CURE algorithm variation for large datasets, arrows are
+    displayed from every not sampled point to its closest representative point; moreover, representative
+    points are surrounded by small circles, to make them more visible. Representative points of different
+    clusters are plotted in different nuances of red.
+
+    :param data: input data array.
+    :param a: input dataframe built by CURE algorithm, listing the cluster and the x and y
+              coordinates of each point.
+    :param reps: list of the coordinates of representative points.
+    :param level_txt: distance at which current merging occurs displayed in the upper right corner.
+    :param level2_txt: incremental distance (not used).
+    :param plot_lines: if True, lines are plot corresponding to the edges of the rectangle,
+                       to make it more visible.
+    :param par_index: partial index to take shuffling data into account.
+    :param u: first cluster to be merged.
+    :param u_cl: second cluster to be merged.
+    :param initial_ind: initial partial index.
+    :param last_reps: dictionary of last representative points.
+    :param not_sampled: coordinates of points that have not been initially sampled, in the large dataset version.
+    :param not_sampled_ind: indexes of not_sampled point_indices.
+    :param n_rep_fin: number of representatives to use for each cluster in the final assignment phase in the large
+                      dataset version
+    :return list_keys_diz: if par_index is not None, returns the new indexes of par_index
+
+    """
 
     if par_index is not None:
         diz = dict(zip(par_index,[i for i in range(len(par_index))]))
@@ -198,6 +229,14 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
 
 
 def dist_clust_cure(rep_u, rep_v):
+    """
+    Compute the distance of two clusters based on the minimum distance found between the
+    representatives of one cluster and the ones of the other.
+
+    :param rep_u: list of representatives of the first cluster
+    :param rep_v: list of representatives of the second cluster
+    :return: distance between two clusters
+    """
     rep_u = np.array(rep_u)
     rep_v = np.array(rep_v)
     distances = []
@@ -209,13 +248,24 @@ def dist_clust_cure(rep_u, rep_v):
 
 
 
-def update_mat_cure(mat,i,j, rep_new, name):
+def update_mat_cure(mat, i, j, rep_new, name):
+    """
+    Update distance matrix of CURE, by computing the new distances from the new representatives.
+
+    :param mat: input dataframe built by CURE algorithm, listing the cluster and the x and y
+                coordinates of each point.
+    :param i: row index of cluster to be merged.
+    :param j: column index of cluster to be merged.
+    :param rep_new: dictionary of new representatives.
+    :param name: string of the form "(" + u + ")" + "-" + "(" + u_cl + ")", containing the new
+                 name of the newly merged cluster.
+    :return mat: updated matrix with new distances
+    """
 
     a1 = mat.loc[i]
     b1 = mat.loc[j]
 
     key_lists = list(rep_new.keys())
-    #print(len(key_lists))
 
     vec = []
     for i in range(len(mat)):
@@ -233,6 +283,19 @@ def update_mat_cure(mat,i,j, rep_new, name):
 
 
 def sel_rep(clusters, name, c, alpha):
+    """
+    Select c representatives of the clusters: first one is the farthest from the centroid,
+    the others c-1 are the farthest from the already selected representatives. It doesn't use
+    the old representatives, so it is slower than sel_rep_fast.
+
+    :param clusters: dictionary of clusters.
+    :param name: name of the cluster we want to select representatives from.
+    :param c: number of representatives we want to extract.
+    :param alpha: 0<=float<=1, it determines how much the representative points are moved
+                 toward the centroid: 0 means they aren't modified, 1 means that all points
+                 collapse to the centroid.
+    :return others: list of representative points.
+    """
 
     if len(clusters[name]) <= c:
 
@@ -278,6 +341,19 @@ def sel_rep(clusters, name, c, alpha):
 
 
 def sel_rep_fast(prec_reps, clusters, name, c, alpha):
+    """
+    Select c representatives of the clusters from the previously computed representatives,
+    so it is faster than sel_rep.
+
+    :param prec_reps: list of previously computed representatives.
+    :param clusters: dictionary of clusters.
+    :param name: name of the cluster we want to select representatives from.
+    :param c: number of representatives we want to extract.
+    :param alpha: 0<=float<=1, it determines how much the representative points are moved
+                 toward the centroid: 0 means they aren't modified, 1 means that all points
+                 collapse to the centroid.
+    :return others: list of representative points.
+    """
 
     com = np.mean(clusters[name], axis=0)
 
