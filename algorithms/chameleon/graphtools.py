@@ -61,8 +61,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
     clusters = 0
     for i, p in enumerate(graph.nodes()):
         graph.node[p]['cluster'] = 0
-    cnts = {}
-    cnts[0] = len(graph.nodes())
+    cnts = {0: len(graph.nodes())}
 
     while clusters < k - 1:
         maxc = -1

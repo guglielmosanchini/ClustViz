@@ -5,7 +5,7 @@ from algorithms.optics import dist1
 from matplotlib.patches import Rectangle
 
 
-def update_mat(mat,i,j, linkage):
+def update_mat(mat, i, j, linkage):
     """
     Updates the input distance matrix in the position (i,j), according to the provided
     linkage method.
@@ -23,26 +23,25 @@ def update_mat(mat,i,j, linkage):
 
     if linkage == "single":
 
-        vec = [np.min([p,q]) for p,q in zip(a1.values,b1.values)]
+        vec = [np.min([p, q]) for p, q in zip(a1.values, b1.values)]
         vec[i] = np.inf
         vec[j] = np.inf
 
     elif linkage == "complete":
 
-        vec = [np.max([p,q]) for p,q in zip(a1.values,b1.values)]
+        vec = [np.max([p, q]) for p, q in zip(a1.values, b1.values)]
 
     elif linkage == "average":
 
-        l_a1 = len(a1.name.replace("(","").replace(")","").split("-"))
-        l_b1 = len(b1.name.replace("(","").replace(")","").split("-"))
-        vec = [(l_a1*a1[k]+l_b1*b1[k])/(l_a1+l_b1) for k in range(len(a1))]
+        l_a1 = len(a1.name.replace("(", "").replace(")", "").split("-"))
+        l_b1 = len(b1.name.replace("(", "").replace(")", "").split("-"))
+        vec = [(l_a1 * a1[k] + l_b1 * b1[k]) / (l_a1 + l_b1) for k in range(len(a1))]
 
+    mat.loc["(" + a1.name + ")" + "-" + "(" + b1.name + ")", :] = vec
+    mat["(" + a1.name + ")" + "-" + "(" + b1.name + ")"] = vec + [np.inf]
 
-    mat.loc["("+a1.name+")"+"-"+"("+b1.name+")",:] = vec
-    mat["("+a1.name+")"+"-"+"("+b1.name+")"] = vec + [np.inf]
-
-    mat = mat.drop([a1.name,b1.name], 0)
-    mat = mat.drop([a1.name,b1.name], 1)
+    mat = mat.drop([a1.name, b1.name], 0)
+    mat = mat.drop([a1.name, b1.name], 1)
 
     return mat
 
@@ -60,74 +59,68 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     :param level2_txt: dist_incr displayed.
     """
 
-    fig, ax = plt.subplots(figsize=(14,6))
+    fig, ax = plt.subplots(figsize=(14, 6))
 
-    plt.scatter(X[:,0], X[:,1], s=300, color="lime", edgecolor="black")
+    plt.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
 
     a = a.dropna(1, how="all")
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',
-               4:'pink', 5:'navy', 6:'orange', 7:'purple', 8:'salmon', 9:'olive', 10:'brown',
-               11:'tan', 12: 'plum', 13:'red', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
+              4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
+              11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 
     len_ind = [len(i.split("-")) for i in list(a.index)]
-    start = np.min([i for i in range(len(len_ind)) if len_ind[i]>1])
+    start = np.min([i for i in range(len(len_ind)) if len_ind[i] > 1])
 
-    for ind,i in enumerate(range(start,len(a))):
-        point = a.iloc[i].name.replace("(","").replace(")","").split("-")
+    for ind, i in enumerate(range(start, len(a))):
+        point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
         point = [int(i) for i in point]
         for j in range(len(point)):
-            plt.scatter(X[point[j],0], X[point[j],1], s=350, color=colors[ind%17])
+            plt.scatter(X[point[j], 0], X[point[j], 1], s=350, color=colors[ind % 17])
 
-    point = a.iloc[-1].name.replace("(","").replace(")","").split("-")
+    point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
     point = [int(i) for i in point]
-    com = X[point].mean(axis=0)
     rect_min = X[point].min(axis=0)
-    rect_diff = X[point].max(axis=0)-rect_min
+    rect_diff = X[point].max(axis=0) - rect_min
 
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
     plt.gcf().gca().add_patch(Rectangle((rect_min[0] - .05, rect_min[1] - .05),
-                                        rect_diff[0]+.1, rect_diff[1]+.1, fill=True,
-                                        color=colors[ind%14], alpha=0.3, linewidth=3,
+                                        rect_diff[0] + .1, rect_diff[1] + .1, fill=True,
+                                        color=colors[ind % 14], alpha=0.3, linewidth=3,
                                         ec="black"))
     plt.gcf().gca().add_patch(Rectangle((rect_min[0] - .05, rect_min[1] - .05),
-                                        rect_diff[0]+.1, rect_diff[1]+.1, fill=None,
+                                        rect_diff[0] + .1, rect_diff[1] + .1, fill=None,
                                         color='r', alpha=1, linewidth=3
                                         ))
 
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
+    xw1 = xwidth * 0.008
+    yw1 = ywidth * 0.01
 
-    xw1 = xwidth*0.008
-    yw1 = ywidth*0.01
+    xw2 = xwidth * 0.005
+    yw2 = ywidth * 0.01
 
-    xw2 = xwidth*0.005
-    yw2 = ywidth*0.01
-
-    xw3 = xwidth*0.01
-    yw3 = ywidth*0.01
+    xw3 = xwidth * 0.01
+    yw3 = ywidth * 0.01
 
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt))==2:
-            ax.annotate(txt, (X[:,0][i]-xw1, X[:,1][i]-yw1), fontsize=12, size=12)
-        elif len(str(txt))==1:
-            ax.annotate(txt, (X[:,0][i]-xw2, X[:,1][i]-yw2), fontsize=12, size=12)
+        if len(str(txt)) == 2:
+            ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
+        elif len(str(txt)) == 1:
+            ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
         else:
-            ax.annotate(txt, (X[:,0][i]-xw3, X[:,1][i]-yw3), fontsize=9, size=9)
+            ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
 
-    ax.annotate("dist_tot: " + str(round(level_txt,5)), (xmax*0.75,ymax*0.9), fontsize=12, size=12)
+    ax.annotate("dist_tot: " + str(round(level_txt, 5)), (xmax * 0.75, ymax * 0.9), fontsize=12, size=12)
 
     if level2_txt is not None:
-        ax.annotate("dist_incr: " + str(round(level2_txt,5)), (xmax*0.75,ymax*0.8), fontsize=12, size=12)
+        ax.annotate("dist_incr: " + str(round(level2_txt, 5)), (xmax * 0.75, ymax * 0.8), fontsize=12, size=12)
 
-    ax.annotate("n° clust: " + str(len(a)), (xmax*0.75,ymax*0.7), fontsize=12, size=12)
+    ax.annotate("n° clust: " + str(len(a)), (xmax * 0.75, ymax * 0.7), fontsize=12, size=12)
 
     plt.show()
-
 
 
 def dist_mat(df, linkage):
@@ -143,30 +136,30 @@ def dist_mat(df, linkage):
 
     """
 
-    even_num = [i for i in range(2,len(df)+1) if i%2==0]
+    even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     D = pd.DataFrame()
     ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
-            if i!=j:
+            if i != j:
 
                 a = df.loc[i].values
                 b = df.loc[j].values
-                z1 = [i for i in even_num if i<=len(a)]
-                z2 = [i for i in even_num if i<=len(b)]
-                a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
-                b = [b[:z2[0]]]+[b[z2[i]:z2[i+1]] for i in range(len(z2)-1)]
+                z1 = [i for i in even_num if i <= len(a)]
+                z2 = [i for i in even_num if i <= len(b)]
+                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
 
                 if linkage == "single":
-                    D.loc[i,j] = sl_dist(a, b)
+                    D.loc[i, j] = sl_dist(a, b)
                 elif linkage == "complete":
-                    D.loc[i,j] = cl_dist(a, b)
+                    D.loc[i, j] = cl_dist(a, b)
                 elif linkage == "average":
-                    D.loc[i,j] = avg_dist(a, b)
+                    D.loc[i, j] = avg_dist(a, b)
             else:
 
-                D.loc[i,j] = np.inf
+                D.loc[i, j] = np.inf
 
         k += 1
 
@@ -175,38 +168,37 @@ def dist_mat(df, linkage):
     return D
 
 
-
-#DEPRECATED
+# DEPRECATED
 def dist_mat_full(df, linkage):
     """Variation of dist_mat, outputs the full distance matrix instead of an upper triangular one"""
 
-    even_num = [i for i in range(2,len(df)+1) if i%2==0]
+    even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     D = pd.DataFrame()
     ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
-            if i!=j:
+            if i != j:
 
                 a = df.loc[i].values
                 b = df.loc[j].values
-                z1 = [i for i in even_num if i<=len(a)]
-                z2 = [i for i in even_num if i<=len(b)]
-                a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
-                b = [b[:z2[0]]]+[b[z2[i]:z2[i+1]] for i in range(len(z2)-1)]
+                z1 = [i for i in even_num if i <= len(a)]
+                z2 = [i for i in even_num if i <= len(b)]
+                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
 
                 if linkage == "single":
-                    D.loc[i,j] = sl_dist(a, b)
-                    D.loc[j,i] = sl_dist(a, b)
+                    D.loc[i, j] = sl_dist(a, b)
+                    D.loc[j, i] = sl_dist(a, b)
                 elif linkage == "complete":
-                    D.loc[i,j] = cl_dist(a, b)
-                    D.loc[j,i] = cl_dist(a, b)
+                    D.loc[i, j] = cl_dist(a, b)
+                    D.loc[j, i] = cl_dist(a, b)
                 elif linkage == "average":
-                    D.loc[i,j] = avg_dist(a, b)
-                    D.loc[j,i] = avg_dist(a, b)
+                    D.loc[i, j] = avg_dist(a, b)
+                    D.loc[j, i] = avg_dist(a, b)
             else:
 
-                D.loc[i,j] = np.inf
+                D.loc[i, j] = np.inf
 
         k += 1
 
@@ -218,33 +210,32 @@ def dist_mat_full(df, linkage):
 def dist_mat_gen(df):
     """Variation of dist_mat, uses only single_linkage method"""
 
-    even_num = [i for i in range(2,len(df)+1) if i%2==0]
+    even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     D = pd.DataFrame()
     ind = list(df.index)
     k = 0
     for i in ind:
         for j in ind[k:]:
-            if i!=j:
+            if i != j:
 
                 a = df.loc[i].values
                 b = df.loc[j].values
-                z1 = [i for i in even_num if i<=len(a)]
-                z2 = [i for i in even_num if i<=len(b)]
-                a = [a[:z1[0]]]+[a[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
-                b = [b[:z2[0]]]+[b[z2[i]:z2[i+1]] for i in range(len(z2)-1)]
+                z1 = [i for i in even_num if i <= len(a)]
+                z2 = [i for i in even_num if i <= len(b)]
+                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
 
-                D.loc[i,j] = sl_dist(a, b)
-                D.loc[j,i] = sl_dist(a, b)
+                D.loc[i, j] = sl_dist(a, b)
+                D.loc[j, i] = sl_dist(a, b)
             else:
 
-                D.loc[i,j] = np.inf
+                D.loc[i, j] = np.inf
 
         k += 1
 
     D = D.fillna(np.inf)
 
     return D
-
 
 
 def compute_var(X, df):
@@ -258,7 +249,7 @@ def compute_var(X, df):
              clusters, and the total intra-cluster variance.
     """
 
-    cleaned_index = [i.replace("(","").replace(")","").split("-") for i in df.index]
+    cleaned_index = [i.replace("(", "").replace(")", "").split("-") for i in df.index]
     cent_x_tot = []
     for li in cleaned_index:
         cent_x = []
@@ -280,8 +271,7 @@ def compute_var(X, df):
 
     centroids["var"] = var_int
 
-    return (centroids, centroids["var"].sum())
-
+    return centroids, centroids["var"].sum()
 
 
 def compute_var_sing(df, centroids):
@@ -295,17 +285,17 @@ def compute_var_sing(df, centroids):
     :return var_int: list of intra-cluster variances.
 
     """
-    even_num = [i for i in range(2,len(df)+1) if i%2==0]
+    even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     var_int = []
     for i in list(df.index):
         az = df.loc[i].values
-        z1 = [i for i in even_num if i<=len(az)]
-        az = [az[:z1[0]]]+[az[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
-        az = [az[i] for i in range(len(az)) if np.isinf(az[i]).sum()!=2]
+        z1 = [i for i in even_num if i <= len(az)]
+        az = [az[:z1[0]]] + [az[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+        az = [az[i] for i in range(len(az)) if np.isinf(az[i]).sum() != 2]
 
         internal_dist = []
         for el in az:
-            distance = (dist1(el,centroids.loc[i,["cx","cy"]].values))**2
+            distance = (dist1(el, centroids.loc[i, ["cx", "cy"]].values)) ** 2
             internal_dist.append(distance)
         var_int.append(np.sum(internal_dist))
 
@@ -325,7 +315,7 @@ def compute_ward_ij(X, df):
              par_var: increment in total intra-cluster variance, i.e. minimum increase in total intra-cluster variance
     """
 
-    even_num = [i for i in range(2,len(X)+1) if i%2==0]
+    even_num = [i for i in range(2, len(X) + 1) if i % 2 == 0]
 
     (centroids, summ) = compute_var(X, df)
     variances = {}
@@ -337,35 +327,35 @@ def compute_ward_ij(X, df):
 
     for i in ind:
         for j in ind[k:]:
-            if i!=j:
+            if i != j:
                 az = df.loc[i].values
                 bz = df.loc[j].values
-                z1 = [i for i in even_num if i<=len(az)]
-                z2 = [i for i in even_num if i<=len(bz)]
-                az = [az[:z1[0]]]+[az[z1[i]:z1[i+1]] for i in range(len(z1)-1)]
-                bz = [bz[:z2[0]]]+[bz[z2[i]:z2[i+1]] for i in range(len(z2)-1)]
+                z1 = [i for i in even_num if i <= len(az)]
+                z2 = [i for i in even_num if i <= len(bz)]
+                az = [az[:z1[0]]] + [az[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+                bz = [bz[:z2[0]]] + [bz[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
                 d = az + bz
-                valid = [d[i] for i in range(len(d)) if np.isinf(d[i]).sum()!=2]
-                #print(valid)
+                valid = [d[i] for i in range(len(d)) if np.isinf(d[i]).sum() != 2]
+                # print(valid)
                 centroid = np.mean(valid, axis=0)
                 var_intz = []
                 var_int_par = []
                 for el in valid:
-                    var_int_par.append(dist1(el,centroid)**2)
+                    var_int_par.append(dist1(el, centroid) ** 2)
                 var_intz = np.sum(var_int_par)
-                partial_var[(i,j)] = var_intz - centroids.loc[i]["var"] - centroids.loc[j]["var"]
+                partial_var[(i, j)] = var_intz - centroids.loc[i]["var"] - centroids.loc[j]["var"]
 
-                var_new = summ + partial_var[(i,j)]
-                variances[(i,j)] = var_new
-        k+=1
+                var_new = summ + partial_var[(i, j)]
+                variances[(i, j)] = var_new
+        k += 1
 
-    (i,j) = min(variances, key=variances.get)
+    (i, j) = min(variances, key=variances.get)
     new_summ = np.min(list(variances.values()))
-    par_var = partial_var[(i,j)]
+    par_var = partial_var[(i, j)]
     if new_summ == summ:
         print("wrong")
 
-    return ((i,j), new_summ, par_var)
+    return (i, j), new_summ, par_var
 
 
 def sl_dist(a, b):
@@ -373,8 +363,8 @@ def sl_dist(a, b):
     distances = []
     for i in a:
         for j in b:
-            distances.append(dist1(i,j))
-    distances = [i for i in distances if np.isnan(i)==False]
+            distances.append(dist1(i, j))
+    distances = [i for i in distances if np.isnan(i) == False]
     return np.min(distances)
 
 
@@ -383,8 +373,8 @@ def cl_dist(a, b):
     distances = []
     for i in a:
         for j in b:
-            distances.append(dist1(i,j))
-    distances = [i for i in distances if (np.isnan(i)==False) and (np.isinf(i)==False)]
+            distances.append(dist1(i, j))
+    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
     return np.max(distances)
 
 
@@ -393,12 +383,12 @@ def avg_dist(a, b):
     distances = []
     for i in a:
         for j in b:
-            distances.append(dist1(i,j))
-    distances = [i for i in distances if (np.isnan(i)==False) and (np.isinf(i)==False)]
+            distances.append(dist1(i, j))
+    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
     return np.mean(distances)
 
 
-#DEPRECATED, agg_clust_mod is faster
+# DEPRECATED, agg_clust_mod is faster
 def agg_clust(X, linkage):
     """
     Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
@@ -411,14 +401,14 @@ def agg_clust(X, linkage):
     levels2 = []
     ind_list = []
 
-    l = [[i,i] for i in range(len(X))]
+    l = [[i, i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
-    col = [str(el)+"x" if i%2==0 else str(el)+"y" for i, el in enumerate(flat_list)]
+    col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
 
     a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
 
-    a["0x"]=X.T[0]
-    a["0y"]=X.T[1]
+    a["0x"] = X.T[0]
+    a["0y"] = X.T[1]
 
     while len(a) > 1:
 
@@ -445,35 +435,34 @@ def agg_clust(X, linkage):
             print("input metric is not valid")
             return
 
-        if (linkage != "ward"):
+        if linkage != "ward":
             X_dist1 = dist_mat(b, linkage)
-            #find indexes of minimum
+            # find indexes of minimum
             (i, j) = np.unravel_index(np.array(X_dist1).argmin(), np.array(X_dist1).shape)
             levels.append(np.min(np.array(X_dist1)))
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
 
-        elif (linkage == "ward"):
-            ((i,j), var_sum, par_var) = compute_ward_ij(X, b)
+        elif linkage == "ward":
+            ((i, j), var_sum, par_var) = compute_ward_ij(X, b)
 
             levels.append(var_sum)
             levels2.append(par_var)
             ind_list.append((i, j))
             new_clust = a.loc[[i, j], :]
 
-        a = a.drop([new_clust.iloc[0].name],0)
-        a = a.drop([new_clust.iloc[1].name],0)
+        a = a.drop([new_clust.iloc[0].name], 0)
+        a = a.drop([new_clust.iloc[1].name], 0)
 
         dim1 = int(new_clust.iloc[0].notna().sum())
 
-        a.loc["("+new_clust.iloc[0].name+")"+"-"+"("+new_clust.iloc[1].name+")",:] = \
-                new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        a.loc["(" + new_clust.iloc[0].name + ")" + "-" + "(" + new_clust.iloc[1].name + ")", :] = \
+            new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
         if linkage != "ward":
             point_plot_mod(X, a, levels[-1])
         else:
             point_plot_mod(X, a, levels[-2], levels2[-1])
-
 
 
 def agg_clust_mod(X, linkage):
@@ -490,31 +479,31 @@ def agg_clust_mod(X, linkage):
     ind_list = []
 
     # build matrix a, used to store points of clusters with their coordinates
-    l = [[i,i] for i in range(len(X))]
+    l = [[i, i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
-    col = [str(el)+"x" if i%2==0 else str(el)+"y" for i, el in enumerate(flat_list)]
+    col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
 
     a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
 
-    a["0x"]=X.T[0]
-    a["0y"]=X.T[1]
+    a["0x"] = X.T[0]
+    a["0y"] = X.T[1]
 
     b = a.dropna(axis=1, how="all")
 
-    #initial distance matrix
+    # initial distance matrix
     X_dist1 = dist_mat_gen(b)
     var_sum = 0
     levels.append(var_sum)
     levels2.append(var_sum)
 
-    #until the desired number of clusters is reached
+    # until the desired number of clusters is reached
     while len(a) > 1:
 
         if linkage == "ward":
-            #find indexes corresponding to the minimum increase in total intra-cluster variance
+            # find indexes corresponding to the minimum increase in total intra-cluster variance
             b = a.dropna(axis=1, how="all")
             b = b.fillna(np.inf)
-            ((i,j), var_sum, par_var) = compute_ward_ij(X, b)
+            ((i, j), var_sum, par_var) = compute_ward_ij(X, b)
 
             levels.append(var_sum)
             levels2.append(par_var)
@@ -522,23 +511,23 @@ def agg_clust_mod(X, linkage):
             new_clust = a.loc[[i, j], :]
 
         else:
-            #find indexes corresponding to the minimum distance
+            # find indexes corresponding to the minimum distance
             (i, j) = np.unravel_index(np.array(X_dist1).argmin(), np.array(X_dist1).shape)
             levels.append(np.min(np.array(X_dist1)))
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
 
-            #update distance matrix
+            # update distance matrix
             X_dist1 = update_mat(X_dist1, i, j, linkage)
 
-        a = a.drop([new_clust.iloc[0].name],0)
-        a = a.drop([new_clust.iloc[1].name],0)
+        a = a.drop([new_clust.iloc[0].name], 0)
+        a = a.drop([new_clust.iloc[1].name], 0)
 
         dim1 = int(new_clust.iloc[0].notna().sum())
 
-        new_cluster_name = "("+new_clust.iloc[0].name+")"+"-"+"("+new_clust.iloc[1].name+")"
+        new_cluster_name = "(" + new_clust.iloc[0].name + ")" + "-" + "(" + new_clust.iloc[1].name + ")"
 
-        a.loc[new_cluster_name,:] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        a.loc[new_cluster_name, :] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
         if linkage != "ward":
             point_plot_mod(X, a, levels[-1])

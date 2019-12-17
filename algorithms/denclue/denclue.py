@@ -13,9 +13,11 @@ def euclidean_distance(a, b):
     """Returns Euclidean distance of two arrays"""
     return np.linalg.norm(np.array(a) - np.array(b))
 
+
 def gauss_infl_function(x, y, s, dist="euclidean"):
     if dist == "euclidean":
-        return np.exp(-(np.power(euclidean_distance(x, y),2)/(2*(s**2))))
+        return np.exp(-(np.power(euclidean_distance(x, y), 2) / (2 * (s ** 2))))
+
 
 def gauss_dens(x, D, s, dist="euclidean"):
     N = len(D)
@@ -25,6 +27,7 @@ def gauss_dens(x, D, s, dist="euclidean"):
 
     return res
 
+
 def grad_gauss_dens(x, D, s, dist="euclidean"):
     N = len(D)
     res = 0
@@ -32,12 +35,14 @@ def grad_gauss_dens(x, D, s, dist="euclidean"):
         res += gauss_infl_function(x, D[i], s, dist) * (np.array(D[i]) - np.array(x))
     return res
 
+
 def square_wave_infl(x, y, s, dist="euclidean"):
     if dist == "euclidean":
-        if euclidean_distance(x,y) <= s:
+        if euclidean_distance(x, y) <= s:
             return 1
         else:
             return 0
+
 
 def square_wave_dens(x, D, s, dist="euclidean"):
     N = len(D)
@@ -46,6 +51,7 @@ def square_wave_dens(x, D, s, dist="euclidean"):
         res += square_wave_infl(x, D[i], s, dist)
     return res
 
+
 def square_wave_grad(x, D, s, dist="euclidean"):
     N = len(D)
     res = 0
@@ -53,11 +59,13 @@ def square_wave_grad(x, D, s, dist="euclidean"):
         res += square_wave_infl(x, D[i], s, dist) * (np.array(D[i]) - np.array(x))
     return res
 
-def FindPoint(x1, y1, x2, y2, x, y) :
-        if (x > x1 and x < x2) and (y > y1 and y < y2):
-            return True
-        else:
-            return False
+
+def FindPoint(x1, y1, x2, y2, x, y):
+    if (x1 < x < x2) and (y1 < y < y2):
+        return True
+    else:
+        return False
+
 
 def FindRect(point, coord_dict):
     for k, v in coord_dict.items():
@@ -65,8 +73,8 @@ def FindRect(point, coord_dict):
             return k
     return None
 
-def form_populated_cubes(a,b,c,d,data):
 
+def form_populated_cubes(a, b, c, d, data):
     N_c = 0
     lin_sum = [0, 0]
     points = []
@@ -81,58 +89,55 @@ def form_populated_cubes(a,b,c,d,data):
 
     return cluster
 
+
 def min_bound_rect(data):
+    plt.figure(figsize=(22, 15))
+    plt.scatter(data[:, 0], data[:, 1], s=100, edgecolor="black")
 
-        plt.figure(figsize = (22,15))
-        plt.scatter(data[:,0], data[:,1], s=100, edgecolor="black")
+    rect_min = data.min(axis=0)
+    rect_diff = data.max(axis=0) - rect_min
 
-        rect_min = data.min(axis = 0)
-        rect_diff = data.max(axis = 0) - rect_min
+    x0 = rect_min[0] - .05
+    y0 = rect_min[1] - .05
 
-        x0 = rect_min[0] - .05
-        y0 = rect_min[1] - .05
-
-        #minimal bounding rectangle
-        plt.gcf().gca().add_patch(Rectangle((x0, y0),
-                                            rect_diff[0] + .1, rect_diff[1] + .1, fill=None,
-                                            color='r', alpha=1, linewidth=3
-                                            ))
-        #plt.show()
+    # minimal bounding rectangle
+    plt.gcf().gca().add_patch(Rectangle((x0, y0),
+                                        rect_diff[0] + .1, rect_diff[1] + .1, fill=None,
+                                        color='r', alpha=1, linewidth=3
+                                        ))
+    # plt.show()
 
 
 def pop_cubes(data, s):
-
     populated_cubes = {}
 
     corresp_key_coord = {}
 
-    rect_min = data.min(axis = 0)
-    rect_diff = data.max(axis = 0) - rect_min
+    rect_min = data.min(axis=0)
+    rect_diff = data.max(axis=0) - rect_min
     x0 = rect_min[0] - .05
     y0 = rect_min[1] - .05
-    num_width = int(ceil((rect_diff[0] + .1) / (2*s)))
-    num_height = int(ceil((rect_diff[1] + .1) / (2*s)))
+    num_width = int(ceil((rect_diff[0] + .1) / (2 * s)))
+    num_height = int(ceil((rect_diff[1] + .1) / (2 * s)))
 
     for h in range(num_height):
         for w in range(num_width):
-            a = x0 + w*(2*s)
-            b = y0 + h*(2*s)
-            c = a + 2*s
-            d = b + 2*s
+            a = x0 + w * (2 * s)
+            b = y0 + h * (2 * s)
+            c = a + 2 * s
+            d = b + 2 * s
 
             cl = form_populated_cubes(a, b, c, d, data)
 
-            corresp_key_coord[(w,h)] = (a, b, c, d)
+            corresp_key_coord[(w, h)] = (a, b, c, d)
 
             if cl[0] > 0:
-                populated_cubes[(w,h)] = cl
+                populated_cubes[(w, h)] = cl
 
-    return (populated_cubes, corresp_key_coord)
-
+    return populated_cubes, corresp_key_coord
 
 
 def plot_grid_rect(data, s, cube_kind="populated", color_grids=True):
-
     cl, ckc = pop_cubes(data, s)
 
     cl_copy = cl.copy()
@@ -140,27 +145,26 @@ def plot_grid_rect(data, s, cube_kind="populated", color_grids=True):
     coms = [center_of_mass(list(cl.values())[i]) for i in range(len(cl))]
 
     if cube_kind == "highly_populated":
-
-        cl = highly_pop_cubes(cl, xi_c = 3)
+        cl = highly_pop_cubes(cl, xi_c=3)
         coms_hpc = [center_of_mass(list(cl.values())[i]) for i in range(len(cl))]
 
     min_bound_rect(data)
 
-    plt.scatter(np.array(coms)[:,0], np.array(coms)[:,1], s=100, color="red", edgecolor="black")
+    plt.scatter(np.array(coms)[:, 0], np.array(coms)[:, 1], s=100, color="red", edgecolor="black")
 
     if cube_kind == "highly_populated":
         for i in range(len(coms_hpc)):
-            plt.gcf().gca().add_artist(plt.Circle((np.array(coms_hpc)[i,0], np.array(coms_hpc)[i,1]),
-                                                  4*s, color="red", fill=False, linewidth=2, alpha=0.6))
+            plt.gcf().gca().add_artist(plt.Circle((np.array(coms_hpc)[i, 0], np.array(coms_hpc)[i, 1]),
+                                                  4 * s, color="red", fill=False, linewidth=2, alpha=0.6))
 
     tot_cubes = connect_cubes(cl, cl_copy, s)
 
-    new_clusts = {i:tot_cubes[i] for i in list(tot_cubes.keys()) if i not in list(cl.keys())}
+    new_clusts = {i: tot_cubes[i] for i in list(tot_cubes.keys()) if i not in list(cl.keys())}
 
     for key in list(new_clusts.keys()):
         (a, b, c, d) = ckc[key]
         plt.gcf().gca().add_patch(Rectangle((a, b),
-                                            2*s, 2*s, fill=True,
+                                            2 * s, 2 * s, fill=True,
                                             color='yellow', alpha=0.3, linewidth=3
                                             ))
 
@@ -177,7 +181,7 @@ def plot_grid_rect(data, s, cube_kind="populated", color_grids=True):
             color_or_not = False
 
         plt.gcf().gca().add_patch(Rectangle((a, b),
-                                            2*s, 2*s, fill=color_or_not,
+                                            2 * s, 2 * s, fill=color_or_not,
                                             color='g', alpha=0.3, linewidth=3
                                             ))
     plt.show()
@@ -191,11 +195,11 @@ def check_border_points_rectangles(data, pop_clust):
     if count == len(data):
         print("No points lie on the borders of rectangles")
     else:
-        diff = len(data)-count
+        diff = len(data) - count
         print("{0} point(s) lie(s) on the border of rectangles".format(diff))
 
-def highly_pop_cubes(pop_cub, xi_c):
 
+def highly_pop_cubes(pop_cub, xi_c):
     highly_pop_cubes = {}
 
     for key in list(pop_cub.keys()):
@@ -204,22 +208,23 @@ def highly_pop_cubes(pop_cub, xi_c):
 
     return highly_pop_cubes
 
+
 def center_of_mass(cube):
     return np.array(cube[1]) / cube[0]
+
 
 def check_connection(cube1, cube2, s, dist="euclidean"):
     c1 = center_of_mass(cube1)
     c2 = center_of_mass(cube2)
     if dist == "euclidean":
-        d = euclidean_distance(c1,c2)
-    if d <= 4*s:
+        d = euclidean_distance(c1, c2)
+    if d <= 4 * s:
         return True
     else:
         return False
 
 
 def connect_cubes(hp_cubes, cubes, s, dist="euclidean"):
-
     i = 0
     rel_keys = []
 
@@ -229,17 +234,17 @@ def connect_cubes(hp_cubes, cubes, s, dist="euclidean"):
             if k1 != k2:
 
                 if check_connection(c1, c2, s, dist) == True:
-
-                    rel_keys.append([k1,k2])
+                    rel_keys.append([k1, k2])
         i += 1
 
     keys_fin = [item for sublist in rel_keys for item in sublist]
 
-    new_cubes = {i:cubes[i] for i in keys_fin}
+    new_cubes = {i: cubes[i] for i in keys_fin}
 
     return new_cubes
 
-def near_with_cube(x, cube_x, tot_cubes, s): #includes the point itself
+
+def near_with_cube(x, cube_x, tot_cubes, s):  # includes the point itself
 
     near_list = []
 
@@ -247,16 +252,15 @@ def near_with_cube(x, cube_x, tot_cubes, s): #includes the point itself
 
         d = euclidean_distance(x, center_of_mass(cube))
 
-        if (d <= 4*s) and (check_connection(cube_x, cube, s)):
-
+        if (d <= 4 * s) and (check_connection(cube_x, cube, s)):
             near_list.append(cube[2])
 
     near_list = [item for sublist in near_list for item in sublist]
 
-    return  near_list
+    return near_list
 
 
-def near_without_cube(x, coord_dict, tot_cubes, s): #includes the point itself
+def near_without_cube(x, coord_dict, tot_cubes, s):  # includes the point itself
 
     k = FindRect(x, coord_dict)
 
@@ -274,31 +278,30 @@ def near_without_cube(x, coord_dict, tot_cubes, s): #includes the point itself
 
         d = euclidean_distance(x, center_of_mass(cube))
 
-        if (d <= 4*s) and (check_connection(cube_x, cube, s)):
-
+        if (d <= 4 * s) and (check_connection(cube_x, cube, s)):
             near_list.append(cube[2])
 
     near_list = [item for sublist in near_list for item in sublist]
 
-    return  near_list
+    return near_list
 
-#%matplotlib notebook
-#%matplotlib inline
+
+# %matplotlib notebook
+# %matplotlib inline
 
 def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
+    fig, ax = plt.subplots(figsize=(14, 6))
 
-    fig, ax = plt.subplots(figsize=(14,6))
-
-    x_data = [np.array(data)[:,0].min(), np.array(data)[:,0].max()]
-    y_data = [np.array(data)[:,1].min(), np.array(data)[:,1].max()]
+    x_data = [np.array(data)[:, 0].min(), np.array(data)[:, 0].max()]
+    y_data = [np.array(data)[:, 1].min(), np.array(data)[:, 1].max()]
     mixed_data = [min(x_data[0], y_data[0]), max(x_data[1], y_data[1])]
 
-    xx = np.outer(np.linspace(mixed_data[0]-1, mixed_data[1]+1, prec*10), np.ones(prec*10))
-    yy = xx.copy().T # transpose
-    z= np.empty((prec*10,prec*10))
-    for i,a in tqdm(enumerate(range(prec*10))):
-        for j,b in enumerate(range(prec*10)):
-            z[i,j] = gauss_dens(x=np.array([xx[i][a],yy[i][b]]), D=data, s=s)
+    xx = np.outer(np.linspace(mixed_data[0] - 1, mixed_data[1] + 1, prec * 10), np.ones(prec * 10))
+    yy = xx.copy().T  # transpose
+    z = np.empty((prec * 10, prec * 10))
+    for i, a in tqdm(enumerate(range(prec * 10))):
+        for j, b in enumerate(range(prec * 10)):
+            z[i, j] = gauss_dens(x=np.array([xx[i][a], yy[i][b]]), D=data, s=s)
 
     if three == True:
         ax = plt.axes(projection="3d")
@@ -308,18 +311,17 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
         CS = ax.contour(xx, yy, z, cmap='winter', edgecolor='none')
         ax.clabel(CS, inline=1, fontsize=10)
 
-        if (scatter == True) and (three==False):
-
-            plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, edgecolor="black", color="yellow", alpha=0.6)
+        if (scatter == True) and (three == False):
+            plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, edgecolor="black", color="yellow", alpha=0.6)
 
         plt.show()
 
-def assign_cluster(data, others, attractor, clust_dict, processed):
 
+def assign_cluster(data, others, attractor, clust_dict, processed):
     if others is None or attractor is None:
         print("None")
 
-        return (clust_dict, processed)
+        return clust_dict, processed
 
     for point in others:
 
@@ -335,20 +337,19 @@ def assign_cluster(data, others, attractor, clust_dict, processed):
         else:
             clust_dict[point_index] = [-1]
 
-    return (clust_dict, processed)
+    return clust_dict, processed
+
 
 def plot_infl(data, s, xi, prec=3):
-
-    fig, ax = plt.subplots(figsize=(14,6))
+    fig, ax = plt.subplots(figsize=(14, 6))
 
     z = []
-    for a,b in zip(np.array(data)[:,0], np.array(data)[:,1]):
-        z.append(gauss_dens(x=np.array([a,b]), D=data, s=s))
+    for a, b in zip(np.array(data)[:, 0], np.array(data)[:, 1]):
+        z.append(gauss_dens(x=np.array([a, b]), D=data, s=s))
 
     x_plot = [i for i in range(len(data))]
 
     for j in range(len(data)):
-
         plt.scatter(x_plot[j], z[j], s=300, color="green" if z[j] >= xi else "yellow",
                     edgecolor="black", alpha=0.7)
 
@@ -358,56 +359,56 @@ def plot_infl(data, s, xi, prec=3):
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    xw1 = xwidth*0.01
-    yw1 = ywidth*0.01
+    xw1 = xwidth * 0.01
+    yw1 = ywidth * 0.01
 
-    xw2 = xwidth*0.005
-    yw2 = ywidth*0.01
+    xw2 = xwidth * 0.005
+    yw2 = ywidth * 0.01
 
-    xw3 = xwidth*0.01
-    yw3 = ywidth*0.01
+    xw3 = xwidth * 0.01
+    yw3 = ywidth * 0.01
 
     for i, txt in enumerate(range(len(data))):
-            if len(str(txt))==2:
-                ax.annotate(txt, (i-xw1, z[i]-yw1), fontsize=12, size=12)
-            elif len(str(txt))==1:
-                ax.annotate(txt, (i-xw2, z[i]-yw2), fontsize=12, size=12)
-            else:
-                ax.annotate(txt, (i-xw3, z[i]-yw3), fontsize=9, size=9)
+        if len(str(txt)) == 2:
+            ax.annotate(txt, (i - xw1, z[i] - yw1), fontsize=12, size=12)
+        elif len(str(txt)) == 1:
+            ax.annotate(txt, (i - xw2, z[i] - yw2), fontsize=12, size=12)
+        else:
+            ax.annotate(txt, (i - xw3, z[i] - yw3), fontsize=9, size=9)
     plt.show()
 
-def plot_3d_both(data, s, xi=None, prec=3):
 
+def plot_3d_both(data, s, xi=None, prec=3):
     from matplotlib import cm
 
-    fig = plt.figure(figsize=(16,10))
+    fig = plt.figure(figsize=(16, 10))
     ax = fig.add_subplot(111, projection='3d')
 
-    x_data = [np.array(data)[:,0].min(), np.array(data)[:,0].max()]
-    y_data = [np.array(data)[:,1].min(), np.array(data)[:,1].max()]
+    x_data = [np.array(data)[:, 0].min(), np.array(data)[:, 0].max()]
+    y_data = [np.array(data)[:, 1].min(), np.array(data)[:, 1].max()]
     mixed_data = [min(x_data[0], y_data[0]), max(x_data[1], y_data[1])]
 
-    xx = np.outer(np.linspace(mixed_data[0]-1, mixed_data[1]+1, prec*10), np.ones(prec*10))
-    yy = xx.copy().T # transpose
-    z= np.empty((prec*10,prec*10))
-    z_xi = np.empty((prec*10,prec*10))
+    xx = np.outer(np.linspace(mixed_data[0] - 1, mixed_data[1] + 1, prec * 10), np.ones(prec * 10))
+    yy = xx.copy().T  # transpose
+    z = np.empty((prec * 10, prec * 10))
+    z_xi = np.empty((prec * 10, prec * 10))
 
-    for i,a in tqdm(enumerate(range(prec*10))):
+    for i, a in tqdm(enumerate(range(prec * 10))):
 
-        for j,b in enumerate(range(prec*10)):
+        for j, b in enumerate(range(prec * 10)):
 
-            z[i,j] = gauss_dens(x=np.array([xx[i][a],yy[i][b]]), D=data, s=s)
+            z[i, j] = gauss_dens(x=np.array([xx[i][a], yy[i][b]]), D=data, s=s)
             if xi is not None:
-                if z[i,j] >= xi:
-                    z_xi[i,j] = z[i,j]
+                if z[i, j] >= xi:
+                    z_xi[i, j] = z[i, j]
                 else:
-                    z_xi[i,j] = xi
+                    z_xi[i, j] = xi
 
     # to set colors according to xi value, red if greater, yellow if smaller
     if xi is not None:
         xi_data = []
-        for a,b in zip(np.array(data)[:,0], np.array(data)[:,1]):
-            to_be_eval = gauss_dens(x=np.array([a,b]), D=data, s=s)
+        for a, b in zip(np.array(data)[:, 0], np.array(data)[:, 1]):
+            to_be_eval = gauss_dens(x=np.array([a, b]), D=data, s=s)
             if to_be_eval >= xi:
                 xi_data.append("red")
             else:
@@ -427,7 +428,7 @@ def plot_3d_both(data, s, xi=None, prec=3):
     else:
         color_plot = "red"
 
-    ax.scatter(np.array(data)[:,0], np.array(data)[:,1], offset, s=30,
+    ax.scatter(np.array(data)[:, 0], np.array(data)[:, 1], offset, s=30,
                edgecolor="black", color=color_plot, alpha=0.6)
 
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
@@ -438,12 +439,12 @@ def plot_3d_both(data, s, xi=None, prec=3):
 
     ax.set_zlabel('Z')
     ax.set_zlim(offset, np.max(z))
-    #ax.set_title('3D surface with 2D contour plot projections')
+    # ax.set_title('3D surface with 2D contour plot projections')
 
     plt.show()
 
-def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_iter=100, dist="euclidean"):
 
+def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_iter=100, dist="euclidean"):
     x_i = []
     it_number = 0
 
@@ -456,7 +457,7 @@ def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_ite
             it_number += 1
 
             for point in data:
-                if euclidean_distance(point, x) <= s/2:
+                if euclidean_distance(point, x) <= s / 2:
                     other_points.append(list(point))
             continue
 
@@ -465,10 +466,10 @@ def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_ite
 
         grad = grad_gauss_dens(x=old, D=near_old, s=s, dist=dist)
 
-        new_x =  old + delta * (grad/np.linalg.norm(grad))
+        new_x = old + delta * (grad / np.linalg.norm(grad))
 
         for point in data:
-            if euclidean_distance(point, new_x) <= s/2:
+            if euclidean_distance(point, new_x) <= s / 2:
                 other_points.append(list(point))
 
         near_new = near_without_cube(x=new_x, coord_dict=coord_dict, tot_cubes=tot_cubes, s=s)
@@ -482,80 +483,79 @@ def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_ite
 
         if dens_new < dens_old:
             attractor = old
-            #print("iterations: ", it_number)
+            # print("iterations: ", it_number)
             if dens_old >= xi:
                 res = (attractor, True)
             else:
                 res = (attractor, False)
 
             other_points.sort()
-            other_points = list(k for k,_ in groupby(other_points))
+            other_points = list(k for k, _ in groupby(other_points))
 
-            return (res, other_points)
-
-            break
+            return res, other_points
 
     print("Max iteration number reached!")
-    return (None, None)
+    return None, None
+
 
 def plot_clust_dict(data, lab_dict):
+    fig, ax = plt.subplots(figsize=(14, 6))
 
-    fig,ax = plt.subplots(figsize=(14,6))
+    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
+              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
+              16: "gainsboro", 17: "peachpuff", 18: "lime", 19: "peru",
+              20: "dodgerblue", 21: "teal", 22: "royalblue", 23: "tomato",
+              24: "bisque", 25: "palegreen"}
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
-               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-               11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki",
-               16:"gainsboro", 17:"peachpuff", 18:"lime", 19:"peru",
-               20:"dodgerblue", 21:"teal", 22:"royalblue", 23:"tomato",
-               24:"bisque", 25:"palegreen"}
+    col = [colors[lab_dict.label[i] % len(colors)] if lab_dict.label[i] != -1 else "red" for i in range(len(lab_dict))]
 
-    col = [colors[lab_dict.label[i]%len(colors)] if lab_dict.label[i] != -1 else "red" for i in range(len(lab_dict))]
-
-    plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, edgecolor="black", color=col, alpha=0.8)
+    plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, edgecolor="black", color=col, alpha=0.8)
 
     df_dens_attr = lab_dict.groupby("label").mean()
 
     for i in range(df_dens_attr.iloc[-1].name + 1):
-        plt.scatter(df_dens_attr.loc[i]["x"], df_dens_attr.loc[i]["y"], color="red", marker="X", s=300, edgecolor="black")
+        plt.scatter(df_dens_attr.loc[i]["x"], df_dens_attr.loc[i]["y"], color="red", marker="X", s=300,
+                    edgecolor="black")
 
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    xw1 = xwidth*0.01
-    yw1 = ywidth*0.01
+    xw1 = xwidth * 0.01
+    yw1 = ywidth * 0.01
 
-    xw2 = xwidth*0.005
-    yw2 = ywidth*0.01
+    xw2 = xwidth * 0.005
+    yw2 = ywidth * 0.01
 
-    xw3 = xwidth*0.01
-    yw3 = ywidth*0.01
+    xw3 = xwidth * 0.01
+    yw3 = ywidth * 0.01
 
     for i, txt in enumerate(range(len(data))):
-                    if len(str(txt))==2:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw1, np.array(data)[i,1]-yw1), fontsize=12, size=12)
-                    elif len(str(txt))==1:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw2, np.array(data)[i,1]-yw2), fontsize=12, size=12)
-                    else:
-                        ax.annotate(txt, (np.array(data)[i,0]-xw3, np.array(data)[i,1]-yw3), fontsize=9, size=9)
+        if len(str(txt)) == 2:
+            ax.annotate(txt, (np.array(data)[i, 0] - xw1, np.array(data)[i, 1] - yw1), fontsize=12, size=12)
+        elif len(str(txt)) == 1:
+            ax.annotate(txt, (np.array(data)[i, 0] - xw2, np.array(data)[i, 1] - yw2), fontsize=12, size=12)
+        else:
+            ax.annotate(txt, (np.array(data)[i, 0] - xw3, np.array(data)[i, 1] - yw3), fontsize=9, size=9)
 
     plt.show()
 
-def extract_cluster_labels(data, cld, tol=2):
 
+def extract_cluster_labels(data, cld, tol=2):
     def similarity(x, y, tol=0.1):
-        if (abs(x[0]-y[0])<=tol) and (abs(x[1]-y[1])<=tol):
+        if (abs(x[0] - y[0]) <= tol) and (abs(x[1] - y[1]) <= tol):
             return True
         else:
             return False
 
     cld_sorted = OrderedDict(sorted(cld.items(), key=lambda t: t[0]))
     l = list(cld_sorted.values())
-    l_mod = [np.round(l[i],1) for i in range(len(l))]
+    l_mod = [np.round(l[i], 1) for i in range(len(l))]
 
-    lr = {i:l_mod[i] for i in range(len(l_mod)) if len(l_mod[i])==2}
+    lr = {i: l_mod[i] for i in range(len(l_mod)) if len(l_mod[i]) == 2}
     da_list = [i for i in range(len(data))]
-    for i,el in enumerate(l_mod):
+    for i, el in enumerate(l_mod):
         if len(el) == 1:
             da_list[i] = -1
         else:
@@ -572,25 +572,25 @@ def extract_cluster_labels(data, cld, tol=2):
         range_labels = len(keys)
         labels = [i for i in range(range_labels)]
 
-    label_dict = dict(zip(keys,labels))
+    label_dict = dict(zip(keys, labels))
     fin_labels = [label_dict[i] for i in da_list]
 
     df = pd.DataFrame(l_mod)
-    df.columns = ["x","y"]
+    df.columns = ["x", "y"]
     df["label"] = fin_labels
-    #df.groupby("label").mean()
+    # df.groupby("label").mean()
 
-    return (fin_labels, df)
+    return fin_labels, df
+
 
 def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
-
-    clust_dict =  {}
+    clust_dict = {}
     processed = []
 
-    z, d = pop_cubes(data=data,s=s)
+    z, d = pop_cubes(data=data, s=s)
     print("Number of populated cubes: ", len(z))
     check_border_points_rectangles(data, z)
-    hpc = highly_pop_cubes(z, xi_c = xi_c)
+    hpc = highly_pop_cubes(z, xi_c=xi_c)
     print("Number of highly populated cubes: ", len(hpc))
     new_cubes = connect_cubes(hpc, z, s=s)
 
@@ -602,24 +602,24 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
 
         plot_3d_both(data, s=s, xi=xi, prec=20)
 
-    points_to_process = [item for sublist in np.array(list(new_cubes.values()))[:,2] for item in sublist]
+    points_to_process = [item for sublist in np.array(list(new_cubes.values()))[:, 2] for item in sublist]
 
     initial_noise = []
     for elem in data:
-        if len((np.nonzero(points_to_process==elem))[0]) == 0:
+        if len((np.nonzero(points_to_process == elem))[0]) == 0:
             initial_noise.append(elem)
 
     for num, point in tqdm(enumerate(points_to_process)):
         delta = 0.02
-        r,o = None, None
+        r, o = None, None
 
         while r is None:
             r, o = density_attractor(data=data, x=point, coord_dict=d, tot_cubes=new_cubes,
                                      s=s, xi=xi, delta=delta, max_iter=600, dist=dist)
-            delta = delta*2
+            delta = delta * 2
 
         clust_dict, proc = assign_cluster(data=data, others=o, attractor=r,
-                                              clust_dict=clust_dict, processed=processed)
+                                          clust_dict=clust_dict, processed=processed)
 
     for point in initial_noise:
         point_index = np.nonzero(data == point)[0][0]

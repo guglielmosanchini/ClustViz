@@ -14,7 +14,7 @@
     (at your option) any later version.
 
     PyClustering is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    but WITHOUT ANY WARRANTY without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
@@ -44,19 +44,19 @@ class measurement_type(IntEnum):
 
     """
 
-    ## Euclidian distance between centroids of clustering features.
+    # Euclidian distance between centroids of clustering features.
     CENTROID_EUCLIDEAN_DISTANCE = 0
 
-    ## Manhattan distance between centroids of clustering features.
+    # Manhattan distance between centroids of clustering features.
     CENTROID_MANHATTAN_DISTANCE = 1
 
-    ## Average distance between all objects from clustering features.
+    # Average distance between all objects from clustering features.
     AVERAGE_INTER_CLUSTER_DISTANCE = 2
 
-    ## Average distance between all objects within clustering features and between them.
+    # Average distance between all objects within clustering features and between them.
     AVERAGE_INTRA_CLUSTER_DISTANCE = 3
 
-    ## Variance based distance between clustering features.
+    # Variance based distance between clustering features.
     VARIANCE_INCREASE_DISTANCE = 4
 
 
@@ -69,13 +69,13 @@ class cfnode_type(IntEnum):
 
     """
 
-    ## Undefined node.
+    # Undefined node.
     CFNODE_DUMMY = 0
 
-    ## Leaf node hasn't got successors, only entries.
+    # Leaf node hasn't got successors, only entries.
     CFNODE_LEAF = 1
 
-    ## Non-leaf node has got successors and hasn't got entries.
+    # Non-leaf node has got successors and hasn't got entries.
     CFNODE_NONLEAF = 2
 
 
@@ -119,7 +119,6 @@ class cfentry:
         """
         return self.__square_sum
 
-
     def __init__(self, number_points, linear_sum, square_sum):
         """!
         @brief CF-entry constructor.
@@ -138,14 +137,12 @@ class cfentry:
         self.__radius = None
         self.__diameter = None
 
-
     def __copy__(self):
         """!
         @returns (cfentry) Makes copy of the cfentry instance.
 
         """
         return cfentry(self.__number_points, self.__linear_sum, self.__square_sum)
-
 
     def __repr__(self):
         """!
@@ -154,14 +151,12 @@ class cfentry:
         """
         return 'CF (%s, %s, %0.2f) [%s]' % (self.number_points, self.linear_sum, self.__square_sum, hex(id(self)))
 
-
     def __str__(self):
         """!
         @brief Default cfentry string representation.
 
         """
         return self.__repr__()
-
 
     def __add__(self, entry):
         """!
@@ -178,7 +173,6 @@ class cfentry:
         result_square_sum = self.square_sum + entry.square_sum
 
         return cfentry(number_points, result_linear_sum, result_square_sum)
-
 
     def __sub__(self, entry):
         """!
@@ -200,7 +194,6 @@ class cfentry:
 
         return cfentry(number_points, result_linear_sum, result_square_sum)
 
-
     def __eq__(self, entry):
         """!
         @brief Overloaded operator eq.
@@ -215,13 +208,14 @@ class cfentry:
         tolerance = 0.00001
 
         result = (self.__number_points == entry.number_points)
-        result &= ((self.square_sum + tolerance > entry.square_sum) and (self.square_sum - tolerance < entry.square_sum))
+        result &= ((self.square_sum + tolerance > entry.square_sum) and (
+                self.square_sum - tolerance < entry.square_sum))
 
         for index_dimension in range(0, len(self.linear_sum)):
-            result &= ((self.linear_sum[index_dimension] + tolerance > entry.linear_sum[index_dimension]) and (self.linear_sum[index_dimension] - tolerance < entry.linear_sum[index_dimension]))
+            result &= ((self.linear_sum[index_dimension] + tolerance > entry.linear_sum[index_dimension]) and (
+                    self.linear_sum[index_dimension] - tolerance < entry.linear_sum[index_dimension]))
 
         return result
-
 
     def get_distance(self, entry, type_measurement):
         """!
@@ -256,7 +250,6 @@ class cfentry:
         else:
             raise ValueError("Unsupported type of measurement '%s' is specified." % type_measurement)
 
-
     def get_centroid(self):
         """!
         @brief Calculates centroid of cluster that is represented by the entry.
@@ -274,7 +267,6 @@ class cfentry:
             self.__centroid[index_dimension] = self.linear_sum[index_dimension] / self.number_points
 
         return self.__centroid
-
 
     def get_radius(self):
         """!
@@ -302,7 +294,6 @@ class cfentry:
         self.__radius = ((1.0 / self.number_points) * (radius_part_1 - radius_part_2 + radius_part_3)) ** 0.5
         return self.__radius
 
-
     def get_diameter(self):
         """!
         @brief Calculates diameter of cluster that is represented by the entry.
@@ -316,13 +307,13 @@ class cfentry:
             return self.__diameter
 
         if type(self.linear_sum) == list:
-            diameter_part = self.square_sum * self.number_points - 2.0 * sum(list_math_multiplication(self.linear_sum, self.linear_sum)) + self.square_sum * self.number_points
+            diameter_part = self.square_sum * self.number_points - 2.0 * sum(
+                list_math_multiplication(self.linear_sum, self.linear_sum)) + self.square_sum * self.number_points
         else:
             diameter_part = self.square_sum * self.number_points - 2.0 * self.linear_sum * self.linear_sum + self.square_sum * self.number_points
 
         self.__diameter = (diameter_part / (self.number_points * (self.number_points - 1))) ** 0.5
         return self.__diameter
-
 
     def __get_average_inter_cluster_distance(self, entry):
         """!
@@ -336,8 +327,9 @@ class cfentry:
 
         linear_part_distance = sum(list_math_multiplication(self.linear_sum, entry.linear_sum))
 
-        return ((entry.number_points * self.square_sum - 2.0 * linear_part_distance + self.number_points * entry.square_sum) / (self.number_points * entry.number_points)) ** 0.5
-
+        return ((
+                        entry.number_points * self.square_sum - 2.0 * linear_part_distance + self.number_points * entry.square_sum) / (
+                        self.number_points * entry.number_points)) ** 0.5
 
     def __get_average_intra_cluster_distance(self, entry):
         """!
@@ -354,10 +346,11 @@ class cfentry:
 
         linear_part_distance = sum(list_math_multiplication(linear_part_first, linear_part_second))
 
-        general_part_distance = 2.0 * (self.number_points + entry.number_points) * (self.square_sum + entry.square_sum) - 2.0 * linear_part_distance
+        general_part_distance = 2.0 * (self.number_points + entry.number_points) * (
+                self.square_sum + entry.square_sum) - 2.0 * linear_part_distance
 
-        return (general_part_distance / ((self.number_points + entry.number_points) * (self.number_points + entry.number_points - 1.0))) ** 0.5
-
+        return (general_part_distance / ((self.number_points + entry.number_points) * (
+                self.number_points + entry.number_points - 1.0))) ** 0.5
 
     def __get_variance_increase_distance(self, entry):
         """!
@@ -371,14 +364,20 @@ class cfentry:
 
         linear_part_12 = list_math_addition(self.linear_sum, entry.linear_sum)
         variance_part_first = (self.square_sum + entry.square_sum) - \
-            2.0 * sum(list_math_multiplication(linear_part_12, linear_part_12)) / (self.number_points + entry.number_points) + \
-            (self.number_points + entry.number_points) * sum(list_math_multiplication(linear_part_12, linear_part_12)) / (self.number_points + entry.number_points)**2.0
+                              2.0 * sum(list_math_multiplication(linear_part_12, linear_part_12)) / (
+                                      self.number_points + entry.number_points) + \
+                              (self.number_points + entry.number_points) * sum(
+            list_math_multiplication(linear_part_12, linear_part_12)) / (
+                                      self.number_points + entry.number_points) ** 2.0
 
         linear_part_11 = sum(list_math_multiplication(self.linear_sum, self.linear_sum))
-        variance_part_second = -(self.square_sum - (2.0 * linear_part_11 / self.number_points) + (linear_part_11 / self.number_points))
+        variance_part_second = -(self.square_sum - (2.0 * linear_part_11 / self.number_points) + (
+                linear_part_11 / self.number_points))
 
         linear_part_22 = sum(list_math_multiplication(entry.linear_sum, entry.linear_sum))
-        variance_part_third = -(entry.square_sum - (2.0 / entry.number_points) * linear_part_22 + entry.number_points * (1.0 / entry.number_points ** 2.0) * linear_part_22)
+        variance_part_third = -(
+                entry.square_sum - (2.0 / entry.number_points) * linear_part_22 + entry.number_points * (
+                1.0 / entry.number_points ** 2.0) * linear_part_22)
 
         return variance_part_first + variance_part_second + variance_part_third
 
@@ -399,18 +398,17 @@ class cfnode:
 
         """
 
-        ## Clustering feature of the node.
+        # Clustering feature of the node.
         self.feature = copy(feature)
 
-        ## Pointer to the parent node (None for root).
+        # Pointer to the parent node (None for root).
         self.parent = parent
 
-        ## Type node (leaf or non-leaf).
+        # Type node (leaf or non-leaf).
         self.type = cfnode_type.CFNODE_DUMMY
 
-        ## Payload of node where user data can be stored.
+        # Payload of node where user data can be stored.
         self.payload = payload
-
 
     def __repr__(self):
         """!
@@ -420,14 +418,12 @@ class cfnode:
 
         return 'CF node %s, parent %s, feature %s' % (hex(id(self)), self.parent, self.feature)
 
-
     def __str__(self):
         """!
         @return (string) String representation of CF node.
 
         """
         return self.__repr__()
-
 
     def get_distance(self, node, type_measurement):
         """!
@@ -457,7 +453,6 @@ class non_leaf_node(cfnode):
         """
         return self.__successors
 
-
     def __init__(self, feature, parent, successors, payload):
         """!
         @brief Create CF Non-leaf node.
@@ -471,19 +466,18 @@ class non_leaf_node(cfnode):
 
         super().__init__(feature, parent, payload)
 
-        ## Node type in CF tree that is CFNODE_NONLEAF for non leaf node.
+        # Node type in CF tree that is CFNODE_NONLEAF for non leaf node.
         self.type = cfnode_type.CFNODE_NONLEAF
 
         self.__successors = successors
-
 
     def __repr__(self):
         """!
         @return (string) Representation of non-leaf node representation.
 
         """
-        return 'Non-leaf node %s, parent %s, feature %s, successors: %d' % (hex(id(self)), self.parent, self.feature, len(self.successors))
-
+        return 'Non-leaf node %s, parent %s, feature %s, successors: %d' % (
+            hex(id(self)), self.parent, self.feature, len(self.successors))
 
     def __str__(self):
         """!
@@ -491,7 +485,6 @@ class non_leaf_node(cfnode):
 
         """
         return self.__repr__()
-
 
     def insert_successor(self, successor):
         """!
@@ -506,7 +499,6 @@ class non_leaf_node(cfnode):
 
         successor.parent = self
 
-
     def remove_successor(self, successor):
         """!
         @brief Remove successor from the node.
@@ -519,7 +511,6 @@ class non_leaf_node(cfnode):
         self.successors.append(successor)
 
         successor.parent = self
-
 
     def merge(self, node):
         """!
@@ -534,7 +525,6 @@ class non_leaf_node(cfnode):
         for child in node.successors:
             child.parent = self
             self.successors.append(child)
-
 
     def get_farthest_successors(self, type_measurement):
         """!
@@ -563,7 +553,6 @@ class non_leaf_node(cfnode):
                     farthest_node2 = candidate2
 
                     return [farthest_node1, farthest_node2]
-
 
     def get_nearest_successors(self, type_measurement):
         """!
@@ -608,7 +597,6 @@ class leaf_node(cfnode):
         """
         return self.__entries
 
-
     def __init__(self, feature, parent, entries, payload):
         """!
         @brief Create CF Leaf node.
@@ -622,11 +610,10 @@ class leaf_node(cfnode):
 
         super().__init__(feature, parent, payload)
 
-        ## Node type in CF tree that is CFNODE_LEAF for leaf node.
+        # Node type in CF tree that is CFNODE_LEAF for leaf node.
         self.type = cfnode_type.CFNODE_LEAF
 
-        self.__entries = entries   # list of clustering features
-
+        self.__entries = entries  # list of clustering features
 
     def __repr__(self):
         """!
@@ -637,8 +624,8 @@ class leaf_node(cfnode):
         for entry in self.entries:
             text_entries += "\t" + str(entry) + "\n"
 
-        return 'Leaf-node %s, parent %s, feature %s, entries: %d %s' % (hex(id(self)), self.parent, self.feature, len(self.entries), text_entries)
-
+        return 'Leaf-node %s, parent %s, feature %s, entries: %d %s' % (
+            hex(id(self)), self.parent, self.feature, len(self.entries), text_entries)
 
     def __str__(self):
         """!
@@ -646,7 +633,6 @@ class leaf_node(cfnode):
 
         """
         return self.__repr__()
-
 
     def insert_entry(self, entry):
         """!
@@ -659,7 +645,6 @@ class leaf_node(cfnode):
         self.feature += entry
         self.entries.append(entry)
 
-
     def remove_entry(self, entry):
         """!
         @brief Remove clustering feature from the leaf node.
@@ -670,7 +655,6 @@ class leaf_node(cfnode):
 
         self.feature -= entry
         self.entries.remove(entry)
-
 
     def merge(self, node):
         """!
@@ -685,7 +669,6 @@ class leaf_node(cfnode):
         # Move entries from merged node
         for entry in node.entries:
             self.entries.append(entry)
-
 
     def get_farthest_entries(self, type_measurement):
         """!
@@ -715,7 +698,6 @@ class leaf_node(cfnode):
 
         return [farthest_entity1, farthest_entity2]
 
-
     def get_nearest_index_entry(self, entry, type_measurement):
         """!
         @brief Find nearest index of nearest entry of node for the specified entry.
@@ -736,7 +718,6 @@ class leaf_node(cfnode):
                 nearest_index = candidate_index
 
         return nearest_index
-
 
     def get_nearest_entry(self, entry, type_measurement):
         """!
@@ -768,7 +749,6 @@ class cftree:
         """
         return self.__root
 
-
     @property
     def leafes(self):
         """!
@@ -776,7 +756,6 @@ class cftree:
 
         """
         return self.__leafes
-
 
     @property
     def amount_nodes(self):
@@ -786,7 +765,6 @@ class cftree:
         """
         return self.__amount_nodes
 
-
     @property
     def amount_entries(self):
         """!
@@ -795,7 +773,6 @@ class cftree:
         """
         return self.__amount_entries
 
-
     @property
     def height(self):
         """!
@@ -803,7 +780,6 @@ class cftree:
 
         """
         return self.__height
-
 
     @property
     def branch_factor(self):
@@ -814,7 +790,6 @@ class cftree:
         """
         return self.__branch_factor
 
-
     @property
     def threshold(self):
         """!
@@ -822,7 +797,6 @@ class cftree:
 
         """
         return self.__threshold
-
 
     @property
     def max_entries(self):
@@ -832,7 +806,6 @@ class cftree:
         """
         return self.__max_entries
 
-
     @property
     def type_measurement(self):
         """!
@@ -841,8 +814,8 @@ class cftree:
         """
         return self.__type_measurement
 
-
-    def __init__(self, branch_factor, max_entries, threshold, type_measurement = measurement_type.CENTROID_EUCLIDEAN_DISTANCE):
+    def __init__(self, branch_factor, max_entries, threshold,
+                 type_measurement=measurement_type.CENTROID_EUCLIDEAN_DISTANCE):
         """!
         @brief Create CF-tree.
 
@@ -867,10 +840,9 @@ class cftree:
         self.__type_measurement = type_measurement
 
         # statistics
-        self.__amount_nodes = 0    # root, despite it can be None.
+        self.__amount_nodes = 0  # root, despite it can be None.
         self.__amount_entries = 0
-        self.__height = 0          # tree size with root.
-
+        self.__height = 0  # tree size with root.
 
     def get_level_nodes(self, level):
         """!
@@ -882,12 +854,11 @@ class cftree:
 
         """
 
-        level_nodes = [];
-        if (level < self.__height):
-            level_nodes = self.__recursive_get_level_nodes(level, self.__root);
+        level_nodes = []
+        if level < self.__height:
+            level_nodes = self.__recursive_get_level_nodes(level, self.__root)
 
-        return level_nodes;
-
+        return level_nodes
 
     def __recursive_get_level_nodes(self, level, node):
         """!
@@ -900,16 +871,15 @@ class cftree:
 
         """
 
-        level_nodes = [];
-        if (level is 0):
-            level_nodes.append(node);
+        level_nodes = []
+        if level is 0:
+            level_nodes.append(node)
 
         else:
             for sucessor in node.successors:
-                level_nodes += self.__recursive_get_level_nodes(level - 1, sucessor);
+                level_nodes += self.__recursive_get_level_nodes(level - 1, sucessor)
 
-        return level_nodes;
-
+        return level_nodes
 
     def insert_cluster(self, cluster):
         """!
@@ -920,9 +890,8 @@ class cftree:
 
         """
         print("insert cluster")
-        entry = cfentry(len(cluster), linear_sum(cluster), square_sum(cluster));
-        self.insert(entry);
-
+        entry = cfentry(len(cluster), linear_sum(cluster), square_sum(cluster))
+        self.insert(entry)
 
     def insert(self, entry):
         """!
@@ -934,26 +903,25 @@ class cftree:
         print("insert entry")
         if (self.__root is None):
             print("first time")
-            node = leaf_node(entry, None, [ entry ], None);
+            node = leaf_node(entry, None, [entry], None)
 
-            self.__root = node;
-            self.__leafes.append(node);
+            self.__root = node
+            self.__leafes.append(node)
 
             # Update statistics
-            self.__amount_entries += 1;
-            self.__amount_nodes += 1;
-            self.__height += 1;             # root has successor now
+            self.__amount_entries += 1
+            self.__amount_nodes += 1
+            self.__height += 1  # root has successor now
         else:
             print("recursive insert")
-            child_node_updation = self.__recursive_insert(entry, self.__root);
-            if (child_node_updation is True):
+            child_node_updation = self.__recursive_insert(entry, self.__root)
+            if child_node_updation is True:
                 print("try merge_nearest_successors")
                 # Splitting has been finished, check for possibility to merge (at least we have already two children).
                 if (self.__merge_nearest_successors(self.__root) is True):
-                    self.__amount_nodes -= 1;
+                    self.__amount_nodes -= 1
 
-
-    def find_nearest_leaf(self, entry, search_node = None):
+    def find_nearest_leaf(self, entry, search_node=None):
         """!
         @brief Search nearest leaf to the specified clustering feature.
 
@@ -964,19 +932,18 @@ class cftree:
 
         """
 
-        if (search_node is None):
-            search_node = self.__root;
+        if search_node is None:
+            search_node = self.__root
 
-        nearest_node = search_node;
+        nearest_node = search_node
 
-        if (search_node.type == cfnode_type.CFNODE_NONLEAF):
-            min_key = lambda child_node: child_node.feature.get_distance(entry, self.__type_measurement);
-            nearest_child_node = min(search_node.successors, key = min_key);
+        if search_node.type == cfnode_type.CFNODE_NONLEAF:
+            min_key = lambda child_node: child_node.feature.get_distance(entry, self.__type_measurement)
+            nearest_child_node = min(search_node.successors, key=min_key)
 
-            nearest_node = self.find_nearest_leaf(entry, nearest_child_node);
+            nearest_node = self.find_nearest_leaf(entry, nearest_child_node)
 
-        return nearest_node;
-
+        return nearest_node
 
     def __recursive_insert(self, entry, search_node):
         """!
@@ -991,15 +958,14 @@ class cftree:
         """
 
         # None-leaf node
-        if (search_node.type == cfnode_type.CFNODE_NONLEAF):
+        if search_node.type == cfnode_type.CFNODE_NONLEAF:
             print("insert for non-leaf")
-            return self.__insert_for_noneleaf_node(entry, search_node);
+            return self.__insert_for_noneleaf_node(entry, search_node)
 
         # Leaf is reached
         else:
             print("insert for leaf")
-            return self.__insert_for_leaf_node(entry, search_node);
-
+            return self.__insert_for_leaf_node(entry, search_node)
 
     def __insert_for_leaf_node(self, entry, search_node):
         """!
@@ -1012,38 +978,37 @@ class cftree:
 
         """
 
-        node_amount_updation = False;
+        node_amount_updation = False
 
         # Try to absorb by the entity
-        index_nearest_entry = search_node.get_nearest_index_entry(entry, self.__type_measurement);
+        index_nearest_entry = search_node.get_nearest_index_entry(entry, self.__type_measurement)
         print("index_nearest_entry", index_nearest_entry)
         print("nearest entry", search_node.entries[index_nearest_entry])
-        merged_entry = search_node.entries[index_nearest_entry] + entry;
+        merged_entry = search_node.entries[index_nearest_entry] + entry
 
         print("diam:", merged_entry.get_diameter())
         # Otherwise try to add new entry
-        if (merged_entry.get_diameter() > self.__threshold):
+        if merged_entry.get_diameter() > self.__threshold:
             print("diam greater than threshold")
             # If it's not exceeded append entity and update feature of the leaf node.
-            search_node.insert_entry(entry);
+            search_node.insert_entry(entry)
 
             # Otherwise current node should be splitted
 
-            if (len(search_node.entries) > self.__max_entries):
+            if len(search_node.entries) > self.__max_entries:
                 print("node has to split")
-                self.__split_procedure(search_node);
-                node_amount_updation = True;
+                self.__split_procedure(search_node)
+                node_amount_updation = True
 
             # Update statistics
-            self.__amount_entries += 1;
+            self.__amount_entries += 1
 
         else:
             print("diam ok")
-            search_node.entries[index_nearest_entry] = merged_entry;
-            search_node.feature += entry;
+            search_node.entries[index_nearest_entry] = merged_entry
+            search_node.feature += entry
 
-        return node_amount_updation;
-
+        return node_amount_updation
 
     def __insert_for_noneleaf_node(self, entry, search_node):
         """!
@@ -1056,50 +1021,49 @@ class cftree:
 
         """
 
-        node_amount_updation = False;
+        node_amount_updation = False
 
-        min_key = lambda child_node: child_node.get_distance(search_node, self.__type_measurement);
-        nearest_child_node = min(search_node.successors, key = min_key);
+        min_key = lambda child_node: child_node.get_distance(search_node, self.__type_measurement)
+        nearest_child_node = min(search_node.successors, key=min_key)
         print("nearestchildnode: ", nearest_child_node)
         print("recursive insert in !!!insert_for_nonleaf!!!")
-        child_node_updation = self.__recursive_insert(entry, nearest_child_node);
+        child_node_updation = self.__recursive_insert(entry, nearest_child_node)
 
         # Update clustering feature of none-leaf node.
-        search_node.feature += entry;
+        search_node.feature += entry
 
         # Check branch factor, probably some leaf has been splitted and threshold has been exceeded.
-        if (len(search_node.successors) > self.__branch_factor):
+        if len(search_node.successors) > self.__branch_factor:
             print("over branch_factor ")
 
             # Check if it's aleady root then new root should be created (height is increased in this case).
-            if (search_node is self.__root):
+            if search_node is self.__root:
                 print("height increases")
-                self.__root = non_leaf_node(search_node.feature, None, [ search_node ], None);
-                search_node.parent = self.__root;
+                self.__root = non_leaf_node(search_node.feature, None, [search_node], None)
+                search_node.parent = self.__root
 
                 # Update statistics
-                self.__amount_nodes += 1;
-                self.__height += 1;
+                self.__amount_nodes += 1
+                self.__height += 1
 
-            [new_node1, new_node2] = self.__split_nonleaf_node(search_node);
+            [new_node1, new_node2] = self.__split_nonleaf_node(search_node)
 
             # Update parent list of successors
-            parent = search_node.parent;
-            parent.successors.remove(search_node);
-            parent.successors.append(new_node1);
-            parent.successors.append(new_node2);
+            parent = search_node.parent
+            parent.successors.remove(search_node)
+            parent.successors.append(new_node1)
+            parent.successors.append(new_node2)
 
             # Update statistics
-            self.__amount_nodes += 1;
-            node_amount_updation = True;
+            self.__amount_nodes += 1
+            node_amount_updation = True
 
         elif (child_node_updation is True):
             # Splitting has been finished, check for possibility to merge (at least we have already two children).
             if (self.__merge_nearest_successors(search_node) is True):
-                self.__amount_nodes -= 1;
+                self.__amount_nodes -= 1
 
-        return node_amount_updation;
-
+        return node_amount_updation
 
     def __merge_nearest_successors(self, node):
         """!
@@ -1111,26 +1075,25 @@ class cftree:
 
         """
 
-        merging_result = False;
+        merging_result = False
 
-        if (node.successors[0].type == cfnode_type.CFNODE_NONLEAF):
-            [nearest_child_node1, nearest_child_node2] = node.get_nearest_successors(self.__type_measurement);
+        if node.successors[0].type == cfnode_type.CFNODE_NONLEAF:
+            [nearest_child_node1, nearest_child_node2] = node.get_nearest_successors(self.__type_measurement)
 
-            if (len(nearest_child_node1.successors) + len(nearest_child_node2.successors) <= self.__branch_factor):
-                node.successors.remove(nearest_child_node2);
-                if (nearest_child_node2.type == cfnode_type.CFNODE_LEAF):
-                    self.__leafes.remove(nearest_child_node2);
+            if len(nearest_child_node1.successors) + len(nearest_child_node2.successors) <= self.__branch_factor:
+                node.successors.remove(nearest_child_node2)
+                if nearest_child_node2.type == cfnode_type.CFNODE_LEAF:
+                    self.__leafes.remove(nearest_child_node2)
 
-                nearest_child_node1.merge(nearest_child_node2);
+                nearest_child_node1.merge(nearest_child_node2)
 
-                merging_result = True;
+                merging_result = True
 
-        if merging_result==True:
+        if merging_result == True:
             print("merging successful")
         else:
             print("merging not successful")
-        return merging_result;
-
+        return merging_result
 
     def __split_procedure(self, split_node):
         """!
@@ -1139,29 +1102,28 @@ class cftree:
         @param[in] split_node (cfnode): CF-tree node that should be splitted.
 
         """
-        if (split_node is self.__root):
-            self.__root = non_leaf_node(split_node.feature, None, [ split_node ], None);
-            split_node.parent = self.__root;
+        if split_node is self.__root:
+            self.__root = non_leaf_node(split_node.feature, None, [split_node], None)
+            split_node.parent = self.__root
 
             # Update statistics
-            self.__amount_nodes += 1;
-            self.__height += 1;
+            self.__amount_nodes += 1
+            self.__height += 1
 
-        [new_node1, new_node2] = self.__split_leaf_node(split_node);
+        [new_node1, new_node2] = self.__split_leaf_node(split_node)
 
-        self.__leafes.remove(split_node);
-        self.__leafes.append(new_node1);
-        self.__leafes.append(new_node2);
+        self.__leafes.remove(split_node)
+        self.__leafes.append(new_node1)
+        self.__leafes.append(new_node2)
 
         # Update parent list of successors
-        parent = split_node.parent;
-        parent.successors.remove(split_node);
-        parent.successors.append(new_node1);
-        parent.successors.append(new_node2);
+        parent = split_node.parent
+        parent.successors.remove(split_node)
+        parent.successors.append(new_node1)
+        parent.successors.append(new_node2)
 
         # Update statistics
-        self.__amount_nodes += 1;
-
+        self.__amount_nodes += 1
 
     def __split_nonleaf_node(self, node):
         """!
@@ -1173,28 +1135,27 @@ class cftree:
 
         """
         print("split non leaf")
-        [farthest_node1, farthest_node2] = node.get_farthest_successors(self.__type_measurement);
+        [farthest_node1, farthest_node2] = node.get_farthest_successors(self.__type_measurement)
 
         # create new non-leaf nodes
-        new_node1 = non_leaf_node(farthest_node1.feature, node.parent, [ farthest_node1 ], None);
-        new_node2 = non_leaf_node(farthest_node2.feature, node.parent, [ farthest_node2 ], None);
+        new_node1 = non_leaf_node(farthest_node1.feature, node.parent, [farthest_node1], None)
+        new_node2 = non_leaf_node(farthest_node2.feature, node.parent, [farthest_node2], None)
 
-        farthest_node1.parent = new_node1;
-        farthest_node2.parent = new_node2;
+        farthest_node1.parent = new_node1
+        farthest_node2.parent = new_node2
 
         # re-insert other successors
         for successor in node.successors:
-            if ( (successor is not farthest_node1) and (successor is not farthest_node2) ):
-                distance1 = new_node1.get_distance(successor, self.__type_measurement);
-                distance2 = new_node2.get_distance(successor, self.__type_measurement);
+            if (successor is not farthest_node1) and (successor is not farthest_node2):
+                distance1 = new_node1.get_distance(successor, self.__type_measurement)
+                distance2 = new_node2.get_distance(successor, self.__type_measurement)
 
-                if (distance1 < distance2):
-                    new_node1.insert_successor(successor);
+                if distance1 < distance2:
+                    new_node1.insert_successor(successor)
                 else:
-                    new_node2.insert_successor(successor);
+                    new_node2.insert_successor(successor)
 
-        return [new_node1, new_node2];
-
+        return [new_node1, new_node2]
 
     def __split_leaf_node(self, node):
         """!
@@ -1209,50 +1170,49 @@ class cftree:
         """
         print("split leaf")
         # search farthest pair of entries
-        [farthest_entity1, farthest_entity2] = node.get_farthest_entries(self.__type_measurement);
+        [farthest_entity1, farthest_entity2] = node.get_farthest_entries(self.__type_measurement)
         print("farthest1 ", farthest_entity1)
         print("farthest2 ", farthest_entity2)
 
         # create new nodes
-        new_node1 = leaf_node(farthest_entity1, node.parent, [ farthest_entity1 ], None);
-        new_node2 = leaf_node(farthest_entity2, node.parent, [ farthest_entity2 ], None);
+        new_node1 = leaf_node(farthest_entity1, node.parent, [farthest_entity1], None)
+        new_node2 = leaf_node(farthest_entity2, node.parent, [farthest_entity2], None)
 
         # re-insert other entries
         for entity in node.entries:
-            if ( (entity is not farthest_entity1) and (entity is not farthest_entity2) ):
-                distance1 = new_node1.feature.get_distance(entity, self.__type_measurement);
-                distance2 = new_node2.feature.get_distance(entity, self.__type_measurement);
+            if (entity is not farthest_entity1) and (entity is not farthest_entity2):
+                distance1 = new_node1.feature.get_distance(entity, self.__type_measurement)
+                distance2 = new_node2.feature.get_distance(entity, self.__type_measurement)
 
-                if (distance1 < distance2):
-                    new_node1.insert_entry(entity);
+                if distance1 < distance2:
+                    new_node1.insert_entry(entity)
                 else:
-                    new_node2.insert_entry(entity);
+                    new_node2.insert_entry(entity)
 
         print("new_node1 ", new_node1)
         print("new_node2", new_node2)
 
-        return [new_node1, new_node2];
+        return [new_node1, new_node2]
 
-
-    def show_feature_destibution(self, data = None):
-         """!
+    def show_feature_distribution(self, data=None):
+        """!
          @brief Shows feature distribution.
          @details Only features in 1D, 2D, 3D space can be visualized.
 
          @param[in] data (list): List of points that will be used for visualization, if it not specified than feature will be displayed only.
 
          """
-         visualizer = cluster_visualizer();
+        visualizer = cluster_visualizer()
 
-         print("amount of nodes: ", self.__amount_nodes);
+        print("amount of nodes: ", self.__amount_nodes)
 
-         if (data is not None):
-             visualizer.append_cluster(data, marker = 'x');
+        if data is not None:
+            visualizer.append_cluster(data, marker='x')
 
-         for level in range(0, self.height):
-             level_nodes = self.get_level_nodes(level);
+        for level in range(0, self.height):
+            level_nodes = self.get_level_nodes(level)
 
-             centers = [ node.feature.get_centroid() for node in level_nodes ];
-             visualizer.append_cluster(centers, None, markersize = (self.height - level + 1) * 5);
+            centers = [node.feature.get_centroid() for node in level_nodes]
+            visualizer.append_cluster(centers, None, markersize=(self.height - level + 1) * 5)
 
-         visualizer.show();
+        visualizer.show()

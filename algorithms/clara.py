@@ -1,5 +1,5 @@
-#akalino GITHUB
-#https://github.com/akalino/Clustering/blob/master/clara.py
+# akalino GITHUB
+# https://github.com/akalino/Clustering/blob/master/clara.py
 
 import random
 import numpy as np
@@ -40,22 +40,22 @@ class ClaraClustering(object):
         best_choices = []
         best_results = {}
 
-        for j in range(runs): #usually 5 times
+        for j in range(runs):  # usually 5 times
             print("\n")
             print("run number: ", j)
-            #take 40+_k*2 random indexes from input data
-            sampling_idx = random.sample([i for i in range(size)], 40+_k*2)
+            # take 40+_k*2 random indexes from input data
+            sampling_idx = random.sample([i for i in range(size)], 40 + _k * 2)
             # take the corresponding rows from input dataframe _df
-            prov_dic = { i:sampling_idx[i] for i in range(40+_k*2)}
+            prov_dic = {i: sampling_idx[i] for i in range(40 + _k * 2)}
             print(prov_dic)
             sampling_data = []
             for idx in sampling_idx:
                 sampling_data.append(_df.iloc[idx])
 
-            #create the sample dataframe
+            # create the sample dataframe
             sampled_df = pd.DataFrame(sampling_data, index=sampling_idx)
 
-            #return total cost, medoids and clusters of sampled_df
+            # return total cost, medoids and clusters of sampled_df
             pre_cost, pre_choice, pre_medoids = self.k_medoids(sampled_df, _k, _fn, niter)
             plot_pam_mod(sampled_df, pre_medoids, _df)
             print("RESULTS OF K-MEDOIDS")
@@ -63,7 +63,7 @@ class ClaraClustering(object):
             print("pre_choice: ", pre_choice)
             print("pre_medoids: ", pre_medoids)
 
-            #compute average cost and clusters of whole input dataframe
+            # compute average cost and clusters of whole input dataframe
             tmp_avg_cost, tmp_medoids = self.average_cost(_df, _fn, pre_choice)
 
             print("RESULTS OF WHOLE DATASET EVALUATION")
@@ -71,7 +71,7 @@ class ClaraClustering(object):
             print("tmp_medoids: ", tmp_medoids)
             # if the new cost is lower
             if tmp_avg_cost < min_avg_cost:
-                print("new_cost is lower, from {0} to {1}".format(round(min_avg_cost,4), round(tmp_avg_cost,4)))
+                print("new_cost is lower, from {0} to {1}".format(round(min_avg_cost, 4), round(tmp_avg_cost, 4)))
                 min_avg_cost = tmp_avg_cost
                 best_choices = list(pre_choice)
                 best_results = dict(tmp_medoids)
@@ -83,7 +83,7 @@ class ClaraClustering(object):
 
         print("\n")
         print("FINAL RESULT:")
-        plot_pam_mod(_df,best_results,_df)
+        plot_pam_mod(_df, best_results, _df)
 
         return min_avg_cost, best_choices, best_results
 
@@ -115,7 +115,7 @@ class ClaraClustering(object):
         best_choices = []
         best_results = {}
 
-        #print('Running with {m} iterations'.format(m=_niter))
+        # print('Running with {m} iterations'.format(m=_niter))
         while iter_count < _niter:
             for m in medoids:
                 clust_iter = 0
@@ -140,13 +140,14 @@ class ClaraClustering(object):
                         medoids_sample[idx] = swap_temp
 
             iter_count += 1
-            if (best_choices == medoids_sample):
+            if best_choices == medoids_sample:
                 print('Best configuration found! best_choices: ', best_choices)
                 break
 
             if current_cost <= prior_cost:
                 if current_cost < prior_cost:
-                    print("Better configuration found! curr_cost:{0}, prior_cost:{1}".format(round(current_cost,2), round(prior_cost,2)))
+                    print("Better configuration found! curr_cost:{0}, prior_cost:{1}".format(round(current_cost, 2),
+                                                                                             round(prior_cost, 2)))
                 else:
                     print("Equal cost")
                 prior_cost = current_cost
@@ -165,7 +166,6 @@ class ClaraClustering(object):
         :param cache_on: Binary flag to turn caching.
         :return: The total configuration cost, the medoids.
         """
-        size = len(_df)
         total_cost = 0.0
         medoids = {}
         for idx in _cur_choice:
@@ -188,7 +188,9 @@ class ClaraClustering(object):
                     elif _fn == 'fast_euclidean':
                         tmp = self.fast_euclidean(_df.loc[m], _df.loc[i])
                     else:
-                        print('You need to input a valid distance function (manhattan, cosine, euclidean or fast_euclidean).')
+                        print(
+                            'You need to input a valid distance function (manhattan, cosine, euclidean or '
+                            'fast_euclidean).')
 
                 if cache_on:
                     self.dist_cache[(m, i)] = tmp
@@ -199,7 +201,7 @@ class ClaraClustering(object):
 
             medoids[choice].append(i)
             total_cost += min_cost
-        #print("total_cost: ", total_cost)
+        # print("total_cost: ", total_cost)
         return total_cost, medoids
 
     def average_cost(self, _df, _fn, _cur_choice):
@@ -226,7 +228,7 @@ class ClaraClustering(object):
         size = len(_df)
         score_holder = []
         medoid_holder = []
-        for _ in range(_nsamp): #17 by default
+        for _ in range(_nsamp):  # 17 by default
             # take _k random points as medoids_sample
             medoids_sample = random.sample(list(_df.index), _k)
             # compute cost and medoids with this medoids_sample
@@ -235,7 +237,7 @@ class ClaraClustering(object):
             score_holder.append(prior_cost)
             medoid_holder.append(medoids)
 
-        #take the minimum cost and the corresponding medoids
+        # take the minimum cost and the corresponding medoids
         idx = score_holder.index(min(score_holder))
         ms = medoid_holder[idx].keys()
         return score_holder[idx], list(ms)
@@ -248,7 +250,7 @@ class ClaraClustering(object):
         """
         dist = 0
         for a1, a2 in zip(v1, v2):
-            dist += abs(a1 - a2)**2
+            dist += abs(a1 - a2) ** 2
         return dist
 
     def fast_euclidean(self, v1, v2):
@@ -278,18 +280,16 @@ class ClaraClustering(object):
         """
         xx, yy, xy = 0, 0, 0
         for a1, a2 in zip(v1, v2):
-            xx += a1*a1
-            yy += a2*a2
-            xy += a1*a2
-        return float(xy) / np.sqrt(xx*yy)
-
-
+            xx += a1 * a1
+            yy += a2 * a2
+            xy += a1 * a2
+        return float(xy) / np.sqrt(xx * yy)
 
 
 def plot_pam_mod(data, cl, full, equal_axis_scale=False):
     """
     Scatterplot of data points, with colors according to cluster labels. Only sampled
-    points are plotted, the others are only displayed with theri indexes; moreover,
+    points are plotted, the others are only displayed with their indexes; moreover,
     centers of mass of the clusters are marked with an X.
 
     :param data: input data sample as dataframe.
@@ -299,45 +299,44 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
 
     """
 
-    fig,ax = plt.subplots(figsize=(14,6))
+    fig, ax = plt.subplots(figsize=(14, 6))
 
-    #just as a habit, it actually doesnt plot anything because points are white with thite edgecolor
-    plt.scatter(full.iloc[:,0], full.iloc[:,1], s=300, color="white", edgecolor="white")
+    # just as a habit, it actually doesnt plot anything because points are white with thite edgecolor
+    plt.scatter(full.iloc[:, 0], full.iloc[:, 1], s=300, color="white", edgecolor="white")
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
-               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown', 11:'tan',
-               12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown', 11: 'tan',
+              12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 
+    # plot the sampled point, with colors according to the cluster they belong to
+    for i, el in enumerate(list(cl.values())):
+        plt.scatter(data.loc[el, 0], data.loc[el, 1], s=300, color=colors[i % 18], edgecolor="black")
 
-    #plot the sampled point, with colors according to the cluster they belong to
-    for i,el in enumerate(list(cl.values())):
-        plt.scatter(data.loc[el,0], data.loc[el,1], s=300, color=colors[i%18], edgecolor="black")
+    # plot centers of mass, marked with an X
+    for i, el in enumerate(list(cl.keys())):
+        plt.scatter(data.loc[el, 0], data.loc[el, 1], s=500, color="red", marker="X", edgecolor="black")
 
-    #plot centers of mass, marked with an X
-    for i,el in enumerate(list(cl.keys())):
-        plt.scatter(data.loc[el,0], data.loc[el,1], s=500, color="red", marker="X", edgecolor="black")
-
-    #plot indexes of points in plot
+    # plot indexes of points in plot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    xw1 = xwidth*0.01
-    yw1 = ywidth*0.01
+    xw1 = xwidth * 0.01
+    yw1 = ywidth * 0.01
 
-    xw2 = xwidth*0.005
-    yw2 = ywidth*0.01
+    xw2 = xwidth * 0.005
+    yw2 = ywidth * 0.01
 
-    xw3 = xwidth*0.01
-    yw3 = ywidth*0.01
+    xw3 = xwidth * 0.01
+    yw3 = ywidth * 0.01
 
     for i, txt in enumerate(range(len(full))):
-        if len(str(txt))==2:
-            ax.annotate(txt, (full.iloc[i,0]-xw1, full.iloc[i,1]-yw1), fontsize=12, size=12)
-        elif len(str(txt))==1:
-            ax.annotate(txt, (full.iloc[i,0]-xw2, full.iloc[i,1]-yw2), fontsize=12, size=12)
+        if len(str(txt)) == 2:
+            ax.annotate(txt, (full.iloc[i, 0] - xw1, full.iloc[i, 1] - yw1), fontsize=12, size=12)
+        elif len(str(txt)) == 1:
+            ax.annotate(txt, (full.iloc[i, 0] - xw2, full.iloc[i, 1] - yw2), fontsize=12, size=12)
         else:
-            ax.annotate(txt, (full.iloc[i,0]-xw3, full.iloc[i,1]-yw3), fontsize=9, size=9)
+            ax.annotate(txt, (full.iloc[i, 0] - xw3, full.iloc[i, 1] - yw3), fontsize=9, size=9)
 
     if equal_axis_scale == True:
         plt.gca().set_aspect('equal', adjustable='box')

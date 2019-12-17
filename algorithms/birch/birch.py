@@ -57,10 +57,10 @@ def plot_tree_fin(tree, info=False):
 
         return
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey', 4:'pink', 5:'turquoise',
-               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-               11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki",
-               16:"gainsboro", 17:"peachpuff"}
+    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
+              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
+              16: "gainsboro", 17: "peachpuff"}
 
     def feat_create(level_nodes):
         """
@@ -81,7 +81,7 @@ def plot_tree_fin(tree, info=False):
 
         return (features, features_num, succ_num)
 
-    #collecting data for each tree level except bottom
+    # collecting data for each tree level except bottom
     feat = []
     feat_num = []
     succ_num = []
@@ -91,59 +91,59 @@ def plot_tree_fin(tree, info=False):
         feat_num.append(f2)
         succ_num.append(s1)
 
-    #collect data of leaves
+    # collect data of leaves
     single_entries = []
-    for z in tree.get_level_nodes(height-1):
+    for z in tree.get_level_nodes(height - 1):
         sing_ent_prov = []
         for single_entry in z.entries:
             sing_ent_prov.append(single_entry.number_points)
         single_entries.append(sing_ent_prov)
 
-
-    #creating names for nodes
-    prov = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ")
+    # creating names for nodes
+    prov = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z".split(
+        " ")
     lett = []
     for i in range(len(prov)):
         for j in range(len(prov)):
-            lett.append(prov[i]+prov[j])
+            lett.append(prov[i] + prov[j])
 
     # creating the tree
     dot = graphviz.Digraph(comment='Clustering')
-    #root
+    # root
     dot.node(lett[0], str(feat_num[0][0]))
 
-    #all other levels
+    # all other levels
     placeholder = 0
 
-    for level in range(1, height+1):
-        #all levels between root and leaves
+    for level in range(1, height + 1):
+        # all levels between root and leaves
         if level != height:
-            for q in range(1,len(feat_num[level])+1):
-                dot.node(lett[placeholder+q], str(feat_num[level][q-1]))
+            for q in range(1, len(feat_num[level]) + 1):
+                dot.node(lett[placeholder + q], str(feat_num[level][q - 1]))
             placeholder += q
-        #leaves with colors
+        # leaves with colors
         else:
-            for q in range(1,len(single_entries)+1):
-                dot.node(lett[placeholder+q], str(single_entries[q-1]),
-                         color=colors[(q-1)%17], style="filled")
+            for q in range(1, len(single_entries) + 1):
+                dot.node(lett[placeholder + q], str(single_entries[q - 1]),
+                         color=colors[(q - 1) % 17], style="filled")
 
-    #adding edges between nodes
+    # adding edges between nodes
     a = 0
     b = 0
     # for all nodes except leaves
     for level in range(0, height):
         for num_succs in succ_num[level]:
             for el in range(num_succs):
-                dot.edge(lett[a],lett[b+el+1])
+                dot.edge(lett[a], lett[b + el + 1])
             a += 1
-            b += el+1
-    #for leaves
+            b += el + 1
+    # for leaves
     for i in range(len(single_entries)):
-        dot.edge(lett[a], lett[b+i+1] )
+        dot.edge(lett[a], lett[b + i + 1])
         a += 1
 
-    graph = graphviz.Source(dot)#.view()
-    #show tree
+    graph = graphviz.Source(dot)  # .view()
+    # show tree
     display(graph)
 
 
@@ -160,52 +160,50 @@ def plot_birch_leaves(tree, data):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    fig, ax = plt.subplots(figsize=(14,6))
+    fig, ax = plt.subplots(figsize=(14, 6))
 
-    colors = { 0:"seagreen", 1:'beige', 2:'yellow', 3:'grey',4:'pink', 5:'turquoise',
-               6:'orange', 7:'purple', 8:'yellowgreen', 9:'olive', 10:'brown',
-              11:'tan', 12: 'plum', 13:'rosybrown', 14:'lightblue', 15:"khaki", 16:"gainsboro", 17:"peachpuff"}
+    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
+              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 
-    #plot evry point in white
-    plt.scatter(np.array(data)[:,0], np.array(data)[:,1], s=300, color="white", edgecolor="black")
+    # plot evry point in white
+    plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")
 
-    #for every leaf
-    for i,el in enumerate(tree.get_level_nodes(tree.height-1)):
-        #for every entry in the leaf
+    # for every leaf
+    for i, el in enumerate(tree.get_level_nodes(tree.height - 1)):
+        # for every entry in the leaf
         for entry in el.entries:
-            #if it is a single point, plot it with its color
+            # if it is a single point, plot it with its color
             if entry.number_points == 1:
-                plt.scatter(entry.linear_sum[0], entry.linear_sum[1], color=colors[i%17], s=300, edgecolor="black")
-            #else, plot the entry centroid as a cross and leave the points white
+                plt.scatter(entry.linear_sum[0], entry.linear_sum[1], color=colors[i % 17], s=300, edgecolor="black")
+            # else, plot the entry centroid as a cross and leave the points white
             else:
-                plt.scatter(entry.get_centroid()[0], entry.get_centroid()[1], color=colors[i%17], marker="X", s=200)
+                plt.scatter(entry.get_centroid()[0], entry.get_centroid()[1], color=colors[i % 17], marker="X", s=200)
                 plt.annotate(entry.number_points, (entry.get_centroid()[0], entry.get_centroid()[1]), fontsize=18)
 
-
-    #plot indexes of points in plot
+    # plot indexes of points in plot
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    xw1 = xwidth*0.01
-    yw1 = ywidth*0.01
+    xw1 = xwidth * 0.01
+    yw1 = ywidth * 0.01
 
-    xw2 = xwidth*0.005
-    yw2 = ywidth*0.01
+    xw2 = xwidth * 0.005
+    yw2 = ywidth * 0.01
 
-    xw3 = xwidth*0.01
-    yw3 = ywidth*0.01
+    xw3 = xwidth * 0.01
+    yw3 = ywidth * 0.01
 
     for i, txt in enumerate(range(len(data))):
-        if len(str(txt))==2:
-            ax.annotate(txt, (np.array(data)[:,0][i]-xw1, np.array(data)[:,1][i]-yw1), fontsize=12, size=12)
-        elif len(str(txt))==1:
-            ax.annotate(txt, (np.array(data)[:,0][i]-xw2, np.array(data)[:,1][i]-yw2), fontsize=12, size=12)
+        if len(str(txt)) == 2:
+            ax.annotate(txt, (np.array(data)[:, 0][i] - xw1, np.array(data)[:, 1][i] - yw1), fontsize=12, size=12)
+        elif len(str(txt)) == 1:
+            ax.annotate(txt, (np.array(data)[:, 0][i] - xw2, np.array(data)[:, 1][i] - yw2), fontsize=12, size=12)
         else:
-            ax.annotate(txt, (np.array(data)[:,0][i]-xw3, np.array(data)[:,1][i]-yw3), fontsize=9, size=9)
+            ax.annotate(txt, (np.array(data)[:, 0][i] - xw3, np.array(data)[:, 1][i] - yw3), fontsize=9, size=9)
 
-
-    #plt.gca().set_aspect('equal', adjustable='box')#print(el.entries)
+    # plt.gca().set_aspect('equal', adjustable='box')#print(el.entries)
     plt.show()
 
 
@@ -278,7 +276,6 @@ class birch:
         self.__clusters = []
         self.__noise = []
 
-
     def process(self, plotting=False):
         """!
         @brief Performs cluster analysis in line with rules of BIRCH algorithm.
@@ -311,8 +308,6 @@ class birch:
         """modified from the original version by me on 24.11.19"""
         return self.__tree
 
-
-
     def get_clusters(self):
         """!
         @brief Returns list of allocated clusters, each cluster contains indexes of objects in list of data.
@@ -328,7 +323,6 @@ class birch:
 
         return self.__clusters
 
-
     def get_cluster_encoding(self):
         """!
         @brief Returns clustering result representation type that indicate how clusters are encoded.
@@ -340,7 +334,6 @@ class birch:
         """
 
         return type_encoding.CLUSTER_INDEX_LIST_SEPARATION
-
 
     def __verify_arguments(self):
         """!
@@ -357,7 +350,6 @@ class birch:
         if self.__entry_size_limit <= 0:
             raise ValueError("Limit entry size (current value: '%d') should be greater than 0." %
                              self.__entry_size_limit)
-
 
     def __extract_features(self):
         """!
@@ -377,7 +369,6 @@ class birch:
             for node in self.__tree.leafes:
                 self.__features.append(node.feature)
 
-
     def __decode_data(self):
         """!
         @brief Decodes data from CF-tree features.
@@ -392,7 +383,6 @@ class birch:
 
             self.__clusters[cluster_index].append(index_point)
 
-
     def __insert_data(self, plotting=False):
         """!
         @brief Inserts input data to the tree.
@@ -404,8 +394,7 @@ class birch:
         for index_point in range(0, len(self.__pointer_data)):
             if (index_point != 0) and (plotting == True):
                 plot_tree_fin(self.__tree)
-                plot_birch_leaves(self.__tree, data = self.__pointer_data, limit_plot=index_point)
-
+                plot_birch_leaves(self.__tree, data=self.__pointer_data)
 
             print("\n")
             print("\n")
@@ -418,8 +407,7 @@ class birch:
                 print("rebuilding tree")
                 self.__tree = self.__rebuild_tree(index_point)
 
-        #self.__tree.show_feature_destibution(self.__pointer_data);
-
+        # self.__tree.show_feature_distribution(self.__pointer_data);
 
     def __rebuild_tree(self, index_point):
         """!
@@ -442,7 +430,8 @@ class birch:
                 increased_diameter = 1.0
 
             # build tree with update parameters
-            tree = cftree(self.__tree.branch_factor, self.__tree.max_entries, increased_diameter, self.__tree.type_measurement)
+            tree = cftree(self.__tree.branch_factor, self.__tree.max_entries, increased_diameter,
+                          self.__tree.type_measurement)
 
             for index_point in range(0, index_point + 1):
                 point = self.__pointer_data[index_point]
@@ -456,7 +445,6 @@ class birch:
             rebuild_result = True
 
         return tree
-
 
     def __find_nearest_cluster_features(self):
         """!
@@ -486,7 +474,6 @@ class birch:
         print("nearest features are: ", index1, index2)
         return [index1, index2]
 
-
     def __get_nearest_feature(self, point, feature_collection):
         """!
         @brief Find nearest entry for specified point.
@@ -502,7 +489,7 @@ class birch:
         index_nearest_feature = -1
 
         for index_entry in range(0, len(feature_collection)):
-            point_entry = cfentry(1, linear_sum([ point ]), square_sum([point]))
+            point_entry = cfentry(1, linear_sum([point]), square_sum([point]))
 
             distance = feature_collection[index_entry].get_distance(point_entry, self.__measurement_type)
             if distance < minimum_distance:
