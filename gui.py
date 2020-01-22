@@ -1,8 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QApplication, QComboBox, QGridLayout, QGroupBox, \
     QLineEdit, QPlainTextEdit
 from PyQt5.QtCore import QTimer, QCoreApplication, QRect
-from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries, \
-    QHorizontalPercentBarSeries
 import pyqtgraph as pg
 import numpy as np
 import pandas as pd
@@ -24,6 +22,11 @@ import matplotlib.pyplot as plt
 
 matplotlib.use('QT5Agg')
 
+# TODO: button images
+# TODO: update tooltips
+# TODO: adjust button positions
+# TODO: play/pause button
+# TODO: comment everything
 
 class Window(QMainWindow):
     def __init__(self):
@@ -33,6 +36,7 @@ class Window(QMainWindow):
 
         self.status = "running"
 
+        # upper plot
         self.canvas1 = FigureCanvas(Figure(figsize=(12, 5)))
         self.ax1 = self.canvas1.figure.subplots()
         self.ax1_t = self.ax1.twinx()
@@ -41,9 +45,8 @@ class Window(QMainWindow):
         self.ax1.set_xticks([], [])
         self.ax1.set_yticks([], [])
         self.ax1.set_title("OPTICS procedure")
-        self.ax1.set_xlabel("x")
-        self.ax1.set_ylabel("y")
 
+        # lower plot
         self.canvas = FigureCanvas(Figure(figsize=(12, 5)))
         self.ax = self.canvas.figure.subplots()
         self.ax_t = self.ax.twinx()
@@ -52,51 +55,57 @@ class Window(QMainWindow):
         self.ax.set_xticks([], [])
         self.ax.set_yticks([], [])
         self.ax.set_title("Reachability Plot")
-        self.ax.set_xlabel("point")
         self.ax.set_ylabel("reachability distance")
 
         self.groupbox = QGroupBox(self)
-        self.groupbox.setGeometry(QRect(30, 50, 850, 700))
+        self.groupbox.setGeometry(QRect(30, 50, 1200, 700))
 
         self.eps = 2
         self.mp = 3
         self.e_extr = 1
-        self.X, self.y = make_blobs(n_samples=20, centers=4, n_features=3, cluster_std=1.8, random_state=42)
+        self.n_points = 50
+        self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=3, cluster_std=1.8, random_state=42)
         self.ClustDist = {}
         self.CoreDist = {}
 
         gridlayout = QGridLayout(self.groupbox)
-        gridlayout.addWidget(self.canvas1, 0, 0)
-        gridlayout.addWidget(self.canvas, 1, 0)
+        gridlayout.addWidget(self.canvas1, 0, 1)
+        gridlayout.addWidget(self.canvas, 1, 1)
 
-        button = QPushButton("START", self)
-        button.setGeometry(30, 10, 100, 30)
-        button.clicked.connect(lambda: self.aux())
 
-        button2 = QPushButton("PAUSE", self)
-        button2.setGeometry(150, 10, 100, 30)
-        button2.clicked.connect(lambda: self.status_change())
+        button_run = QPushButton("START", self)
+        button_run.setGeometry(30, 10, 100, 30)
+        button_run.clicked.connect(lambda: self.aux())
 
-        button3 = QPushButton("EXTRACT", self)
-        button3.setGeometry(260, 10, 100, 30)
-        button3.clicked.connect(lambda: self.aux2())
+        button_extract = QPushButton("EXTRACT", self)
+        button_extract.setGeometry(130, 10, 100, 30)
+        button_extract.clicked.connect(lambda: self.aux2())
+
+        label_np = QLabel(self)
+        label_np.setText("n_points:")
+        label_np.setGeometry(240, 10, 30, 30)
+        label_np.setToolTip("ciao huhuh")
+
+        self.line_edit_np = QLineEdit(self)
+        self.line_edit_np.resize(30, 40)
+        self.line_edit_np.setText(str(self.n_points))
 
         label_eps = QLabel(self)
         label_eps.setText("eps:")
-        label_eps.setGeometry(390, 10, 50, 30)
+        label_eps.setGeometry(240, 10, 30, 30)
         label_eps.setToolTip("ciao prova")
 
         self.line_edit_eps = QLineEdit(self)
-        self.line_edit_eps.setGeometry(420, 10, 50, 30)
+        self.line_edit_eps.resize(30, 40)
         self.line_edit_eps.setText(str(self.eps))
 
         label_mp = QLabel(self)
         label_mp.setText("minPTS:")
-        label_mp.setGeometry(500, 10, 70, 30)
+        label_mp.setGeometry(310, 10, 70, 30)
         label_mp.setToolTip("ciao genny")
 
         self.line_edit_mp = QLineEdit(self)
-        self.line_edit_mp.setGeometry(590, 10, 50, 30)
+        self.line_edit_mp.setGeometry(360, 10, 30, 40)
         self.line_edit_mp.setText(str(self.mp))
 
         label_eps_extr = QLabel(self)
@@ -105,16 +114,21 @@ class Window(QMainWindow):
         label_eps_extr.setToolTip("ciao bufu")
 
         self.line_edit_eps_extr = QLineEdit(self)
-        self.line_edit_eps_extr.setGeometry(670, 10, 50, 30)
+        self.line_edit_eps_extr.setGeometry(670, 10, 50, 40)
         self.line_edit_eps_extr.setText(str(self.e_extr))
 
+        label_ds = QLabel(self)
+        label_ds.setText("dataset:")
+        label_mp.setGeometry(310, 10, 70, 30)
+        label_mp.setToolTip("ciao gino")
+
         self.combobox = QComboBox(self)
-        self.combobox.setGeometry(750, 10, 100, 30)
+        self.combobox.setGeometry(750, 10, 120, 30)
         self.combobox.addItem("blobs")
         self.combobox.addItem("moons")
         self.combobox.addItem("scatter")
 
-        self.log = QPlainTextEdit(self)
+        self.log = QPlainTextEdit()
         self.log.setGeometry(900, 60, 350, 400)
         self.log.appendPlainText("current point: ")
         self.log.setStyleSheet(
@@ -122,6 +136,33 @@ class Window(QMainWindow):
                                color: #000000;
                                text-decoration: underline;
                                font-family: Courier;}""")
+
+        gridlayout.addWidget(self.log, 1, 0)
+
+        self.groupbox_buttons = QGroupBox("OPTICS")
+        self.groupbox_buttons.setGeometry(15,30, 450,200)
+
+        gridlayout.addWidget(self.groupbox_buttons, 0, 0)
+
+
+        gridlayout_but = QGridLayout(self.groupbox_buttons)
+        gridlayout_but.addWidget(label_ds, 0, 0)
+        gridlayout_but.addWidget(self.combobox, 0, 1)
+
+        gridlayout_but.addWidget(label_np, 1, 0)
+        gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+        gridlayout_but.addWidget(label_eps, 2, 0)
+        gridlayout_but.addWidget(self.line_edit_eps, 2, 1)
+        gridlayout_but.addWidget(label_mp, 3, 0)
+        gridlayout_but.addWidget(self.line_edit_mp, 3, 1)
+        gridlayout_but.addWidget(label_eps_extr, 4, 0)
+        gridlayout_but.addWidget(self.line_edit_eps_extr, 4, 1)
+
+        gridlayout_but.addWidget(button_run, 5, 0)
+        gridlayout_but.addWidget(button_extract, 6, 0)
+
+
+
 
         self.statusBar().showMessage('Message in statusbar.')
 
@@ -138,15 +179,16 @@ class Window(QMainWindow):
         self.eps = float(self.line_edit_eps.text())
         self.mp = int(self.line_edit_mp.text())
         self.e_extr = float(self.line_edit_eps_extr.text())
+        self.n_points = int(self.line_edit_np.text())
 
         chosen_dataset = self.combobox.currentText()
 
         if chosen_dataset == "blobs":
-            self.X, self.y = make_blobs(n_samples=40, centers=4, n_features=3, cluster_std=1.8, random_state=42)
+            self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=3, cluster_std=1.5, random_state=42)
         elif chosen_dataset == "moons":
-            self.X, self.y = make_moons(n_samples=80, noise=0.05, random_state=42)
+            self.X, self.y = make_moons(n_samples=self.n_points, noise=0.05, random_state=42)
         elif chosen_dataset == "scatter":
-            self.X = make_blobs(n_samples=120, cluster_std=[3.5, 3.5, 3.5], random_state=42)[0]
+            self.X = make_blobs(n_samples=self.n_points, cluster_std=[2, 2, 2], random_state=42)[0]
 
         self.OPTICS_gui(plot=True, plot_reach=True)
 
@@ -264,7 +306,7 @@ class Window(QMainWindow):
         lines represent eps and eps_db
         """
 
-        self.ax1.set_title("OPTICS procedure")
+        self.ax1.set_title("Cluster Plot")
 
         self.ax.set_title("Reachability Plot")
         self.ax.set_ylabel("reachability distance")
@@ -436,13 +478,7 @@ class Window(QMainWindow):
 
                                 self.clear_seed_log(Seed, o)
 
-        self.ax.cla()
-        self.ax1.cla()
-        self.ax_t.cla()
-        self.ax1_t.cla()
-        self.ax1_t.set_yticks([], [])
-        self.plot_clust_gui()
-        # return ClustDist, CoreDist
+        self.aux2()
 
 
 if __name__ == '__main__':
