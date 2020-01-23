@@ -1,14 +1,12 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QApplication, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit, QDoubleSpinBox
-from PyQt5.QtCore import QTimer, QCoreApplication, QRect
+    QLineEdit, QPlainTextEdit
+from PyQt5.QtCore import QCoreApplication, QRect
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
-import pyqtgraph as pg
 import numpy as np
 import pandas as pd
 from collections import OrderedDict
-import time
 import sys
-import qdarkstyle
+# import qdarkstyle
 import random
 
 from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -34,13 +32,13 @@ class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
         ''' ========== WINDOW ====================================================================================== '''
-        self.setGeometry(150, 150, 1290, 800)
+        self.setGeometry(100, 100, 1290, 850)
 
         self.status = "running"
 
         # upper plot
-        self.canvas1 = FigureCanvas(Figure(figsize=(12, 5)))
-        self.ax1 = self.canvas1.figure.subplots()
+        self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax1 = self.canvas_up.figure.subplots()
         self.ax1_t = self.ax1.twinx()
         self.ax1_t.set_xticks([], [])
         self.ax1_t.set_yticks([], [])
@@ -49,50 +47,92 @@ class Window(QMainWindow):
         self.ax1.set_title("OPTICS procedure")
 
         # lower plot
-        self.canvas = FigureCanvas(Figure(figsize=(12, 5)))
-        self.ax = self.canvas.figure.subplots()
+        self.canvas_down = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax = self.canvas_down.figure.subplots()
         self.ax_t = self.ax.twinx()
         self.ax_t.set_xticks([], [])
         self.ax_t.set_yticks([], [])
         self.ax.set_xticks([], [])
         self.ax.set_yticks([], [])
-        self.ax.set_title("Reachability Plot")
+        self.ax.set_title("OPTICS Reachability Plot")
         self.ax.set_ylabel("reachability distance")
 
         # box containing everything
         self.groupbox = QGroupBox(self)
-        self.groupbox.setGeometry(QRect(30, 50, 1200, 700))
+        self.groupbox.setGeometry(QRect(30, 10, 1200, 720))
 
         # parameters initialization
         self.eps = 2
         self.mp = 3
         self.eps_extr = 1
         self.n_points = 50
-        self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)
+        self.X = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)[0]
         self.ClustDist = {}
         self.CoreDist = {}
         self.param_check = True
 
         # grid where the two pictures, the log and the button box are inserted (row,column)
         gridlayout = QGridLayout(self.groupbox)
-        gridlayout.addWidget(self.canvas1, 0, 1)
-        gridlayout.addWidget(self.canvas, 1, 1)
+        gridlayout.addWidget(self.canvas_up, 1, 1)
+        gridlayout.addWidget(self.canvas_down, 2, 1)
+
+        # upper part
+
+        self.label_alg = QLabel(self)
+        self.label_alg.setText("Choose a clustering algorithm: ")
+        self.label_alg.setToolTip("hello mona")
+        gridlayout.addWidget(self.label_alg, 0, 0)
+
+        # buttons algorithms
+        self.groupbox_alg = QGroupBox("Algorithms")
+        gridlayout.addWidget(self.groupbox_alg, 0, 1)
+
+        gridlayout_alg = QGridLayout(self.groupbox_alg)
+
+        self.button_alg1 = QPushButton("OPTICS", self)
+        self.button_alg1.clicked.connect(lambda: None)
+        self.button_alg2 = QPushButton("DBSCAN", self)
+        self.button_alg2.clicked.connect(lambda: None)
+        self.button_alg3 = QPushButton("AGGLOMERATIVE", self)
+        self.button_alg3.clicked.connect(lambda: None)
+        self.button_alg4 = QPushButton("DENCLUE", self)
+        self.button_alg4.clicked.connect(lambda: None)
+        self.button_alg5 = QPushButton("CURE", self)
+        self.button_alg5.clicked.connect(lambda: None)
+        self.button_alg6 = QPushButton("PAM", self)
+        self.button_alg6.clicked.connect(lambda: None)
+        self.button_alg7 = QPushButton("CLARA", self)
+        self.button_alg7.clicked.connect(lambda: None)
+        self.button_alg8 = QPushButton("CLARANS", self)
+        self.button_alg8.clicked.connect(lambda: None)
+        self.button_alg9 = QPushButton("BIRCH", self)
+        self.button_alg9.clicked.connect(lambda: None)
+        self.button_alg10 = QPushButton("CHAMELEON", self)
+        self.button_alg10.clicked.connect(lambda: None)
+
+        gridlayout_alg.addWidget(self.button_alg1, 0, 0)
+        gridlayout_alg.addWidget(self.button_alg2, 0, 1)
+        gridlayout_alg.addWidget(self.button_alg3, 0, 2)
+        gridlayout_alg.addWidget(self.button_alg4, 0, 3)
+        gridlayout_alg.addWidget(self.button_alg5, 0, 4)
+        gridlayout_alg.addWidget(self.button_alg6, 1, 0)
+        gridlayout_alg.addWidget(self.button_alg7, 1, 1)
+        gridlayout_alg.addWidget(self.button_alg8, 1, 2)
+        gridlayout_alg.addWidget(self.button_alg9, 1, 3)
+        gridlayout_alg.addWidget(self.button_alg10, 1, 4)
 
         # START BUTTON
-        button_run = QPushButton("START", self)
-        button_run.setGeometry(30, 10, 100, 30)
-        button_run.clicked.connect(lambda: self.aux())
+        self.button_run = QPushButton("START", self)
+        self.button_run.clicked.connect(lambda: self.start_OPTICS())
 
         # EXTRACT BUTTON
         self.button_extract = QPushButton("EXTRACT", self)
-        self.button_extract.setGeometry(130, 10, 100, 30)
-        self.button_extract.clicked.connect(lambda: self.aux2())
+        self.button_extract.clicked.connect(lambda: self.start_EXTRACT_OPTICS())
         self.button_extract.setEnabled(False)
 
         # n_points LABEL
         label_np = QLabel(self)
         label_np.setText("n_points:")
-        #label_np.setGeometry(240, 10, 30, 30)
         label_np.setToolTip("ciao huhuh")
 
         self.line_edit_np = QLineEdit(self)
@@ -105,7 +145,6 @@ class Window(QMainWindow):
         # eps LABEL
         label_eps = QLabel(self)
         label_eps.setText("eps (\u03B5):")
-        #label_eps.setGeometry(240, 10, 30, 30)
         label_eps.setToolTip("ciao prova")
 
         self.line_edit_eps = QLineEdit(self)
@@ -118,7 +157,6 @@ class Window(QMainWindow):
         # minPTS LABEL
         label_mp = QLabel(self)
         label_mp.setText("minPTS:")
-        #label_mp.setGeometry(310, 10, 70, 30)
         label_mp.setToolTip("ciao genny")
 
         self.line_edit_mp = QLineEdit(self)
@@ -131,7 +169,6 @@ class Window(QMainWindow):
         # eps_extr LABEL
         label_eps_extr = QLabel(self)
         label_eps_extr.setText("eps_extr (\u03B5\'):")
-        #label_eps_extr.setGeometry(620, 10, 50, 30)
         label_eps_extr.setToolTip("ciao bufu")
 
         self.line_edit_eps_extr = QLineEdit(self)
@@ -144,7 +181,6 @@ class Window(QMainWindow):
         # dataset LABEL
         label_ds = QLabel(self)
         label_ds.setText("dataset:")
-        #label_mp.setGeometry(310, 10, 70, 30)
         label_mp.setToolTip("ciao gino")
 
         # COMBOBOX of datasets
@@ -153,6 +189,7 @@ class Window(QMainWindow):
         self.combobox.addItem("blobs")
         self.combobox.addItem("moons")
         self.combobox.addItem("scatter")
+        self.combobox.addItem("circle")
 
         # LOG
         self.log = QPlainTextEdit("SEED QUEUE")
@@ -162,13 +199,13 @@ class Window(QMainWindow):
                                color: #000000;
                                font-family: Courier;}""")
 
-        gridlayout.addWidget(self.log, 1, 0)
+        gridlayout.addWidget(self.log, 2, 0)
 
         # buttons GROUPBOX
-        self.groupbox_buttons = QGroupBox("OPTICS")
+        self.groupbox_buttons = QGroupBox("Parameters")
         self.groupbox_buttons.setGeometry(15,30, 450,200)
 
-        gridlayout.addWidget(self.groupbox_buttons, 0, 0)
+        gridlayout.addWidget(self.groupbox_buttons, 1, 0)
 
 
         gridlayout_but = QGridLayout(self.groupbox_buttons)
@@ -184,7 +221,7 @@ class Window(QMainWindow):
         gridlayout_but.addWidget(label_eps_extr, 4, 0)
         gridlayout_but.addWidget(self.line_edit_eps_extr, 4, 1)
 
-        gridlayout_but.addWidget(button_run, 5, 0)
+        gridlayout_but.addWidget(self.button_run, 5, 0)
         gridlayout_but.addWidget(self.button_extract, 6, 0)
 
 
@@ -227,7 +264,7 @@ class Window(QMainWindow):
 
 
 
-    def aux(self):
+    def start_OPTICS(self):
 
         self.ax.cla()
         self.ax1.cla()
@@ -248,16 +285,21 @@ class Window(QMainWindow):
         chosen_dataset = self.combobox.currentText()
 
         if chosen_dataset == "blobs":
-            self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.5, random_state=42)
+            self.X= make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.5, random_state=42)[0]
         elif chosen_dataset == "moons":
-            self.X, self.y = make_moons(n_samples=self.n_points, noise=0.05, random_state=42)
+            self.X= make_moons(n_samples=self.n_points, noise=0.05, random_state=42)[0]
         elif chosen_dataset == "scatter":
             self.X = make_blobs(n_samples=self.n_points, cluster_std=[2, 2, 2], random_state=42)[0]
+        elif chosen_dataset == "circle":
+            self.X = make_circles(n_samples=self.n_points, noise=0, random_state=42)[0]
 
+        self.button_extract.setEnabled(False)
+        self.button_run.setEnabled(False)
         self.OPTICS_gui(plot=True, plot_reach=True)
         self.button_extract.setEnabled(True)
+        self.button_run.setEnabled(True)
 
-    def aux2(self):
+    def start_EXTRACT_OPTICS(self):
 
         self.ax.cla()
         self.ax1.cla()
@@ -281,7 +323,7 @@ class Window(QMainWindow):
         else:
             self.status = "running"
 
-    def point_plot_gui(self, X_dict, x, y, neigh, processed=None, col='yellow'):
+    def point_plot_gui(self, X_dict, coords, neigh, processed=None, col='yellow'):
         """
         Plots a scatter plot of points, where the point (x,y) is light black and
         surrounded by a red circle of radius eps, where processed point are plotted
@@ -289,8 +331,8 @@ class Window(QMainWindow):
         with black edgecolor.
 
         :param X_dict: input dictionary version of X.
-        :param x: x-coordinate of the point that is currently inspected.
-        :param y: y-coordinate of the point that is currently inspected.
+        :param coords: coordinates of the point that is currently inspected.
+        :param neigh: neighborhood of the point as dictionary.
         :param processed: already processed points, to plot in col
         :param col: color to use for processed points, yellow by default.
         """
@@ -300,33 +342,37 @@ class Window(QMainWindow):
         self.ax1.set_title("OPTICS procedure")
 
         # plot every point in color lime
-        self.ax1.scatter(self.X[:, 0], self.X[:, 1], s=300, color="lime", edgecolor="black")
+        self.ax1.scatter(self.X[:, 0], self.X[:, 1], s=300, color="lime", edgecolor="black", label="unprocessed")
 
         # plot clustered points according to appropriate colors
         if processed is not None:
-            for i in processed:
-                self.ax1.scatter(X_dict[i][0], X_dict[i][1], s=300, color=col)
-        #
-        for element in neigh.values():
-            self.ax1.scatter(element[0], element[1], s=300, color="red")
+            X_not_proc = [X_dict[i][0] for i in processed]
+            Y_not_proc = [X_dict[i][1] for i in processed]
+            self.ax1.scatter(X_not_proc, Y_not_proc, s=300, color=col, label="processed")
+
+        # plot points in neighboorhood in red, if neigh is not empty
+        if len(neigh) != 0:
+            neigh_array = np.array(list(neigh.values()))
+            self.ax1.scatter(neigh_array[:,0], neigh_array[:,1], s=300, color="red", label="neighbors")
 
         # plot last added point in black and surround it with a red circle
-        self.ax1.scatter(x=x, y=y, s=400, color="black", alpha=0.4)
+        self.ax1.scatter(x=coords[0], y=coords[1], s=400, color="black", alpha=0.4)
 
-        circle1 = plt.Circle((x, y), self.eps, color='r', fill=False, linewidth=3, alpha=0.7)
+        circle1 = plt.Circle((coords[0], coords[1]), self.eps, color='r', fill=False, linewidth=3, alpha=0.7)
         self.ax1.add_artist(circle1)
 
         for i, txt in enumerate([i for i in range(len(self.X))]):
             self.ax1.annotate(txt, (self.X[:, 0][i], self.X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
         # self.ax1.set_aspect('equal')
-        self.canvas1.draw()
+        self.ax1.legend(fontsize=8)
+        self.canvas_up.draw()
         QCoreApplication.processEvents()
 
-    def Reach_plot_gui(self, data):
+    def reach_plot_gui(self, data):
         """
         Plots the reachability plot, along with a horizontal line denoting eps,
-        from the ClustDist produced by OPTICS
+        from the ClustDist produced by OPTICS.
 
         :param data: input dictionary.
         """
@@ -373,19 +419,19 @@ class Window(QMainWindow):
         self.ax_t.set_yticks([self.eps])
         self.ax_t.set_yticklabels(["\u03B5"])
 
-        self.canvas.draw()
+        self.canvas_down.draw()
         QCoreApplication.processEvents()
 
     def plot_clust_gui(self):
         """
         Plot a scatter plot on the left, where points are colored according to the cluster they belong to,
         and a reachability plot on the right, where colors correspond to the clusters, and the two horizontal
-        lines represent eps and eps_db
+        lines represent eps and eps_db.
         """
 
-        self.ax1.set_title("Cluster Plot")
+        self.ax1.set_title("OPTICS Cluster Plot")
 
-        self.ax.set_title("Reachability Plot")
+        self.ax.set_title("OPTICS Reachability Plot")
         self.ax.set_ylabel("reachability distance")
 
         X_dict = dict(zip([str(i) for i in range(len(self.X))], self.X))
@@ -434,6 +480,8 @@ class Window(QMainWindow):
 
                 plot_dic[key] = self.ClustDist[key]
 
+        tick_list = list(self.ClustDist.keys())
+
         self.ax.bar(plot_dic.keys(), plot_dic.values(),
                     color=[colors[i % 13] if i != -1 else "red" for i in df.label])
 
@@ -445,13 +493,24 @@ class Window(QMainWindow):
         self.ax_t.set_ylim(self.ax.get_ylim())
         self.ax_t.set_yticks([self.eps, self.eps_extr])
         self.ax_t.set_yticklabels(["\u03B5", "\u03B5" + "\'"])
+        self.ax.set_xticklabels(tick_list, rotation=90, fontsize=8)
 
-        self.canvas1.draw()
-        self.canvas.draw()
+        self.canvas_up.draw()
+        self.canvas_down.draw()
         QCoreApplication.processEvents()
 
     def clear_seed_log(self, Seed=None, point=None, final=False):
+        """ Take care of the log, updating it with information about the current point beign examined,
+        the current seed queue and, after the execution of OPTICS, it displays the core distance of every point.
 
+        :param Seed: current seed queue created by OPTICS.
+        :param point: current point being examined by OPTICS.
+        :param final: if True, plot core distances produced by OPTICS.
+
+        """
+
+        # during execution, add the current point being examined to the log, along with all other points
+        # in the seed queue, listed with their reachability distances
         if final is False:
 
             self.log.clear()
@@ -463,13 +522,14 @@ class Window(QMainWindow):
             if len(Seed) != 0:
                 rounded_values = [round(i, 3) for i in list(Seed.values())]
                 rounded_dict = {k: v for k, v in zip(Seed.keys(), rounded_values)}
-                self.log.appendPlainText("neighbors: ")
+                self.log.appendPlainText("queue: ")
                 self.log.appendPlainText("")
                 for k, v in rounded_dict.items():
                     self.log.appendPlainText(str(k) + ": " + str(v))
             else:
-                self.log.appendPlainText("no neighbors")
+                self.log.appendPlainText("empty queue")
 
+        # at the end of the algorithm, plot the dictionary of core distances, ordered by value
         else:
             self.log.clear()
             self.log.appendPlainText("CORE DISTANCES")
@@ -536,10 +596,10 @@ class Window(QMainWindow):
 
                 if plot == True:
 
-                    self.point_plot_gui(X_dict, X_dict[o][0], X_dict[o][1], N, processed)
+                    self.point_plot_gui(X_dict, X_dict[o], N, processed)
 
                     if plot_reach == True:
-                        self.Reach_plot_gui(X_dict)
+                        self.reach_plot_gui(X_dict)
 
                 # mark o as processed
                 processed.append(o)
@@ -571,7 +631,7 @@ class Window(QMainWindow):
 
                                 self.clear_seed_log(Seed, o)
 
-        self.aux2()
+        self.start_EXTRACT_OPTICS()
 
 
 if __name__ == '__main__':

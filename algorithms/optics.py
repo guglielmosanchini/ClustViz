@@ -162,7 +162,7 @@ def reach_dist(data, x, y, minPTS, eps):
     return max(dist2(data, x, y), minPTSdist(data, y, minPTS, eps))
 
 
-def Reach_plot(data, ClustDist, eps):
+def reach_plot(data, ClustDist, eps):
     """
     Plots the reachability plot, along with a horizontal line denoting eps,
     from the ClustDist produced by OPTICS
@@ -263,7 +263,7 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
             point_plot(X, X_dict, X_dict[o][0], X_dict[o][1], eps, processed)
 
             if plot_reach == True:
-                Reach_plot(X_dict, ClustDist, eps)
+                reach_plot(X_dict, ClustDist, eps)
 
         # mark o as processed
         processed.append(o)
