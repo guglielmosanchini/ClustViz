@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QApplication, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit
+    QLineEdit, QPlainTextEdit, QDoubleSpinBox
 from PyQt5.QtCore import QTimer, QCoreApplication, QRect
+from PyQt5.QtGui import QDoubleValidator, QIntValidator
 import pyqtgraph as pg
 import numpy as np
 import pandas as pd
@@ -27,6 +28,7 @@ matplotlib.use('QT5Agg')
 # TODO: adjust button positions
 # TODO: play/pause button
 # TODO: comment everything
+
 
 class Window(QMainWindow):
     def __init__(self):
@@ -57,88 +59,112 @@ class Window(QMainWindow):
         self.ax.set_title("Reachability Plot")
         self.ax.set_ylabel("reachability distance")
 
+        # box containing everything
         self.groupbox = QGroupBox(self)
         self.groupbox.setGeometry(QRect(30, 50, 1200, 700))
 
+        # parameters initialization
         self.eps = 2
         self.mp = 3
-        self.e_extr = 1
+        self.eps_extr = 1
         self.n_points = 50
-        self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=3, cluster_std=1.8, random_state=42)
+        self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)
         self.ClustDist = {}
         self.CoreDist = {}
+        self.param_check = True
 
+        # grid where the two pictures, the log and the button box are inserted (row,column)
         gridlayout = QGridLayout(self.groupbox)
         gridlayout.addWidget(self.canvas1, 0, 1)
         gridlayout.addWidget(self.canvas, 1, 1)
 
-
+        # START BUTTON
         button_run = QPushButton("START", self)
         button_run.setGeometry(30, 10, 100, 30)
         button_run.clicked.connect(lambda: self.aux())
 
-        button_extract = QPushButton("EXTRACT", self)
-        button_extract.setGeometry(130, 10, 100, 30)
-        button_extract.clicked.connect(lambda: self.aux2())
+        # EXTRACT BUTTON
+        self.button_extract = QPushButton("EXTRACT", self)
+        self.button_extract.setGeometry(130, 10, 100, 30)
+        self.button_extract.clicked.connect(lambda: self.aux2())
+        self.button_extract.setEnabled(False)
 
+        # n_points LABEL
         label_np = QLabel(self)
         label_np.setText("n_points:")
-        label_np.setGeometry(240, 10, 30, 30)
+        #label_np.setGeometry(240, 10, 30, 30)
         label_np.setToolTip("ciao huhuh")
 
         self.line_edit_np = QLineEdit(self)
         self.line_edit_np.resize(30, 40)
         self.line_edit_np.setText(str(self.n_points))
 
+        self.n_points_validator = QIntValidator(5, 200, self)
+        self.line_edit_np.setValidator(self.n_points_validator)
+
+        # eps LABEL
         label_eps = QLabel(self)
-        label_eps.setText("eps:")
-        label_eps.setGeometry(240, 10, 30, 30)
+        label_eps.setText("eps (\u03B5):")
+        #label_eps.setGeometry(240, 10, 30, 30)
         label_eps.setToolTip("ciao prova")
 
         self.line_edit_eps = QLineEdit(self)
         self.line_edit_eps.resize(30, 40)
         self.line_edit_eps.setText(str(self.eps))
 
+        self.eps_validator = QDoubleValidator(0, 1000, 4, self)
+        self.line_edit_eps.setValidator(self.eps_validator)
+
+        # minPTS LABEL
         label_mp = QLabel(self)
         label_mp.setText("minPTS:")
-        label_mp.setGeometry(310, 10, 70, 30)
+        #label_mp.setGeometry(310, 10, 70, 30)
         label_mp.setToolTip("ciao genny")
 
         self.line_edit_mp = QLineEdit(self)
         self.line_edit_mp.setGeometry(360, 10, 30, 40)
         self.line_edit_mp.setText(str(self.mp))
 
+        self.mp_validator = QIntValidator(1, 200, self)
+        self.line_edit_mp.setValidator(self.mp_validator)
+
+        # eps_extr LABEL
         label_eps_extr = QLabel(self)
-        label_eps_extr.setText("eps extr:")
-        label_eps_extr.setGeometry(620, 10, 50, 30)
+        label_eps_extr.setText("eps_extr (\u03B5\'):")
+        #label_eps_extr.setGeometry(620, 10, 50, 30)
         label_eps_extr.setToolTip("ciao bufu")
 
         self.line_edit_eps_extr = QLineEdit(self)
         self.line_edit_eps_extr.setGeometry(670, 10, 50, 40)
-        self.line_edit_eps_extr.setText(str(self.e_extr))
+        self.line_edit_eps_extr.setText(str(self.eps_extr))
 
+        self.eps_extr_validator = QDoubleValidator(0, 1000, 4, self)
+        self.line_edit_eps_extr.setValidator(self.eps_extr_validator)
+
+        # dataset LABEL
         label_ds = QLabel(self)
         label_ds.setText("dataset:")
-        label_mp.setGeometry(310, 10, 70, 30)
+        #label_mp.setGeometry(310, 10, 70, 30)
         label_mp.setToolTip("ciao gino")
 
+        # COMBOBOX of datasets
         self.combobox = QComboBox(self)
         self.combobox.setGeometry(750, 10, 120, 30)
         self.combobox.addItem("blobs")
         self.combobox.addItem("moons")
         self.combobox.addItem("scatter")
 
-        self.log = QPlainTextEdit()
+        # LOG
+        self.log = QPlainTextEdit("SEED QUEUE")
         self.log.setGeometry(900, 60, 350, 400)
-        self.log.appendPlainText("current point: ")
         self.log.setStyleSheet(
             """QPlainTextEdit {background-color: #FFF;
                                color: #000000;
-                               text-decoration: underline;
                                font-family: Courier;}""")
 
         gridlayout.addWidget(self.log, 1, 0)
 
+        # buttons GROUPBOX
         self.groupbox_buttons = QGroupBox("OPTICS")
         self.groupbox_buttons.setGeometry(15,30, 450,200)
 
@@ -159,14 +185,47 @@ class Window(QMainWindow):
         gridlayout_but.addWidget(self.line_edit_eps_extr, 4, 1)
 
         gridlayout_but.addWidget(button_run, 5, 0)
-        gridlayout_but.addWidget(button_extract, 6, 0)
-
-
+        gridlayout_but.addWidget(self.button_extract, 6, 0)
 
 
         self.statusBar().showMessage('Message in statusbar.')
 
         self.show()
+
+    def show_error_message(self, check, msg):
+        if check[0] != 2:
+
+            if self.param_check is True:
+                self.log.clear()
+
+            self.param_check = False
+            self.log.appendPlainText("ERROR")
+            self.log.appendPlainText("")
+            self.log.appendPlainText(msg)
+            self.log.appendPlainText("")
+
+
+
+    def verify_input_parameters(self, extract=False):
+
+        self.param_check = True
+
+        check_eps_extr = self.eps_extr_validator.validate(self.line_edit_eps_extr.text(), 0)
+        self.show_error_message(check_eps_extr,
+                                "The parameter eps_extr must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(
+                                    0, 1000, 4))
+        if extract is False:
+
+            check_n_points = self.n_points_validator.validate(self.line_edit_np.text(), 0)
+            check_eps = self.eps_validator.validate(self.line_edit_eps.text(), 0)
+            check_mp = self.mp_validator.validate(self.line_edit_mp.text(), 0)
+
+
+            self.show_error_message(check_n_points, "The parameter n_points must be an integer and lie between {0} and {1}.".format(5, 200))
+            self.show_error_message(check_eps, "The parameter eps must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(0, 1000, 4))
+            self.show_error_message(check_mp, "The parameter minPTS must be an integer and lie between {0} and {1}.".format(1, 200))
+
+
 
     def aux(self):
 
@@ -176,21 +235,27 @@ class Window(QMainWindow):
         self.ax1_t.cla()
         self.ax1_t.set_yticks([], [])
 
+        self.verify_input_parameters()
+
+        if self.param_check is False:
+            return
+
         self.eps = float(self.line_edit_eps.text())
         self.mp = int(self.line_edit_mp.text())
-        self.e_extr = float(self.line_edit_eps_extr.text())
+        self.eps_extr = float(self.line_edit_eps_extr.text())
         self.n_points = int(self.line_edit_np.text())
 
         chosen_dataset = self.combobox.currentText()
 
         if chosen_dataset == "blobs":
-            self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=3, cluster_std=1.5, random_state=42)
+            self.X, self.y = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.5, random_state=42)
         elif chosen_dataset == "moons":
             self.X, self.y = make_moons(n_samples=self.n_points, noise=0.05, random_state=42)
         elif chosen_dataset == "scatter":
             self.X = make_blobs(n_samples=self.n_points, cluster_std=[2, 2, 2], random_state=42)[0]
 
         self.OPTICS_gui(plot=True, plot_reach=True)
+        self.button_extract.setEnabled(True)
 
     def aux2(self):
 
@@ -200,8 +265,15 @@ class Window(QMainWindow):
         self.ax1_t.cla()
         self.ax1_t.set_yticks([], [])
 
-        self.e_extr = float(self.line_edit_eps_extr.text())
+        self.verify_input_parameters(extract=True)
+
+        if self.param_check is False:
+            return
+
+        self.eps_extr = float(self.line_edit_eps_extr.text())
         self.plot_clust_gui()
+        self.clear_seed_log(final=True)
+
 
     def status_change(self):
         if self.status == "running":
@@ -209,7 +281,7 @@ class Window(QMainWindow):
         else:
             self.status = "running"
 
-    def point_plot_gui(self, X_dict, x, y, processed=None, col='yellow'):
+    def point_plot_gui(self, X_dict, x, y, neigh, processed=None, col='yellow'):
         """
         Plots a scatter plot of points, where the point (x,y) is light black and
         surrounded by a red circle of radius eps, where processed point are plotted
@@ -234,6 +306,9 @@ class Window(QMainWindow):
         if processed is not None:
             for i in processed:
                 self.ax1.scatter(X_dict[i][0], X_dict[i][1], s=300, color=col)
+        #
+        for element in neigh.values():
+            self.ax1.scatter(element[0], element[1], s=300, color="red")
 
         # plot last added point in black and surround it with a red circle
         self.ax1.scatter(x=x, y=y, s=400, color="black", alpha=0.4)
@@ -246,6 +321,7 @@ class Window(QMainWindow):
 
         # self.ax1.set_aspect('equal')
         self.canvas1.draw()
+        QCoreApplication.processEvents()
 
     def Reach_plot_gui(self, data):
         """
@@ -298,6 +374,7 @@ class Window(QMainWindow):
         self.ax_t.set_yticklabels(["\u03B5"])
 
         self.canvas.draw()
+        QCoreApplication.processEvents()
 
     def plot_clust_gui(self):
         """
@@ -314,7 +391,7 @@ class Window(QMainWindow):
         X_dict = dict(zip([str(i) for i in range(len(self.X))], self.X))
 
         # extract the cluster dictionary using DBSCAN
-        cl = ExtractDBSCANclust(self.ClustDist, self.CoreDist, self.e_extr)
+        cl = ExtractDBSCANclust(self.ClustDist, self.CoreDist, self.eps_extr)
 
         new_dict = {key: (val1, cl[key]) for key, val1 in zip(list(X_dict.keys()), list(X_dict.values()))}
 
@@ -362,31 +439,47 @@ class Window(QMainWindow):
 
         self.ax.axhline(self.eps, color="black", linewidth=3)
 
-        self.ax.axhline(self.e_extr, color="black", linewidth=3)
+        self.ax.axhline(self.eps_extr, color="black", linewidth=3)
 
 
         self.ax_t.set_ylim(self.ax.get_ylim())
-        self.ax_t.set_yticks([self.eps, self.e_extr])
+        self.ax_t.set_yticks([self.eps, self.eps_extr])
         self.ax_t.set_yticklabels(["\u03B5", "\u03B5" + "\'"])
 
         self.canvas1.draw()
         self.canvas.draw()
         QCoreApplication.processEvents()
 
-    def clear_seed_log(self, Seed, point):
-        self.log.clear()
-        self.log.appendPlainText("current point: " + str(point))
-        self.log.appendPlainText("")
+    def clear_seed_log(self, Seed=None, point=None, final=False):
 
-        if len(Seed) !=0:
-            rounded_values = [round(i, 3) for i in list(Seed.values())]
-            rounded_dict = {k: v for k, v in zip(Seed.keys(), rounded_values)}
-            self.log.appendPlainText("neighbors: ")
+        if final is False:
+
+            self.log.clear()
+            self.log.appendPlainText("SEED QUEUE")
             self.log.appendPlainText("")
-            for k, v in rounded_dict.items():
-                self.log.appendPlainText(str(k) + ": " + str(v))
+            self.log.appendPlainText("current point: " + str(point))
+            self.log.appendPlainText("")
+
+            if len(Seed) != 0:
+                rounded_values = [round(i, 3) for i in list(Seed.values())]
+                rounded_dict = {k: v for k, v in zip(Seed.keys(), rounded_values)}
+                self.log.appendPlainText("neighbors: ")
+                self.log.appendPlainText("")
+                for k, v in rounded_dict.items():
+                    self.log.appendPlainText(str(k) + ": " + str(v))
+            else:
+                self.log.appendPlainText("no neighbors")
+
         else:
-            self.log.appendPlainText("no neighbors")
+            self.log.clear()
+            self.log.appendPlainText("CORE DISTANCES")
+            self.log.appendPlainText("")
+            rounded_values = [round(i, 3) for i in list(self.CoreDist.values())]
+            rounded_dict = {k: v for k, v in zip(self.CoreDist.keys(), rounded_values)}
+            rounded_dict_sorted = {k: v for k, v in sorted(rounded_dict.items(), key=lambda item: item[1])}
+            for k, v in rounded_dict_sorted.items():
+                self.log.appendPlainText(str(k) + ": " + str(v))
+
 
 
 
@@ -435,6 +528,7 @@ class Window(QMainWindow):
 
                 # scan the neighborhood of the point
                 N = scan_neigh1(X_dict, X_dict[o], self.eps)
+
                 # update the cluster dictionary and the core distance dictionary
                 self.ClustDist.update({o: r})
 
@@ -442,12 +536,10 @@ class Window(QMainWindow):
 
                 if plot == True:
 
-                    self.point_plot_gui(X_dict, X_dict[o][0], X_dict[o][1], processed)
-                    QCoreApplication.processEvents()
+                    self.point_plot_gui(X_dict, X_dict[o][0], X_dict[o][1], N, processed)
 
                     if plot_reach == True:
                         self.Reach_plot_gui(X_dict)
-                        QCoreApplication.processEvents()
 
                 # mark o as processed
                 processed.append(o)
@@ -464,6 +556,7 @@ class Window(QMainWindow):
                         else:
                             # compute its reach_dist from o
                             p = reach_dist(X_dict, n, o, self.mp, self.eps)
+
                             # if it is in Seed, update its reach_dist if it is lower
                             if n in Seed:
 
