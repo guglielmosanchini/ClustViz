@@ -29,7 +29,7 @@ def scan_neigh1_mod(data, point, eps):
     return neigh
 
 
-def point_plot_mod(X, X_dict, x, y, eps, ClustDict):
+def point_plot_mod(X, X_dict, point, eps, ClustDict):
     """
     Plots a scatter plot of points, where the point (x,y) is light black and
     surrounded by a red circle of radius eps, where already processed point are plotted
@@ -38,8 +38,7 @@ def point_plot_mod(X, X_dict, x, y, eps, ClustDict):
 
     :param X: input array.
     :param X_dict: input dictionary version of X.
-    :param x: x-coordinate of the point that is currently inspected.
-    :param y: y-coordinate of the point that is currently inspected.
+    :param point: coordinates of the point that is currently inspected.
     :param eps: radius of the circle to plot around the point (x,y).
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
     """
@@ -58,9 +57,9 @@ def point_plot_mod(X, X_dict, x, y, eps, ClustDict):
         plt.scatter(X_dict[i][0], X_dict[i][1], color=colors[ClustDict[i] % 12], s=300)
 
     # plot the last added point bigger and black, with a red circle surrounding it
-    plt.scatter(x=x, y=y, s=400, color="black", alpha=0.4)
+    plt.scatter(x=X_dict[point][0], y=X_dict[point][1], s=400, color="black", alpha=0.4)
 
-    circle1 = plt.Circle((x, y), eps, color='r', fill=False, linewidth=3, alpha=0.7)
+    circle1 = plt.Circle((X_dict[point][0], X_dict[point][1]), eps, color='r', fill=False, linewidth=3, alpha=0.7)
     plt.gcf().gca().add_artist(circle1)
 
     # add indexes to points in the scatterplot
@@ -120,8 +119,6 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
               11: 'tan', 12: 'lime'}
 
     fig, ax1 = plt.subplots(1, 1, figsize=(18, 6))
-
-    grouped = df.groupby('label')
 
     lista_lab = list(df.label.value_counts().index)
 
@@ -227,7 +224,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 ClustDict.update({point: -1})
 
                 if plotting == True:
-                    point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict, -1)
+                    point_plot_mod(data, X_dict, point, eps, ClustDict)
             # else if it is a Core point
             else:
                 # increase current id of cluster
@@ -236,7 +233,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 ClustDict.update({point: clust_id})
 
                 if plotting == True:
-                    point_plot_mod(data, X_dict, X_dict[point][0], X_dict[point][1], eps, ClustDict)
+                    point_plot_mod(data, X_dict, point, eps, ClustDict)
                 # add it to the temporary processed list
                 processed_list = [point]
                 # remove it from the neighborhood N
