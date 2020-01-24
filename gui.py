@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QApplication, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit, QTabWidget, QWidget, QVBoxLayout
+    QLineEdit, QPlainTextEdit, QTabWidget, QWidget, QVBoxLayout, QTabBar
 from PyQt5.QtCore import QCoreApplication, QRect, QUrl
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
 import numpy as np
 import pandas as pd
 from collections import OrderedDict
@@ -28,9 +28,9 @@ matplotlib.use('QT5Agg')
 # TODO: comment everything
 
 
-class Window(QMainWindow):
+class OPTICS_class(QWidget):
     def __init__(self):
-        super(Window, self).__init__()
+        super(OPTICS_class, self).__init__()
 
         self.setWindowTitle("OPTICS")
         self.setGeometry(100, 100, 1290, 850)
@@ -181,7 +181,7 @@ class Window(QMainWindow):
         gridlayout_but.addWidget(self.button_extract, 6, 0)
 
 
-        self.statusBar().showMessage('Message in statusbar.')
+        #self.statusBar().showMessage('Message in statusbar.')
 
         self.show()
 
@@ -590,106 +590,111 @@ class Window(QMainWindow):
         self.start_EXTRACT_OPTICS()
 
 
+class Main_Window(QWidget):
+    def __init__(self, parent):
+        super(Main_Window, self).__init__(parent)
+        # main layout of Initial Tab
+        self.layout = QVBoxLayout(self)
+        # initialization of all tabs
+        self.OPTICS_tab = None
+        self.DBSCAN_tab = None
+        # fonts
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
 
-class Initial_Window(QMainWindow):
-    def __init__(self):
-        super(Initial_Window, self).__init__()
+        font_title = QFont()
+        font_title.setFamily("Arial")
+        font_title.setPointSize(18)
+        # tab widget initializer
+        self.tabs = QTabWidget()
+        self.tabs.setFont(font)
+        # allow tab to be closed
+        self.tabs.setTabsClosable(True)
+        # set what to do when pressing x on a tab
+        self.tabs.tabCloseRequested.connect(self.closeTab)
+        # initialize Initial Tab
+        self.initial_tab = QWidget()
+        # layout of central box
+        gridlayout = QGridLayout(self.initial_tab)
 
-        self.title = "First Window"
+        self.initial_tab.groupbox_alg = QGroupBox()
+        self.initial_tab.groupbox_alg.setTitle("Choose a clustering algorithm: ")
+        # self.initial_tab.groupbox_alg.setFont(font_title)
+        self.initial_tab.groupbox_alg.setFixedSize(600, 400)
+        gridlayout.addWidget(self.initial_tab.groupbox_alg)
 
-        self.setWindowTitle("Clustering Algorithms Visualization")
-        self.setGeometry(100,100,550,400)
-
-        self.groupbox = QGroupBox(self)
-        self.groupbox.setGeometry(QRect(10, 10, 530, 380))
-
-        gridlayout = QGridLayout(self.groupbox)
-
-        self.label_alg = QLabel(self)
-        self.label_alg.setText("Choose a clustering algorithm: ")
-        self.label_alg.setToolTip("hello mona")
-        gridlayout.addWidget(self.label_alg, 0, 0)
-
-        # buttons algorithms
-        self.groupbox_alg = QGroupBox()
-        gridlayout.addWidget(self.groupbox_alg, 1, 0)
-
-        gridlayout.setColumnStretch(0, 0)
-        gridlayout.setColumnStretch(0, 0)
-        gridlayout.setRowStretch(1, 3)
-        gridlayout.setRowStretch(1, 3)
-
-        gridlayout_alg = QGridLayout(self.groupbox_alg)
-
-        self.button_alg1 = QPushButton("OPTICS", self)
-        self.button_alg1.clicked.connect(self.open_OPTICS)
-        self.button_alg2 = QPushButton("DBSCAN", self)
-        self.button_alg2.clicked.connect(lambda: None)
-        self.button_alg3 = QPushButton("AGGLOMERATIVE", self)
-        self.button_alg3.clicked.connect(lambda: None)
-        self.button_alg4 = QPushButton("DENCLUE", self)
-        self.button_alg4.clicked.connect(lambda: None)
-        self.button_alg5 = QPushButton("CURE", self)
-        self.button_alg5.clicked.connect(lambda: None)
-        self.button_alg6 = QPushButton("PAM", self)
-        self.button_alg6.clicked.connect(lambda: None)
-        self.button_alg7 = QPushButton("CLARA", self)
-        self.button_alg7.clicked.connect(lambda: None)
-        self.button_alg8 = QPushButton("CLARANS", self)
-        self.button_alg8.clicked.connect(lambda: None)
-        self.button_alg9 = QPushButton("BIRCH", self)
-        self.button_alg9.clicked.connect(lambda: None)
-        self.button_alg10 = QPushButton("CHAMELEON", self)
-        self.button_alg10.clicked.connect(lambda: None)
-
-        gridlayout_alg.addWidget(self.button_alg1, 0, 0)
-        gridlayout_alg.addWidget(self.button_alg2, 0, 1)
-        gridlayout_alg.addWidget(self.button_alg3, 0, 2)
-        gridlayout_alg.addWidget(self.button_alg4, 0, 3)
-        gridlayout_alg.addWidget(self.button_alg5, 1, 0)
-        gridlayout_alg.addWidget(self.button_alg6, 1, 1)
-        gridlayout_alg.addWidget(self.button_alg7, 1, 2)
-        gridlayout_alg.addWidget(self.button_alg8, 1, 3)
-        gridlayout_alg.addWidget(self.button_alg9, 2, 0)
-        gridlayout_alg.addWidget(self.button_alg10, 2, 1)
-
-        self.statusBar().showMessage('https://github.com/guglielmosanchini/Clustering')
-
+        gridlayout_alg = QGridLayout(self.initial_tab.groupbox_alg)
+        # all the buttons
+        self.initial_tab.button_alg1 = QPushButton("OPTICS", self)
+        self.initial_tab.button_alg1.clicked.connect(self.open_OPTICS)
+        self.initial_tab.button_alg2 = QPushButton("DBSCAN", self)
+        self.initial_tab.button_alg2.clicked.connect(lambda: None)
+        self.initial_tab.button_alg3 = QPushButton("AGGLOMERATIVE", self)
+        self.initial_tab.button_alg3.clicked.connect(lambda: None)
+        self.initial_tab.button_alg4 = QPushButton("DENCLUE", self)
+        self.initial_tab.button_alg4.clicked.connect(lambda: None)
+        self.initial_tab.button_alg5 = QPushButton("CURE", self)
+        self.initial_tab.button_alg5.clicked.connect(lambda: None)
+        self.initial_tab.button_alg6 = QPushButton("PAM", self)
+        self.initial_tab.button_alg6.clicked.connect(lambda: None)
+        self.initial_tab.button_alg7 = QPushButton("CLARA", self)
+        self.initial_tab.button_alg7.clicked.connect(lambda: None)
+        self.initial_tab.button_alg8 = QPushButton("CLARANS", self)
+        self.initial_tab.button_alg8.clicked.connect(lambda: None)
+        self.initial_tab.button_alg9 = QPushButton("BIRCH", self)
+        self.initial_tab.button_alg9.clicked.connect(lambda: None)
+        self.initial_tab.button_alg10 = QPushButton("CHAMELEON", self)
+        self.initial_tab.button_alg10.clicked.connect(lambda: None)
+        # adding all the buttons to the grid
+        gridlayout_alg.addWidget(self.initial_tab.button_alg1, 0, 0)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg2, 0, 1)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg3, 0, 2)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg4, 0, 3)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg5, 1, 0)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg6, 1, 1)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg7, 1, 2)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg8, 1, 3)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg9, 2, 0)
+        gridlayout_alg.addWidget(self.initial_tab.button_alg10, 2, 1)
+        # adding the Initial Tab and making it unclosable
+        self.tabs.addTab(self.initial_tab, "Initial Tab")
+        self.tabs.tabBar().setTabButton(0, QTabBar.LeftSide, None)
+        # add tha tab widget to the main layout
+        self.layout.addWidget(self.tabs)
 
         self.show()
 
     def open_OPTICS(self):
-        self.w = Window()
-        self.w.show()
-        self.button_alg1.setEnabled(False)
-        #self.hide()
+        """Open OPTICS_tab and disable its button in the Initial Tab"""
+        self.OPTICS_tab = OPTICS_class()
+        self.tabs.addTab(self.OPTICS_tab, "OPTICS Tab")
+        self.tabs.setCurrentIndex(1)
+        self.initial_tab.button_alg1.setEnabled(False)
+        # self.hide()
+
+    def closeTab(self, currentIndex):
+        """Close the selected tab and reenable its button in the Initial Tab"""
+        currentQWidget = self.tabs.widget(currentIndex)
+        currentQWidget.deleteLater()
+        self.tabs.removeTab(currentIndex)
+        self.initial_tab.button_alg1.setEnabled(True)
+        sys.exit()
 
 
-class MyTableWidget(QWidget):
+class main(QMainWindow):
 
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
-        self.layout = QVBoxLayout(self)
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Clustering Algorithms Visualization")
+        self.setGeometry(100, 100, 1290, 850)
 
-        # Initialize tab screen
-        self.tabs = QTabWidget()
-        self.tab1 = QWidget()
-        self.tab2 = QWidget()
-        self.tabs.resize(300, 200)
+        self.table_widget = Main_Window(self)
+        self.setCentralWidget(self.table_widget)
 
-        # Add tabs
-        self.tabs.addTab(self.tab1, "Tab 1")
-        self.tabs.addTab(self.tab2, "Tab 2")
+        self.statusBar().showMessage('https://github.com/guglielmosanchini/Clustering')
 
-        # Create first tab
-        self.tab1.layout = QVBoxLayout(self)
-        self.pushButton1 = QPushButton("PyQt5 button")
-        self.tab1.layout.addWidget(self.pushButton1)
-        self.tab1.setLayout(self.tab1.layout)
-
-        # Add tabs to widget
-        self.layout.addWidget(self.tabs)
-        self.setLayout(self.layout)
+        self.show()
 
 
 if __name__ == '__main__':
@@ -697,7 +702,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # pg.setConfigOption('background', 'w')
     # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-    win = Initial_Window()
+    win = main()
     win.update()
     # setup stylesheet
     # run
