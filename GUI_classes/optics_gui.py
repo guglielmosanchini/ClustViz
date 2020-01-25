@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit,  QWidget
+    QLineEdit, QPlainTextEdit, QWidget
 from PyQt5.QtCore import QCoreApplication, QRect
-from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
+from PyQt5.QtGui import QDoubleValidator, QIntValidator
 import numpy as np
 import pandas as pd
 from collections import OrderedDict
@@ -15,10 +15,9 @@ from algorithms.optics import scan_neigh1, reach_dist, minPTSdist, ExtractDBSCAN
 
 from sklearn.datasets.samples_generator import make_blobs
 
-import matplotlib
 import matplotlib.pyplot as plt
 
-from GUI_classes.utils_gui import choose_dataset
+from GUI_classes.utils_gui import choose_dataset, pause_execution, LabeledSlider
 
 
 class OPTICS_class(QWidget):
@@ -61,6 +60,7 @@ class OPTICS_class(QWidget):
         self.X = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)[0]
         self.ClustDist = {}
         self.CoreDist = {}
+        self.delay = 0
         self.param_check = True
 
         # grid where the two pictures, the log and the button box are inserted (row,column)
@@ -72,6 +72,15 @@ class OPTICS_class(QWidget):
         self.button_run = QPushButton("START", self)
         self.button_run.clicked.connect(lambda: self.start_OPTICS())
         self.button_run.setToolTip("Perform clustering.")
+
+        # SLIDER
+        label_slider = QLabel(self)
+        label_slider.setText("delay:")
+        label_slider.setToolTip("Delay each step of the algorithm for the desidered number of seconds.")
+
+        self.slider = LabeledSlider(minimum=0, maximum=3, interval=1, single_step=0.5)
+        self.slider.sl.valueChanged.connect(self.changedValue)
+        self.slider.setFixedHeight(50)
 
         # EXTRACT BUTTON
         self.button_extract = QPushButton("EXTRACT", self)
@@ -119,7 +128,8 @@ class OPTICS_class(QWidget):
         # eps_extr LABEL
         label_eps_extr = QLabel(self)
         label_eps_extr.setText("eps_extr (\u03B5\'):")
-        label_eps_extr.setToolTip("The eps parameter to use to extract clusters from the reachability plot in a DBSCAN way.")
+        label_eps_extr.setToolTip(
+            "The eps parameter to use to extract clusters from the reachability plot in a DBSCAN way.")
 
         self.line_edit_eps_extr = QLineEdit(self)
         self.line_edit_eps_extr.setGeometry(670, 10, 50, 40)
@@ -153,10 +163,9 @@ class OPTICS_class(QWidget):
 
         # buttons GROUPBOX
         self.groupbox_buttons = QGroupBox("Parameters")
-        self.groupbox_buttons.setGeometry(15, 30, 450, 200)
+        self.groupbox_buttons.setFixedSize(200,350)
 
         gridlayout.addWidget(self.groupbox_buttons, 1, 0)
-
 
         gridlayout_but = QGridLayout(self.groupbox_buttons)
         gridlayout_but.addWidget(label_ds, 0, 0)
@@ -172,10 +181,15 @@ class OPTICS_class(QWidget):
         gridlayout_but.addWidget(self.line_edit_eps_extr, 4, 1)
 
         gridlayout_but.addWidget(self.button_run, 5, 0)
-        gridlayout_but.addWidget(self.button_extract, 6, 0)
-
+        gridlayout_but.addWidget(label_slider, 6, 0)
+        gridlayout_but.addWidget(self.slider, 6, 1)
+        gridlayout_but.addWidget(self.button_extract, 7,0)
 
         self.show()
+
+    def changedValue(self):
+        size = self.slider.sl.value()
+        self.delay = size
 
     def show_error_message(self, check, msg):
         if check[0] != 2:
@@ -189,8 +203,6 @@ class OPTICS_class(QWidget):
             self.log.appendPlainText(msg)
             self.log.appendPlainText("")
 
-
-
     def verify_input_parameters(self, extract=False):
 
         self.param_check = True
@@ -200,17 +212,19 @@ class OPTICS_class(QWidget):
                                 "The parameter eps_extr must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(
                                     0, 1000, 4))
         if extract is False:
-
             check_n_points = self.n_points_validator.validate(self.line_edit_np.text(), 0)
             check_eps = self.eps_validator.validate(self.line_edit_eps.text(), 0)
             check_mp = self.mp_validator.validate(self.line_edit_mp.text(), 0)
 
-
-            self.show_error_message(check_n_points, "The parameter n_points must be an integer and lie between {0} and {1}.".format(5, 200))
-            self.show_error_message(check_eps, "The parameter eps must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(0, 1000, 4))
-            self.show_error_message(check_mp, "The parameter minPTS must be an integer and lie between {0} and {1}.".format(1, 200))
-
-
+            self.show_error_message(check_n_points,
+                                    "The parameter n_points must be an integer and lie between {0} and {1}.".format(5,
+                                                                                                                    200))
+            self.show_error_message(check_eps,
+                                    "The parameter eps must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(
+                                        0, 1000, 4))
+            self.show_error_message(check_mp,
+                                    "The parameter minPTS must be an integer and lie between {0} and {1}.".format(1,
+                                                                                                                  200))
 
     def start_OPTICS(self):
 
@@ -234,7 +248,7 @@ class OPTICS_class(QWidget):
 
         self.button_extract.setEnabled(False)
         self.button_run.setEnabled(False)
-        self.OPTICS_gui(plot=True, plot_reach=True)
+        self.OPTICS_gui(plot=True, plot_reach=True, delay=self.delay)
         self.button_extract.setEnabled(True)
         self.button_run.setEnabled(True)
 
@@ -285,7 +299,7 @@ class OPTICS_class(QWidget):
         # plot points in neighboorhood in red, if neigh is not empty
         if len(neigh) != 0:
             neigh_array = np.array(list(neigh.values()))
-            self.ax1.scatter(neigh_array[:,0], neigh_array[:,1], s=300, color="red", label="neighbors")
+            self.ax1.scatter(neigh_array[:, 0], neigh_array[:, 1], s=300, color="red", label="neighbors")
 
         # plot last added point in black and surround it with a red circle
         self.ax1.scatter(x=coords[0], y=coords[1], s=400, color="black", alpha=0.4)
@@ -337,7 +351,6 @@ class OPTICS_class(QWidget):
 
         self.ax.set_title("Reachability Plot")
         self.ax.set_ylabel("reachability distance")
-
 
         self.ax.bar(plot_dic.keys(), plot_dic.values())
 
@@ -420,7 +433,6 @@ class OPTICS_class(QWidget):
 
         self.ax.axhline(self.eps_extr, color="black", linewidth=3)
 
-
         self.ax_t.set_ylim(self.ax.get_ylim())
         self.ax_t.set_yticks([self.eps, self.eps_extr])
         self.ax_t.set_yticklabels(["\u03B5", "\u03B5" + "\'"])
@@ -471,15 +483,14 @@ class OPTICS_class(QWidget):
             for k, v in rounded_dict_sorted.items():
                 self.log.appendPlainText(str(k) + ": " + str(v))
 
-
-
-
-    def OPTICS_gui(self, plot=True, plot_reach=False):
+    def OPTICS_gui(self, plot=True, plot_reach=False, delay=0):
         """
         Executes the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.
 
         :param plot: if True, the scatter plot of the function point_plot is displayed at each step.
         :param plot_reach: if True, the reachability plot is displayed at each step.
+        :param delay: seconds for which to delay the algorithm, so that the images displayes in the GUI
+                      show at a slower pace.
         :return (ClustDist, CoreDist): ClustDist, a dictionary of the form point_index:reach_dist, and
                  CoreDist, a dictionary of the form point_index:core_dist
         """
@@ -522,6 +533,9 @@ class OPTICS_class(QWidget):
             self.ClustDist.update({o: r})
 
             self.CoreDist.update({o: minPTSdist(X_dict, o, self.mp, self.eps)})
+
+            if delay != 0:
+                pause_execution(self.delay)
 
             if plot == True:
 

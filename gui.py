@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout, QGroupBox,  QTabWidget, QWidget, \
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout, QGroupBox, QTabWidget, QWidget, \
     QVBoxLayout, QTabBar
 
 from PyQt5.QtGui import QFont
@@ -8,6 +8,7 @@ import sys
 
 from GUI_classes.optics_gui import OPTICS_class
 from GUI_classes.dbscan_gui import DBSCAN_class
+
 
 # TODO: button images
 # TODO: update tooltips
@@ -23,7 +24,7 @@ class Main_Window(QWidget):
         # initialization of all tabs
         self.OPTICS_tab = None
         self.DBSCAN_tab = None
-        # current index
+        # current index and current dictionary of open tabs
         self.current_index = 0
         self.open_tab_dict = {}
         # fonts
@@ -61,7 +62,8 @@ class Main_Window(QWidget):
         self.swapped_button_dictionary = dict([(value, key) for key, value in self.button_dictionary.items()])
 
         self.functions = {1: self.open_OPTICS, 2: self.open_DBSCAN, 3: self.open_AGGLOMERATIVE, 4: self.open_DENCLUE,
-                          5: self.open_CURE, 6: self.open_PAM, 7: self.open_CLARA, 8: self.open_CLARANS, 9: self.open_BIRCH,
+                          5: self.open_CURE, 6: self.open_PAM, 7: self.open_CLARA, 8: self.open_CLARANS,
+                          9: self.open_BIRCH,
                           10: self.open_CHAMELEON}
 
         # buttons
@@ -71,7 +73,7 @@ class Main_Window(QWidget):
         for i, (key, value) in enumerate(self.button_dictionary.items()):
             self.initial_tab.buttons.append(QPushButton(self.button_dictionary[key], self))
             self.initial_tab.buttons[-1].clicked.connect(self.functions[key])
-            gridlayout_alg.addWidget(self.initial_tab.buttons[-1],h, k)
+            gridlayout_alg.addWidget(self.initial_tab.buttons[-1], h, k)
             if k != 3:
                 k += 1
             else:
@@ -92,7 +94,6 @@ class Main_Window(QWidget):
         else:
             self.initial_tab.buttons[number].setEnabled(True)
 
-
     def open_OPTICS(self):
         """Open OPTICS_tab and disable its button in the Initial Tab"""
         self.OPTICS_tab = OPTICS_class()
@@ -101,8 +102,7 @@ class Main_Window(QWidget):
         index = self.swapped_button_dictionary["OPTICS"]
         self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
         self.tabs.setCurrentIndex(self.current_index)
-        self.change_button_status(index-1)
-        print(self.open_tab_dict)
+        self.change_button_status(index - 1)
         # self.hide()
 
     def open_DBSCAN(self):
@@ -113,26 +113,33 @@ class Main_Window(QWidget):
         index = self.swapped_button_dictionary["DBSCAN"]
         self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
         self.tabs.setCurrentIndex(self.current_index)
-        self.change_button_status(index-1)
-        print(self.open_tab_dict)
+        self.change_button_status(index - 1)
 
 
     def open_CURE(self):
         pass
+
     def open_AGGLOMERATIVE(self):
         pass
+
     def open_CLARA(self):
         pass
+
     def open_CLARANS(self):
         pass
+
     def open_PAM(self):
         pass
+
     def open_CURE(self):
         pass
+
     def open_CHAMELEON(self):
         pass
+
     def open_BIRCH(self):
         pass
+
     def open_DENCLUE(self):
         pass
 
@@ -143,15 +150,12 @@ class Main_Window(QWidget):
         self.tabs.removeTab(currentIndex)
         self.current_index -= 1
         temp_index = self.open_tab_dict[currentIndex]
-        print("currentIndex: ", currentIndex)
-        print("temp_index: ", temp_index)
-        print("swap dict: ", self.swapped_button_dictionary[temp_index])
-        self.initial_tab.buttons[self.swapped_button_dictionary[temp_index]-1].setEnabled(True)
+        self.initial_tab.buttons[self.swapped_button_dictionary[temp_index] - 1].setEnabled(True)
 
         # the following serves the purpose of readjusting self.open_tab_dict
         del self.open_tab_dict[currentIndex]
 
-        if currentIndex == len(self.open_tab_dict) - 1:
+        if currentIndex == len(self.open_tab_dict) + 1:
             return
 
         if len(self.open_tab_dict) != 0:
@@ -159,6 +163,7 @@ class Main_Window(QWidget):
                 self.open_tab_dict.update({el: self.open_tab_dict[el + 1]})
 
             del self.open_tab_dict[len(self.open_tab_dict)]
+
 
 
 class main(QMainWindow):
