@@ -8,6 +8,7 @@ import sys
 
 from GUI_classes.optics_gui import OPTICS_class
 from GUI_classes.dbscan_gui import DBSCAN_class
+from GUI_classes.agglomerative_gui import AGGLOMERATIVE_class
 
 
 # TODO: button images
@@ -24,6 +25,7 @@ class Main_Window(QWidget):
         # initialization of all tabs
         self.OPTICS_tab = None
         self.DBSCAN_tab = None
+        self.AGGLOMERATIVE_tab = None
         # current index and current dictionary of open tabs
         self.current_index = 0
         self.open_tab_dict = {}
@@ -47,8 +49,7 @@ class Main_Window(QWidget):
         # layout of central box
         gridlayout = QGridLayout(self.initial_tab)
 
-        self.initial_tab.groupbox_alg = QGroupBox()
-        self.initial_tab.groupbox_alg.setTitle("CHOOSE A CLUSTERING ALGORITHM: ")
+        self.initial_tab.groupbox_alg = QGroupBox("CHOOSE A CLUSTERING ALGORITHM: ")
         # self.initial_tab.groupbox_alg.setFont(font_title)
         self.initial_tab.groupbox_alg.setFixedSize(600, 400)
         gridlayout.addWidget(self.initial_tab.groupbox_alg)
@@ -120,7 +121,14 @@ class Main_Window(QWidget):
         pass
 
     def open_AGGLOMERATIVE(self):
-        pass
+        """Open AGGLOMERATIVE_tab and disable its button in the Initial Tab"""
+        self.AGGLOMERATIVE_tab = AGGLOMERATIVE_class()
+        self.tabs.addTab(self.AGGLOMERATIVE_tab, "AGGLOMERATIVE")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["AGGLOMERATIVE"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_CLARA(self):
         pass
@@ -171,7 +179,7 @@ class main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Clustering Algorithms Visualization")
-        self.setGeometry(100, 100, 1290, 850)
+        self.setGeometry(50, 50, 1290, 850)
 
         self.table_widget = Main_Window(self)
         self.setCentralWidget(self.table_widget)

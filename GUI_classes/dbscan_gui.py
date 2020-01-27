@@ -1,186 +1,22 @@
-from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit, QWidget
-from PyQt5.QtCore import QCoreApplication, QRect
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtCore import QCoreApplication, QRect, Qt
 import pandas as pd
 from collections import OrderedDict
-# import qdarkstyle
-import random
 
-from matplotlib.backends.backend_qt5agg import FigureCanvas
-from matplotlib.figure import Figure
+import random
 
 from algorithms.dbscan import scan_neigh1_mod
 
-from sklearn.datasets.samples_generator import make_blobs
-
 import matplotlib.pyplot as plt
 
-from GUI_classes.utils_gui import choose_dataset, LabeledSlider, pause_execution
+from GUI_classes.utils_gui import choose_dataset, pause_execution
+
+from GUI_classes.generic_gui import StartingGui
 
 
-class DBSCAN_class(QWidget):
+class DBSCAN_class(StartingGui):
     def __init__(self):
-        super(DBSCAN_class, self).__init__()
-
-        self.setWindowTitle("DBSCAN")
-        self.setGeometry(100, 100, 1290, 850)
-
-        # upper plot
-        self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
-        self.ax1 = self.canvas_up.figure.subplots()
-        self.ax1.set_xticks([], [])
-        self.ax1.set_yticks([], [])
-        self.ax1.set_title("DBSCAN procedure")
-
-        # box containing everything
-        self.groupbox = QGroupBox(self)
-        self.groupbox.setGeometry(QRect(30, 10, 1200, 720))
-
-        # parameters initialization
-        self.eps = 2
-        self.mp = 3
-        self.n_points = 50
-        self.X = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)[0]
-        self.ClustDict = {}
-        self.delay = 0
-        self.param_check = True
-
-        # grid where the two pictures, the log and the button box are inserted (row,column)
-        gridlayout = QGridLayout(self.groupbox)
-        gridlayout.addWidget(self.canvas_up, 0, 1)
-
-        # START BUTTON
-        self.button_run = QPushButton("START", self)
-        self.button_run.clicked.connect(lambda: self.start_DBSCAN())
-        self.button_run.setToolTip("Perform clustering.")
-
-        # SLIDER
-        label_slider = QLabel(self)
-        label_slider.setText("delay:")
-        label_slider.setToolTip("Delay each step of the algorithm for the desidered number of seconds.")
-
-        self.slider = LabeledSlider(minimum=0, maximum=3, interval=1, single_step=0.5)
-        self.slider.sl.valueChanged.connect(self.changedValue)
-        self.slider.setFixedHeight(50)
-
-        # n_points LABEL
-        label_np = QLabel(self)
-        label_np.setText("n_points:")
-        label_np.setToolTip("Number of points of the dataset. It can lie between 5 and 200.")
-
-        self.line_edit_np = QLineEdit(self)
-        self.line_edit_np.resize(30, 40)
-        self.line_edit_np.setText(str(self.n_points))
-
-        self.n_points_validator = QIntValidator(5, 200, self)
-        self.line_edit_np.setValidator(self.n_points_validator)
-
-        # eps LABEL
-        label_eps = QLabel(self)
-        label_eps.setText("eps (\u03B5):")
-        label_eps.setToolTip("""The maximum distance between two samples for one to be considered as in the neighborhood 
-                                of the other. """)
-
-        self.line_edit_eps = QLineEdit(self)
-        self.line_edit_eps.resize(30, 40)
-        self.line_edit_eps.setText(str(self.eps))
-
-        self.eps_validator = QDoubleValidator(0, 1000, 4, self)
-        self.line_edit_eps.setValidator(self.eps_validator)
-
-        # minPTS LABEL
-        label_mp = QLabel(self)
-        label_mp.setText("minPTS:")
-        label_mp.setToolTip("The number of samples in a neighborhood for a point to be considered as a core point.")
-
-        self.line_edit_mp = QLineEdit(self)
-        self.line_edit_mp.setGeometry(360, 10, 30, 40)
-        self.line_edit_mp.setText(str(self.mp))
-
-        self.mp_validator = QIntValidator(1, 200, self)
-        self.line_edit_mp.setValidator(self.mp_validator)
-
-        # dataset LABEL
-        label_ds = QLabel(self)
-        label_ds.setText("dataset:")
-        label_ds.setToolTip("Choose among four sklearn generated datasets to perform clustering.")
-
-        # COMBOBOX of datasets
-        self.combobox = QComboBox(self)
-        self.combobox.setGeometry(750, 10, 120, 30)
-        self.combobox.addItem("blobs")
-        self.combobox.addItem("moons")
-        self.combobox.addItem("scatter")
-        self.combobox.addItem("circle")
-
-        # LOG
-        self.log = QPlainTextEdit("DBSCAN LOG")
-        self.log.setGeometry(900, 60, 350, 400)
-        self.log.setStyleSheet(
-            """QPlainTextEdit {background-color: #FFF;
-                               color: #000000;
-                               font-family: Courier;}""")
-        self.log.setFixedHeight(335)
-        gridlayout.addWidget(self.log, 1, 1)
-
-        # buttons GROUPBOX
-        self.groupbox_buttons = QGroupBox("Parameters")
-        self.groupbox_buttons.setFixedSize(200,350)
-
-        gridlayout.addWidget(self.groupbox_buttons, 0, 0)
-
-        gridlayout_but = QGridLayout(self.groupbox_buttons)
-        gridlayout_but.addWidget(label_ds, 0, 0)
-        gridlayout_but.addWidget(self.combobox, 0, 1)
-
-        gridlayout_but.addWidget(label_np, 1, 0)
-        gridlayout_but.addWidget(self.line_edit_np, 1, 1)
-        gridlayout_but.addWidget(label_eps, 2, 0)
-        gridlayout_but.addWidget(self.line_edit_eps, 2, 1)
-        gridlayout_but.addWidget(label_mp, 3, 0)
-        gridlayout_but.addWidget(self.line_edit_mp, 3, 1)
-
-        gridlayout_but.addWidget(self.button_run, 4, 0)
-        gridlayout_but.addWidget(label_slider, 5, 0)
-        gridlayout_but.addWidget(self.slider, 5, 1)
-
-
-        self.show()
-
-    def changedValue(self):
-        size = self.slider.sl.value()
-        self.delay = size
-
-    def show_error_message(self, check, msg):
-        if check[0] != 2:
-
-            if self.param_check is True:
-                self.log.clear()
-
-            self.param_check = False
-            self.log.appendPlainText("ERROR")
-            self.log.appendPlainText("")
-            self.log.appendPlainText(msg)
-            self.log.appendPlainText("")
-
-    def verify_input_parameters(self):
-
-        self.param_check = True
-
-        check_n_points = self.n_points_validator.validate(self.line_edit_np.text(), 0)
-        check_eps = self.eps_validator.validate(self.line_edit_eps.text(), 0)
-        check_mp = self.mp_validator.validate(self.line_edit_mp.text(), 0)
-
-        self.show_error_message(check_n_points,
-                                "The parameter n_points must be an integer and lie between {0} and {1}.".format(5,
-                                                                                                                200))
-        self.show_error_message(check_eps,
-                                "The parameter eps must lie between {0} and {1}, and can have a maximum of {2} decimal places.".format(
-                                    0, 1000, 4))
-        self.show_error_message(check_mp,
-                                "The parameter minPTS must be an integer and lie between {0} and {1}.".format(1,
-                                                                                                              200))
+        super(DBSCAN_class, self).__init__(name="DBSCAN", twinx=False, second_plot=False,
+                                           function=self.start_DBSCAN)
 
     def start_DBSCAN(self):
 
@@ -198,12 +34,35 @@ class DBSCAN_class(QWidget):
         self.X = choose_dataset(self.combobox.currentText(), self.n_points)
 
         self.button_run.setEnabled(False)
+        self.checkbox_saveimg.setEnabled(False)
+        self.button_delete_pics.setEnabled(False)
+
+        if self.first_run_occurred is True:
+            self.ind_run += 1
+            self.ind_extr_fig = 0
+            if self.save_plots is True:
+                self.checkBoxChangedAction(self.checkbox_saveimg.checkState())
+        else:
+            if Qt.Checked == self.checkbox_saveimg.checkState():
+                self.first_run_occurred = True
+                self.checkBoxChangedAction(self.checkbox_saveimg.checkState())
+
+
+        self.checkbox_gif.setEnabled(False)
+
         self.DBSCAN_gui(plotting=True, print_details=True, delay=self.delay)
 
         self.ax1.cla()
-        self.plot_clust_DB_gui()
+        self.plot_clust_DB_gui(save_plots=self.save_plots)
+
+        if (self.make_gif is True) and (self.save_plots is True):
+            self.generate_GIF()
 
         self.button_run.setEnabled(True)
+        self.checkbox_saveimg.setEnabled(True)
+        if self.checkbox_saveimg.isChecked() is True:
+            self.checkbox_gif.setEnabled(True)
+        self.button_delete_pics.setEnabled(True)
 
     def update_log(self, point=None, msg=None, initial=False, noise=False, change_current=False, change_subcurrent=False):
         """ Take care of the log, updating it with information about the current point being examined,
@@ -211,11 +70,14 @@ class DBSCAN_class(QWidget):
         :param point: current point being examined by DBSCAN.
         :param msg: message to be displayed.
         :param initial: what to do at the start of the algorithm.
+        :param change_subcurrent: True means that the current subpoint examined has changed.
+        :param change_current: True means that the current point examined has changed.
+        :param noise: True means that the current point has been classified as noise.
 
         """
         if initial is True:
             self.log.clear()
-            self.log.appendPlainText("DBSCAN LOG")
+            self.log.appendPlainText("{} LOG".format(self.name))
             self.log.appendPlainText("")
 
         else:
@@ -234,7 +96,7 @@ class DBSCAN_class(QWidget):
             self.log.appendPlainText("")
             self.log.appendPlainText(msg)
 
-    def point_plot_mod_gui(self, X_dict, point):
+    def point_plot_mod_gui(self, X_dict, point, save_plots=False, ind_fig=None):
         """
         Plots a scatter plot of points, where the point (x,y) is light black and
         surrounded by a red circle of radius eps, where already processed point are plotted
@@ -243,6 +105,8 @@ class DBSCAN_class(QWidget):
 
         :param X_dict: input dictionary version of self.X.
         :param point: coordinates of the point that is currently inspected.
+        :param ind_fig: index of the current plot.
+        :param save_plots: if True, saves the plot.
 
         """
 
@@ -273,19 +137,25 @@ class DBSCAN_class(QWidget):
 
         # self.ax1.set_aspect('equal')
         # self.ax1.legend(fontsize=8)
+
         self.canvas_up.draw()
+        if save_plots is True:
+            self.canvas_up.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+
         QCoreApplication.processEvents()
 
-    def plot_clust_DB_gui(self, circle_class=None, noise_circle=False):
+    def plot_clust_DB_gui(self, save_plots=False, circle_class=None, noise_circle=False):
         """
         Scatter plot of the data points, colored according to the cluster they belong to; circle_class Plots
         circles around some or all points, with a radius of eps; if Noise_circle is True, circle are also plotted
         around noise points.
 
+
         :param circle_class: if True, plots circles around every non-noise point, else plots circles
                              only around points belonging to certain clusters, e.g. circle_class = [1,2] will
                              plot circles around points belonging to clusters 1 and 2.
         :param noise_circle: if True, plots circles around noise points
+        :param save_plots: if True, saves the plot.
 
         """
         # create dictionary of X
@@ -348,6 +218,11 @@ class DBSCAN_class(QWidget):
         # self.ax1.set_aspect('equal')
         self.ax1.legend()
         self.canvas_up.draw()
+
+        if save_plots is True:
+            self.canvas_up.figure.savefig('./Images/{}_{:02}/fig_fin_{:02}.png'.format(self.name, self.ind_run,
+                                                                                        self.ind_extr_fig))
+
         QCoreApplication.processEvents()
 
     def DBSCAN_gui(self, plotting=True, print_details=True, delay=0):
@@ -364,6 +239,7 @@ class DBSCAN_class(QWidget):
 
         """
         self.update_log(initial=True)
+        index_for_saving_plots = 0
 
         # initialize dictionary of clusters
         self.ClustDict = {}
@@ -396,9 +272,11 @@ class DBSCAN_class(QWidget):
 
                     if plotting == True:
                         if delay != 0:
-                            pause_execution(self.delay)
+                            pause_execution(delay)
 
-                        self.point_plot_mod_gui(X_dict, point)
+                        self.point_plot_mod_gui(X_dict, point, save_plots=self.save_plots,
+                                                ind_fig=index_for_saving_plots)
+                        index_for_saving_plots += 1
                         self.update_log(noise=True)
                 # else if it is a Core point
                 else:
@@ -409,9 +287,11 @@ class DBSCAN_class(QWidget):
 
                     if plotting == True:
                         if delay != 0:
-                            pause_execution(self.delay)
+                            pause_execution(delay)
 
-                        self.point_plot_mod_gui(X_dict, point)
+                        self.point_plot_mod_gui(X_dict, point, save_plots=self.save_plots,
+                                                ind_fig=index_for_saving_plots)
+                        index_for_saving_plots += 1
                     # add it to the temporary processed list
                     processed_list = [point]
                     # remove it from the neighborhood N
@@ -458,5 +338,7 @@ class DBSCAN_class(QWidget):
 
                         if plotting == True:
                             if delay != 0:
-                                pause_execution(self.delay)
-                            self.point_plot_mod_gui(X_dict, n)
+                                pause_execution(delay)
+                            self.point_plot_mod_gui(X_dict, n, save_plots=self.save_plots,
+                                                    ind_fig=index_for_saving_plots)
+                            index_for_saving_plots += 1
