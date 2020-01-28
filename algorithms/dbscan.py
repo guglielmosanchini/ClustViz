@@ -60,29 +60,11 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
     plt.scatter(x=X_dict[point][0], y=X_dict[point][1], s=400, color="black", alpha=0.4)
 
     circle1 = plt.Circle((X_dict[point][0], X_dict[point][1]), eps, color='r', fill=False, linewidth=3, alpha=0.7)
-    plt.gcf().gca().add_artist(circle1)
+    ax.add_artist(circle1)
 
     # add indexes to points in the scatterplot
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.008
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     plt.show()
 
@@ -156,26 +138,8 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     ax1.set_ylabel("")
 
     # plot labels of points
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.005
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.0025
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt)) == 2:
-            ax1.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=8, size=10)
-        elif len(str(txt)) == 1:
-            ax1.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=8, size=10)
-        else:
-            ax1.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=6, size=8)
+        ax1.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     plt.show()
 

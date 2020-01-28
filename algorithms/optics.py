@@ -35,29 +35,11 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
     plt.scatter(x=x, y=y, s=400, color="black", alpha=0.4)
 
     circle1 = plt.Circle((x, y), eps, color='r', fill=False, linewidth=3, alpha=0.7)
-    plt.gcf().gca().add_artist(circle1)
+    ax.add_artist(circle1)
 
     # add indexes to points in plot
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.008
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     plt.show()
 
@@ -373,25 +355,9 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax1.set_ylabel("")
 
     xmin, xmax, ymin, ymax = ax1.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.003
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.02
-    yw3 = ywidth * 0.01
 
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt)) == 2:
-            ax1.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=8, size=10)
-        elif len(str(txt)) == 1:
-            ax1.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=8, size=10)
-        else:
-            ax1.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=6, size=8)
+        ax1.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     # second plot: reachability plot, with colors corresponding to clusters
     plot_dic = {}

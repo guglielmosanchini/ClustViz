@@ -4,15 +4,15 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout,
 from PyQt5.QtGui import QFont
 
 import sys
-# import qdarkstyle
 
 from GUI_classes.optics_gui import OPTICS_class
 from GUI_classes.dbscan_gui import DBSCAN_class
 from GUI_classes.agglomerative_gui import AGGLOMERATIVE_class
+from GUI_classes.cure_gui import CURE_class
+from GUI_classes.cure_large_gui import LARGE_CURE_class
 
 
 # TODO: button images
-# TODO: update tooltips
 # TODO: play/pause button
 # TODO: comment everything
 
@@ -20,12 +20,15 @@ from GUI_classes.agglomerative_gui import AGGLOMERATIVE_class
 class Main_Window(QWidget):
     def __init__(self, parent):
         super(Main_Window, self).__init__(parent)
+
         # main layout of Initial Tab
         self.layout = QVBoxLayout(self)
         # initialization of all tabs
         self.OPTICS_tab = None
         self.DBSCAN_tab = None
         self.AGGLOMERATIVE_tab = None
+        self.CURE_tab = None
+        self.LARGE_CURE_tab = None
         # current index and current dictionary of open tabs
         self.current_index = 0
         self.open_tab_dict = {}
@@ -58,14 +61,13 @@ class Main_Window(QWidget):
 
         # buttons and functions dictionaries
         self.button_dictionary = {1: "OPTICS", 2: "DBSCAN", 3: "AGGLOMERATIVE", 4: "DENCLUE",
-                                  5: "CURE", 6: "PAM", 7: "CLARA", 8: "CLARANS", 9: "BIRCH",
-                                  10: "CHAMELEON"}
+                                  5: "CURE", 6: "LARGE CURE", 7: "PAM", 8: "CLARA", 9: "CLARANS", 10: "BIRCH",
+                                  11: "CHAMELEON"}
         self.swapped_button_dictionary = dict([(value, key) for key, value in self.button_dictionary.items()])
 
         self.functions = {1: self.open_OPTICS, 2: self.open_DBSCAN, 3: self.open_AGGLOMERATIVE, 4: self.open_DENCLUE,
-                          5: self.open_CURE, 6: self.open_PAM, 7: self.open_CLARA, 8: self.open_CLARANS,
-                          9: self.open_BIRCH,
-                          10: self.open_CHAMELEON}
+                          5: self.open_CURE, 6: self.open_LARGE_CURE, 7: self.open_PAM, 8: self.open_CLARA,
+                          9: self.open_CLARANS, 10: self.open_BIRCH, 11: self.open_CHAMELEON}
 
         # buttons
         self.initial_tab.buttons = []
@@ -116,9 +118,25 @@ class Main_Window(QWidget):
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
-
     def open_CURE(self):
-        pass
+        """Open CURE_tab and disable its button in the Initial Tab"""
+        self.CURE_tab = CURE_class()
+        self.tabs.addTab(self.CURE_tab, "CURE")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["CURE"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
+
+    def open_LARGE_CURE(self):
+        """Open LARGE_CURE_tab and disable its button in the Initial Tab"""
+        self.LARGE_CURE_tab = LARGE_CURE_class()
+        self.tabs.addTab(self.LARGE_CURE_tab, "LARGE CURE")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["LARGE CURE"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_AGGLOMERATIVE(self):
         """Open AGGLOMERATIVE_tab and disable its button in the Initial Tab"""
@@ -137,9 +155,6 @@ class Main_Window(QWidget):
         pass
 
     def open_PAM(self):
-        pass
-
-    def open_CURE(self):
         pass
 
     def open_CHAMELEON(self):
@@ -171,7 +186,6 @@ class Main_Window(QWidget):
                 self.open_tab_dict.update({el: self.open_tab_dict[el + 1]})
 
             del self.open_tab_dict[len(self.open_tab_dict)]
-
 
 
 class main(QMainWindow):

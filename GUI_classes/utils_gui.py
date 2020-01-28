@@ -4,6 +4,11 @@ from PyQt5.QtWidgets import QStyle, QStyleOptionSlider
 from PyQt5.QtCore import QRect, QPoint, Qt
 from sklearn.datasets.samples_generator import make_blobs, make_moons, make_circles
 import time
+from matplotlib.pyplot import Polygon
+from scipy.spatial import ConvexHull
+from matplotlib import colors
+import numpy as np
+
 
 
 def choose_dataset(chosen_dataset, n_points):
@@ -23,6 +28,22 @@ def choose_dataset(chosen_dataset, n_points):
 
 def pause_execution(seconds):
     time.sleep(seconds)
+
+
+def encircle(x, y, ax, **kw):
+    p = np.c_[x, y]
+    hull = ConvexHull(p)
+    poly = Polygon(p[hull.vertices, :], **kw)
+    ax.add_patch(poly)
+
+
+def convert_colors(dict_colors, alpha=0.5):
+    new_dict_colors = {}
+
+    for i, col in enumerate(dict_colors.values()):
+        new_dict_colors[i] = tuple(list(colors.to_rgb(col)) + [alpha])
+
+    return new_dict_colors
 
 
 class LabeledSlider(QtWidgets.QWidget):
@@ -69,10 +90,7 @@ class LabeledSlider(QtWidgets.QWidget):
             self.sl.setMinimumHeight(300)  # just to make it easier to read
         self.sl.setTickInterval(interval)
 
-
         self.layout.addWidget(self.sl)
-
-
 
     def paintEvent(self, e):
 

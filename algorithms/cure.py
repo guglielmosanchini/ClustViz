@@ -8,9 +8,10 @@ from collections import Counter, OrderedDict
 from copy import deepcopy
 import random
 import math
+from GUI_classes.utils_gui import encircle, convert_colors
 
 
-def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
+def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
                     par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,
                     not_sampled=None, not_sampled_ind=None, n_rep_fin=None):
     """
@@ -30,8 +31,6 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
     :param reps: list of the coordinates of representative points.
     :param level_txt: distance at which current merging occurs displayed in the upper right corner.
     :param level2_txt: incremental distance (not used).
-    :param plot_lines: if True, lines are plot corresponding to the edges of the rectangle,
-                       to make it more visible.
     :param par_index: partial index to take the shuffling of indexes into account.
     :param u: first cluster to be merged.
     :param u_cl: second cluster to be merged.
@@ -62,6 +61,7 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
     colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
               4: 'pink', 5: 'turquoise', 6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    color_dict_rect = convert_colors(colors, alpha=0.3)
 
     # to speed things up, this splits all points inside the clusters' names, and start gives the starting index
     # that shows where clusters with more than 1 element start (because they are always appended to a)
@@ -73,12 +73,16 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
     for ind, i in enumerate(range(start, len(a))):
         point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
         if par_index is not None:
-            for j in range(len(point)):
-                plt.scatter(X[diz[point[j]], 0], X[diz[point[j]], 1], s=350, color=colors[ind % 18])
+            X_clust = [X[diz[point[j]], 0] for j in range(len(point))]
+            Y_clust = [X[diz[point[j]], 1] for j in range(len(point))]
+
+            ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
         else:
             point = [int(i) for i in point]
-            for j in range(len(point)):
-                plt.scatter(X[point[j], 0], X[point[j], 1], s=350, color=colors[ind % 18])
+            X_clust = [X[point[j], 0] for j in range(len(point))]
+            Y_clust = [X[point[j], 1] for j in range(len(point))]
+
+            ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
 
     # last merged cluster, so the last element of matrix a
     point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
@@ -99,65 +103,32 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
     plt.scatter(x_reps, y_reps, s=360, color="r", edgecolor="black")
 
     # finding the right measures for the rectangle
-    if par_index is not None:
-        rect_min = X[point].min(axis=0)
-        rect_diff = X[point].max(axis=0) - rect_min
-    else:
-        rect_min = X[point].min(axis=0)
-        rect_diff = X[point].max(axis=0) - rect_min
+    rect_min = X[point].min(axis=0)
+    rect_diff = X[point].max(axis=0) - rect_min
 
     xmin, xmax, ymin, ymax = plt.axis()
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    xx_rect = xwidth * 0.015
-    yy_rect = xx_rect * 2
-
-    # to plot more evident lines around the rectangle, to make it more visible
-    if plot_lines == True:
-        plt.axvline(rect_min[0], color="black")
-        plt.axvline(rect_diff[0] + rect_min[0], color="black")
-        plt.axhline(rect_min[1], color="black")
-        plt.axhline(rect_diff[1] + rect_min[1], color="black")
-
     # adding the rectangle, using two rectangles one above the other to use different colors
     # for the border and for the inside
-    plt.gcf().gca().add_patch(Rectangle((rect_min[0] - xx_rect, rect_min[1] - xx_rect),
-                                        rect_diff[0] + yy_rect, rect_diff[1] + yy_rect, fill=True,
-                                        color=colors[ind % 18], alpha=0.1, linewidth=3,
-                                        ec="black"))
-    plt.gcf().gca().add_patch(Rectangle((rect_min[0] - xx_rect, rect_min[1] - xx_rect),
-                                        rect_diff[0] + yy_rect, rect_diff[1] + yy_rect, fill=None,
-                                        color='r', alpha=1, linewidth=3
-                                        ))
+    if len(point) <= 2:
+
+        ax.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                               rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
+                               color=color_dict_rect[ind % 18], linewidth=3,
+                               ec="red"))
+    else:
+        encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 18], linewidth=3, ec="red")
 
     # adding labels to points in the plot
-    xw1 = xwidth * 0.009
-    yw1 = ywidth * 0.015
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
 
     if initial_ind is not None:
         for i, txt in enumerate(initial_ind):
-            if len(str(txt)) == 2:
-                ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-            elif len(str(txt)) == 1:
-                ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-            else:
-                ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
-
+            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
     else:
         for i, txt in enumerate([i for i in range(len(X))]):
-            if len(str(txt)) == 2:
-                ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-            elif len(str(txt)) == 1:
-                ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-            else:
-                ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
+            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     # adding the annotations
     ax.annotate("min_dist: " + str(round(level_txt, 5)), (xmax * 0.75, ymax * 0.9), fontsize=12, size=12)
@@ -223,21 +194,12 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None, plot_lines=False,
 
         # plotting the indexes for each point
         for i, txt in enumerate(initial_ind):
-            if len(str(txt)) == 2:
-                ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-            elif len(str(txt)) == 1:
-                ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-            else:
-                ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
+            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
         if not_sampled_ind is not None:
             for i, txt in enumerate(not_sampled_ind):
-                if len(str(txt)) == 2:
-                    ax.annotate(txt, (not_sampled[:, 0][i] - xw1, not_sampled[:, 1][i] - yw1), fontsize=12, size=12)
-                elif len(str(txt)) == 1:
-                    ax.annotate(txt, (not_sampled[:, 0][i] - xw2, not_sampled[:, 1][i] - yw2), fontsize=12, size=12)
-                else:
-                    ax.annotate(txt, (not_sampled[:, 0][i] - xw3, not_sampled[:, 1][i] - yw3), fontsize=9, size=9)
+                ax.annotate(txt, (not_sampled[:, 0][i], not_sampled[:, 1][i]), fontsize=10, size=10,
+                            ha='center', va='center')
 
         plt.show()
 
@@ -603,13 +565,15 @@ def plot_results_cure(clust):
 
     :param clust: output of CURE algorithm, dictionary of the form cluster_labels+point_indices: coords of points
     """
+    fig, ax = plt.subplots(figsize=(14, 6))
+
     cl_list = []
     for num_clust in range(len(clust)):
         cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
         try:
-            plt.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1])
+            plt.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1], s=300)
         except:
-            plt.scatter(cl_list[-1][0], cl_list[-1][1])
+            plt.scatter(cl_list[-1][0], cl_list[-1][1], s=300)
     plt.show()
 
 
@@ -630,8 +594,8 @@ def Chernoff_Bounds(u_min, f, N, d, k):
 
     l = np.log(1 / d)
     res = f * N + N / u_min * l + N / u_min * np.sqrt(l ** 2 + 2 * f * u_min * l)
-    print("If the sample size is {0}, the probability of selecting fewer than {1} points from".format(math.ceil(res),
-                                                                                                      round(f * u_min)) \
+    print("If the sample size is {0}, the probability of selecting fewer "
+          "than {1} points from".format(math.ceil(res), round(f * u_min))
           + " any one of the clusters is less than {0}".format(k * d))
 
     return res
@@ -686,7 +650,7 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     :param p: the number of partitions.
     :param q: the number >1 such that each partition reduces to n/(pq) clusters.
     :param n_rep_finalclust: number of representatives to use in the final assignment phase.
-    :return (clusters, rep, a): returns the clusters dictionary, the dictionary of representatives,
+    :return (clusters, rep, mat_a): returns the clusters dictionary, the dictionary of representatives,
                                 the matrix a
     """
 
@@ -705,8 +669,20 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     a["0y"] = X.T[1]
     b = a.dropna(axis=1, how="all")
 
-    n = math.ceil(Chernoff_Bounds(u_min=u_min, f=f, N=len(X), k=k, d=d))
-    b_sampled = b.sample(n, random_state=42)
+    # this is done to ensure that the algorithm starts even when input params are bad
+    while True:
+        try:
+            print("new f: ", f)
+            print("new d: ", d)
+            n = math.ceil(Chernoff_Bounds(u_min=u_min, f=f, N=len(X), k=k, d=d))
+            b_sampled = b.sample(n, random_state=42)
+            break
+        except:
+            if f >= 0.19:
+                f = f - 0.1
+            else:
+                d = d * 2
+
     b_notsampled = b.loc[[str(i) for i in range(len(b)) if str(i) not in b_sampled.index], :]
 
     # find the best p and q according to the paper
@@ -786,6 +762,8 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
                                 partial_index=b_sampled.index, n_rep_finalclust=n_rep_finalclust,
                                 not_sampled=b_notsampled.values,
                                 not_sampled_ind=b_notsampled.index)
+
+    return clusters, rep, mat_a
 
 
 def demo_parameters():

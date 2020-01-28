@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtCore import QCoreApplication, Qt
 
 import numpy as np
 from matplotlib.patches import Rectangle
@@ -6,15 +6,15 @@ import pandas as pd
 
 from algorithms.agglomerative import dist_mat_gen, compute_ward_ij, update_mat
 
-from GUI_classes.utils_gui import choose_dataset, pause_execution
+from GUI_classes.utils_gui import choose_dataset, pause_execution, encircle, convert_colors
 
 from GUI_classes.generic_gui import StartingGui
 
 
 class AGGLOMERATIVE_class(StartingGui):
     def __init__(self):
-        super(AGGLOMERATIVE_class, self).__init__(name="AGGLOMERATIVE", twinx=False, second_plot=True,
-                                                  function=self.start_AGGL, extract=False)
+        super(AGGLOMERATIVE_class, self).__init__(name="AGGLOMERATIVE", twinx=False, second_plot=False,
+                                                  function=self.start_AGGL, extract=False, stretch_plot=True)
 
     def start_AGGL(self):
         self.ax1.cla()
@@ -73,6 +73,7 @@ class AGGLOMERATIVE_class(StartingGui):
         :param ind_fig: index of the figure that is saved.
         """
         self.ax1.clear()
+        self.ax1.set_title("{} procedure".format(self.name))
         self.ax1.scatter(self.X[:, 0], self.X[:, 1], s=300, color="lime", edgecolor="black")
 
         a = a.dropna(1, how="all")
@@ -81,28 +82,36 @@ class AGGLOMERATIVE_class(StartingGui):
                   4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 
+        color_dict_rect = convert_colors(colors, alpha=0.3)
+
         len_ind = [len(i.split("-")) for i in list(a.index)]
         start = np.min([i for i in range(len(len_ind)) if len_ind[i] > 1])
 
         for ind, i in enumerate(range(start, len(a))):
             point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
             point = [int(i) for i in point]
-            for j in range(len(point)):
-                self.ax1.scatter(self.X[point[j], 0], self.X[point[j], 1], s=350, color=colors[ind % 17])
+
+            X_clust = [self.X[point[j], 0] for j in range(len(point))]
+            Y_clust = [self.X[point[j], 1] for j in range(len(point))]
+
+            self.ax1.scatter(X_clust, Y_clust, s=350, color=colors[ind % 17])
 
         point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
         point = [int(i) for i in point]
         rect_min = self.X[point].min(axis=0)
         rect_diff = self.X[point].max(axis=0) - rect_min
 
-        self.ax1.add_patch(Rectangle((rect_min[0] - .5, rect_min[1] - .5),
-                                     rect_diff[0] + .5, rect_diff[1] + .5, fill=True,
-                                     color=colors[ind % 17], alpha=0.3, linewidth=3,
-                                     ec="black"))
-        self.ax1.add_patch(Rectangle((rect_min[0] - .5, rect_min[1] - .5),
-                                     rect_diff[0] + .5, rect_diff[1] + .5, fill=None,
-                                     color='r', alpha=1, linewidth=3
-                                     ))
+        xwidth = self.ax1.axis()[1] - self.ax1.axis()[0]
+        ywidth = self.ax1.axis()[3] - self.ax1.axis()[2]
+
+        if len(X_clust) <= 5:
+
+            self.ax1.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                                   rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
+                                   color=color_dict_rect[ind % 17], linewidth=3,
+                                   ec="red"))
+        else:
+            encircle(X_clust, Y_clust, ax=self.ax1, color=color_dict_rect[ind % 17], linewidth=3, ec="red", zorder=0)
 
         for i, txt in enumerate([i for i in range(len(self.X))]):
             self.ax1.annotate(txt, (self.X[:, 0][i], self.X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')

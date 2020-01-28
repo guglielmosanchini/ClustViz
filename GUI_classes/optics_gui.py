@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtCore import QCoreApplication, Qt
 
 import numpy as np
 import pandas as pd
@@ -55,7 +55,6 @@ class OPTICS_class(StartingGui):
                 self.first_run_occurred = True
                 self.checkBoxChangedAction(self.checkbox_saveimg.checkState())
 
-
         self.checkbox_gif.setEnabled(False)
 
         self.OPTICS_gui(plot=True, plot_reach=True, delay=self.delay)
@@ -109,7 +108,7 @@ class OPTICS_class(StartingGui):
 
         # fig, ax = plt.subplots(figsize=(14, 6))
         self.ax1.cla()
-        self.ax1.set_title("OPTICS procedure")
+        self.ax1.set_title("{} procedure".format(self.name))
 
         # plot every point in color lime
         self.ax1.scatter(self.X[:, 0], self.X[:, 1], s=300, color="lime", edgecolor="black", label="unprocessed")
@@ -197,7 +196,7 @@ class OPTICS_class(StartingGui):
 
         if save_plots is True:
             self.canvas_down.figure.savefig('./Images/{}_{:02}/reachplot_{:02}.png'.format(self.name,
-                                                                                            self.ind_run, ind_fig))
+                                                                                           self.ind_run, ind_fig))
 
         QCoreApplication.processEvents()
 
@@ -278,10 +277,10 @@ class OPTICS_class(StartingGui):
 
         if save_plots is True:
             self.canvas_up.figure.savefig('./Images/{}_{:02}/fig_fin_{:02}.png'.format(self.name, self.ind_run,
-                                                                                        self.ind_extr_fig))
+                                                                                       self.ind_extr_fig))
             self.canvas_down.figure.savefig('./Images/{}_{:02}/reach_plot_fin_{:02}.png'.format(self.name,
-                                                                                                 self.ind_run,
-                                                                                                 self.ind_extr_fig))
+                                                                                                self.ind_run,
+                                                                                                self.ind_extr_fig))
 
         QCoreApplication.processEvents()
 

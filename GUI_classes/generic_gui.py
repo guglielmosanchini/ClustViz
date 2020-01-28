@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
     QLineEdit, QPlainTextEdit, QWidget, QCheckBox, QMessageBox
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from imageio import mimsave, imread
 import os
@@ -17,7 +17,7 @@ from GUI_classes.utils_gui import LabeledSlider
 # todo: PARAMETERS REGULARIZATION mettere a posto
 
 class StartingGui(QWidget):
-    def __init__(self, name, twinx, second_plot, function, extract=False):
+    def __init__(self, name, twinx, second_plot, function, stretch_plot=False, extract=False):
         super().__init__()
 
         self.name = name
@@ -66,7 +66,11 @@ class StartingGui(QWidget):
 
         # grid where the two pictures, the log and the button box are inserted (row,column)
         self.gridlayout = QGridLayout(self)
-        self.gridlayout.addWidget(self.canvas_up, 0, 1)
+        if stretch_plot is False:
+            self.gridlayout.addWidget(self.canvas_up, 0, 1)
+        else:
+            self.gridlayout.addWidget(self.canvas_up, 0, 1, 2, 1)
+
         if self.second_plot is True:
             self.gridlayout.addWidget(self.canvas_down, 1, 1)
 
@@ -151,7 +155,7 @@ class StartingGui(QWidget):
 
     def parameter_initialization(self):
 
-        self.n_points = 50
+        self.n_points = 30
         self.X = make_blobs(n_samples=self.n_points, centers=4, n_features=2, cluster_std=1.8, random_state=42)[0]
         self.delay = 0
         self.ind_extr_fig = 0
@@ -169,8 +173,17 @@ class StartingGui(QWidget):
             self.CoreDist = {}
 
         elif self.name == "AGGLOMERATIVE":
-            self.n_clust = 1
+            self.n_clust = 3
             self.linkage = "single"
+
+        elif (self.name == "CURE") or (self.name == "LARGE CURE"):
+            self.n_clust = 2
+            self.n_repr = 3
+            self.alpha_cure = 0.5
+
+            if self.name == "LARGE CURE":
+                self.p_cure = 2
+                self.q_cure = 2
 
     def label_initialization(self):
 
@@ -231,7 +244,7 @@ class StartingGui(QWidget):
             self.label_linkage = QLabel(self)
             self.label_linkage.setText("linkage:")
             self.label_linkage.setToolTip("Choose among four linkage methods to perform hierarchical "
-                                     "agglomerative clustering.")
+                                          "agglomerative clustering.")
 
             # COMBOBOX of linkage methods
             self.combobox_linkage = QComboBox(self)
@@ -240,8 +253,71 @@ class StartingGui(QWidget):
             self.combobox_linkage.addItem("average")
             self.combobox_linkage.addItem("ward")
 
+        elif (self.name == "CURE") or (self.name == "LARGE CURE"):
+
+            # n_clust LABEL
+            self.label_n_clust = QLabel(self)
+            self.label_n_clust.setText("n_clust:")
+            self.label_n_clust.setToolTip("The desired number of clusters to partition the dataset into.")
+
+            self.line_edit_n_clust = QLineEdit(self)
+            self.line_edit_n_clust.setText(str(self.n_clust))
+
+            self.n_clust_validator = QIntValidator(1, 1000, self)
+            self.line_edit_n_clust.setValidator(self.n_clust_validator)
+
+            # n_repr LABEL
+            self.label_n_repr = QLabel(self)
+            self.label_n_repr.setText("n_repr:")
+            self.label_n_repr.setToolTip("The desired number of representative points for each cluster.")
+
+            self.line_edit_n_repr = QLineEdit(self)
+            self.line_edit_n_repr.setText(str(self.n_repr))
+
+            self.n_repr_validator = QIntValidator(1, 1000, self)
+            self.line_edit_n_repr.setValidator(self.n_repr_validator)
+
+            # alpha_cure LABEL
+            self.label_alpha_cure = QLabel(self)
+            self.label_alpha_cure.setText("alpha:")
+            self.label_alpha_cure.setToolTip(
+                "How much the representative points are shrunk towards the center of mass; if it is "
+                "equal to 1, they collapse to the center of mass, if it is 0 they do not move.")
+
+            self.line_edit_alpha_cure = QLineEdit(self)
+            self.line_edit_alpha_cure.setText(str(self.alpha_cure))
+
+            self.alpha_cure_validator = QDoubleValidator(0, 1, 4, self)
+            self.line_edit_alpha_cure.setValidator(self.alpha_cure_validator)
+
+            if (self.name == "LARGE CURE"):
+                # p_cure LABEL
+                self.label_p_cure = QLabel(self)
+                self.label_p_cure.setText("p:")
+                self.label_p_cure.setToolTip(
+                    "The number of partitions to divide the dataset into, for the large dataset version.")
+
+                self.line_edit_p_cure = QLineEdit(self)
+                self.line_edit_p_cure.setText(str(self.p_cure))
+
+                self.p_cure_validator = QIntValidator(1, 4, self)
+                self.line_edit_p_cure.setValidator(self.p_cure_validator)
+
+                # q_cure LABEL
+                self.label_q_cure = QLabel(self)
+                self.label_q_cure.setText("q:")
+                self.label_q_cure.setToolTip(
+                    "The number > 1 such that each partition reduces to n_points/(pq) clusters, "
+                    "for the large dataset version.")
+
+                self.line_edit_q_cure = QLineEdit(self)
+                self.line_edit_q_cure.setText(str(self.q_cure))
+
+                self.q_cure_validator = QIntValidator(2, 100, self)
+                self.line_edit_q_cure.setValidator(self.q_cure_validator)
+
     def log_initialization(self):
-        if self.name == "OPTICS":
+        if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE"):
             self.log = QPlainTextEdit("SEED QUEUE")
             self.log.setStyleSheet(
                 """QPlainTextEdit {background-color: #FFF;
@@ -250,7 +326,7 @@ class StartingGui(QWidget):
 
             self.gridlayout.addWidget(self.log, 1, 0)
 
-        elif (self.name == "DBSCAN") or (self.name == "AGGLOMERATIVE"):
+        elif self.name == "DBSCAN" :
             self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setGeometry(900, 60, 350, 400)
             self.log.setStyleSheet(
@@ -258,7 +334,16 @@ class StartingGui(QWidget):
                                    color: #000000;
                                    font-family: Courier;}""")
             self.log.setFixedHeight(335)
-            self.gridlayout.addWidget(self.log, 1, 1)
+            self.gridlayout.addWidget(self.log, 1, 0)
+
+        elif (self.name == "CURE") or (self.name == "LARGE CURE"):
+            self.log = QPlainTextEdit("{} LOG".format(self.name))
+            self.log.setStyleSheet(
+                """QPlainTextEdit {background-color: #FFF;
+                                   color: #000000;
+                                   font-family: Courier;}""")
+
+            self.gridlayout.addWidget(self.log, 1, 0)
 
     def buttons_groupbox_initialization(self):
 
@@ -312,6 +397,39 @@ class StartingGui(QWidget):
             self.gridlayout_but.addWidget(self.checkbox_gif, 6, 1)
             self.gridlayout_but.addWidget(self.button_delete_pics, 7, 0, 1, 0)
 
+        elif (self.name == "CURE") or (self.name == "LARGE CURE"):
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0, 1, 2)
+            self.gridlayout_but.addWidget(self.combobox, 0, 2, 1, 2)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0, 1, 2)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 2, 1, 2)
+            self.gridlayout_but.addWidget(self.label_n_clust, 2, 0, 1, 2)
+            self.gridlayout_but.addWidget(self.line_edit_n_clust, 2, 2, 1, 2)
+            self.gridlayout_but.addWidget(self.label_n_repr, 3, 0, 1, 2)
+            self.gridlayout_but.addWidget(self.line_edit_n_repr, 3, 2, 1, 2)
+            self.gridlayout_but.addWidget(self.label_alpha_cure, 4, 0, 1, 2)
+            self.gridlayout_but.addWidget(self.line_edit_alpha_cure, 4, 2, 1, 2)
+            if (self.name == "LARGE CURE"):
+                self.gridlayout_but.addWidget(self.label_p_cure, 5, 0)
+                self.gridlayout_but.addWidget(self.line_edit_p_cure, 5, 1)
+                self.gridlayout_but.addWidget(self.label_q_cure, 5, 2)
+                self.gridlayout_but.addWidget(self.line_edit_q_cure, 5, 3)
+
+                self.gridlayout_but.addWidget(self.button_run, 6, 0, 1, 2)
+
+                self.gridlayout_but.addWidget(self.label_slider, 7, 0, 1, 2)
+                self.gridlayout_but.addWidget(self.slider, 7, 2, 1, 2)
+                self.gridlayout_but.addWidget(self.checkbox_saveimg, 8, 0, 1, 2)
+                self.gridlayout_but.addWidget(self.checkbox_gif, 8, 2, 1, 2)
+                self.gridlayout_but.addWidget(self.button_delete_pics, 9, 0, 1, 4)
+            elif (self.name == "CURE"):
+                self.gridlayout_but.addWidget(self.button_run, 5, 0, 1, 2)
+
+                self.gridlayout_but.addWidget(self.label_slider, 6, 0, 1, 2)
+                self.gridlayout_but.addWidget(self.slider, 6, 2, 1, 2)
+                self.gridlayout_but.addWidget(self.checkbox_saveimg, 7, 0, 1, 2)
+                self.gridlayout_but.addWidget(self.checkbox_gif, 7, 2, 1, 2)
+                self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 4)
+
     def checkBoxChangedAction(self, state):
         if (Qt.Checked == state):
             self.save_plots = True
@@ -358,7 +476,10 @@ class StartingGui(QWidget):
         fig_list.sort()
         fin_list = [pic for pic in os.listdir(png_dir) if 'fig_fin' in pic]
         fin_list.sort()
-        list_for_gif = fig_list + [fin_list[-1]]
+        if len(fin_list) != 0:
+            list_for_gif = fig_list + [fin_list[-1]]
+        else:
+            list_for_gif = fig_list
 
         for file_name in list_for_gif:
             file_path = os.path.join(png_dir, file_name)
@@ -422,3 +543,30 @@ class StartingGui(QWidget):
             self.show_error_message(check_n_clust,
                                     "The parameter n_clust must be an integer and lie between "
                                     "{0} and {1}".format(1, 1000))
+
+        elif (self.name == "CURE") or (self.name == "LARGE CURE"):
+
+            check_n_repr = self.n_repr_validator.validate(self.line_edit_n_repr.text(), 0)
+            check_alpha_cure = self.alpha_cure_validator.validate(self.line_edit_alpha_cure.text(), 0)
+            check_n_clust = self.n_clust_validator.validate(self.line_edit_n_clust.text(), 0)
+
+            self.show_error_message(check_n_clust,
+                                    "The parameter n_clust must be an integer and lie between "
+                                    "{0} and {1}".format(1, 1000))
+
+            self.show_error_message(check_n_repr,
+                                    "The parameter n_repr must be an integer and lie between {0}"
+                                    " and {1}.".format(1, 1000))
+            self.show_error_message(check_alpha_cure,
+                                    "The parameter alpha must lie between {0} and {1}, and can "
+                                    "have a maximum of {2} decimal places.".format(0, 1, 4))
+
+            if self.name == "LARGE CURE":
+                check_p_cure = self.p_cure_validator.validate(self.line_edit_p_cure.text(), 0)
+                check_q_cure = self.q_cure_validator.validate(self.line_edit_q_cure.text(), 0)
+                self.show_error_message(check_p_cure,
+                                        "The parameter p must be an integer and lie between {0}"
+                                        " and {1}.".format(1, 4))
+                self.show_error_message(check_q_cure,
+                                        "The parameter q must be an integer and lie between {0}"
+                                        " and {1}.".format(2, 100))

@@ -16,7 +16,7 @@ from GUI_classes.generic_gui import StartingGui
 class DBSCAN_class(StartingGui):
     def __init__(self):
         super(DBSCAN_class, self).__init__(name="DBSCAN", twinx=False, second_plot=False,
-                                           function=self.start_DBSCAN)
+                                           function=self.start_DBSCAN, stretch_plot=True)
 
     def start_DBSCAN(self):
 
@@ -87,11 +87,11 @@ class DBSCAN_class(StartingGui):
 
             if change_subcurrent is True:
                 self.log.appendPlainText("")
-                self.log.appendPlainText("\tcurrent subpoint: " + str(point))
+                self.log.appendPlainText("  current subpoint: " + str(point))
 
             if noise is True:
                 self.log.appendPlainText("")
-                self.log.appendPlainText("\tnoise")
+                self.log.appendPlainText("  noise")
 
             self.log.appendPlainText("")
             self.log.appendPlainText(msg)
@@ -263,7 +263,7 @@ class DBSCAN_class(StartingGui):
                 N = scan_neigh1_mod(X_dict, X_dict[point], self.eps)
 
                 if print_details == True:
-                    self.update_log(point, "\tinitial len(N): " + str(len(N)), change_current=True)
+                    self.update_log(point, "  initial len(N): " + str(len(N)), change_current=True)
                     # print("len(N): ", len(N))
                 # if there are less than minPTS in its neighborhood, classify it as noise
                 if len(N) < self.mp:
@@ -303,7 +303,7 @@ class DBSCAN_class(StartingGui):
                         n = random.choice(list(N.keys()))
 
                         if print_details == True:
-                            self.update_log(n, "\t\tupdated len(N): " + str(len(N)), change_subcurrent=True)
+                            self.update_log(n, "     updated len(N): " + str(len(N)), change_subcurrent=True)
                             # print("len(N) in while loop: ", len(N))
 
                         # but the point must not be in processed_list aka already visited
@@ -321,7 +321,7 @@ class DBSCAN_class(StartingGui):
                             N_2 = scan_neigh1_mod(X_dict, X_dict[n], self.eps)
 
                             if print_details == True:
-                                self.update_log(point, "\t\tlen(N_sub): " + str(len(N_2)))
+                                self.update_log(point, "     len(N_sub): " + str(len(N_2)))
                                 # print("len(N2): ", len(N_2))
                             # if it is a core point
                             if len(N_2) >= self.mp:

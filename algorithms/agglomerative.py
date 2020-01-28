@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from algorithms.optics import dist1
 from matplotlib.patches import Rectangle
+from GUI_classes.utils_gui import encircle, convert_colors
 
 
 def update_mat(mat, i, j, linkage):
@@ -65,9 +66,11 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
     a = a.dropna(1, how="all")
 
-    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    color_dict = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
+                  4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
+                  11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+
+    color_dict_rect = convert_colors(color_dict, alpha=0.3)
 
     len_ind = [len(i.split("-")) for i in list(a.index)]
     start = np.min([i for i in range(len(len_ind)) if len_ind[i] > 1])
@@ -75,8 +78,12 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     for ind, i in enumerate(range(start, len(a))):
         point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
         point = [int(i) for i in point]
-        for j in range(len(point)):
-            plt.scatter(X[point[j], 0], X[point[j], 1], s=350, color=colors[ind % 17])
+
+        X_clust = [X[point[j], 0] for j in range(len(point))]
+        Y_clust = [X[point[j], 1] for j in range(len(point))]
+
+        # if ind != len(a) - 1:
+        plt.scatter(X_clust, Y_clust, s=350, color=color_dict[ind % 17])
 
     point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
     point = [int(i) for i in point]
@@ -87,31 +94,19 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     xwidth = xmax - xmin
     ywidth = ymax - ymin
 
-    plt.gcf().gca().add_patch(Rectangle((rect_min[0] - .05, rect_min[1] - .05),
-                                        rect_diff[0] + .1, rect_diff[1] + .1, fill=True,
-                                        color=colors[ind % 14], alpha=0.3, linewidth=3,
-                                        ec="black"))
-    plt.gcf().gca().add_patch(Rectangle((rect_min[0] - .05, rect_min[1] - .05),
-                                        rect_diff[0] + .1, rect_diff[1] + .1, fill=None,
-                                        color='r', alpha=1, linewidth=3
-                                        ))
+    if len(X_clust) <= 2:
 
-    xw1 = xwidth * 0.008
-    yw1 = ywidth * 0.01
+        ax.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                               rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
+                               color=color_dict_rect[ind % 17], linewidth=3,
+                               ec="red"))
+    else:
+        encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 17], linewidth=3, ec="red")
 
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
+    # plt.scatter(X_clust, Y_clust, s=350, color=color_dict[(len(a)-1) % 17])
 
     for i, txt in enumerate([i for i in range(len(X))]):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (X[:, 0][i] - xw1, X[:, 1][i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (X[:, 0][i] - xw2, X[:, 1][i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (X[:, 0][i] - xw3, X[:, 1][i] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
     ax.annotate("dist_tot: " + str(round(level_txt, 5)), (xmax * 0.75, ymax * 0.9), fontsize=12, size=12)
 
