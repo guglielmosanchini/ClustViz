@@ -15,7 +15,7 @@ from GUI_classes.generic_gui import StartingGui
 
 class DBSCAN_class(StartingGui):
     def __init__(self):
-        super(DBSCAN_class, self).__init__(name="DBSCAN", twinx=False, second_plot=False,
+        super(DBSCAN_class, self).__init__(name="DBSCAN", twinx=False, first_plot=True, second_plot=False,
                                            function=self.start_DBSCAN, stretch_plot=True)
 
     def start_DBSCAN(self):

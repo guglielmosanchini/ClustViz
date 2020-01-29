@@ -6,9 +6,7 @@ import pandas as pd
 from algorithms.optics import dist1
 from algorithms.agglomerative import dist_mat_gen
 from matplotlib.patches import Rectangle
-from collections import Counter
 from copy import deepcopy
-import math
 
 from collections import OrderedDict
 
@@ -19,12 +17,12 @@ from GUI_classes.utils_gui import choose_dataset, pause_execution, encircle, con
 
 from GUI_classes.generic_gui import StartingGui
 
-from algorithms.cure import dist_clust_cure, dist_mat_gen_cure, update_mat_cure, sel_rep, sel_rep_fast, Chernoff_Bounds
+from algorithms.cure import update_mat_cure, sel_rep_fast
 
 
 class CURE_class(StartingGui):
     def __init__(self):
-        super(CURE_class, self).__init__(name="CURE", twinx=False, second_plot=False,
+        super(CURE_class, self).__init__(name="CURE", twinx=False, first_plot=True, second_plot=False,
                                          function=self.start_CURE, extract=False, stretch_plot=True)
 
     def start_CURE(self):

@@ -17,37 +17,37 @@ from GUI_classes.utils_gui import LabeledSlider
 # todo: PARAMETERS REGULARIZATION mettere a posto
 
 class StartingGui(QWidget):
-    def __init__(self, name, twinx, second_plot, function, stretch_plot=False, extract=False):
+    def __init__(self, name, twinx, first_plot, second_plot, function, stretch_plot=False,
+                 extract=False, partition=False):
         super().__init__()
 
         self.name = name
-        self.twinx = twinx
-        self.second_plot = second_plot
         self.function = function
 
         self.setWindowTitle(self.name)
         self.setGeometry(100, 100, 1290, 850)
 
         # upper plot
-        self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
-        self.ax1 = self.canvas_up.figure.subplots()
-        self.ax1.set_xticks([], [])
-        self.ax1.set_yticks([], [])
-        self.ax1.set_title(self.name + " procedure")
-        if self.twinx is True:
-            self.ax1_t = self.ax1.twinx()
-            self.ax1_t.set_xticks([], [])
-            self.ax1_t.set_yticks([], [])
+        if first_plot is True:
+            self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
+            self.ax1 = self.canvas_up.figure.subplots()
+            self.ax1.set_xticks([], [])
+            self.ax1.set_yticks([], [])
+            self.ax1.set_title(self.name + " procedure")
+            if twinx is True:
+                self.ax1_t = self.ax1.twinx()
+                self.ax1_t.set_xticks([], [])
+                self.ax1_t.set_yticks([], [])
 
         # lower plot
-        if self.second_plot is True:
+        if second_plot is True:
             self.canvas_down = FigureCanvas(Figure(figsize=(12, 5)))
             self.ax = self.canvas_down.figure.subplots()
             self.ax.set_xticks([], [])
             self.ax.set_yticks([], [])
             self.ax.set_title(self.name + " Reachability Plot")
             self.ax.set_ylabel("reachability distance")
-            if self.twinx is True:
+            if twinx is True:
                 self.ax_t = self.ax.twinx()
                 self.ax_t.set_xticks([], [])
                 self.ax_t.set_yticks([], [])
@@ -62,16 +62,17 @@ class StartingGui(QWidget):
         if len(folders) == 0:
             self.ind_run = 0
         else:
-            self.ind_run = int(folders[-1][(len(self.name)+1):]) + 1
+            self.ind_run = int(folders[-1][(len(self.name) + 1):]) + 1
 
         # grid where the two pictures, the log and the button box are inserted (row,column)
         self.gridlayout = QGridLayout(self)
-        if stretch_plot is False:
-            self.gridlayout.addWidget(self.canvas_up, 0, 1)
-        else:
-            self.gridlayout.addWidget(self.canvas_up, 0, 1, 2, 1)
+        if first_plot is True:
+            if stretch_plot is False:
+                self.gridlayout.addWidget(self.canvas_up, 0, 1)
+            else:
+                self.gridlayout.addWidget(self.canvas_up, 0, 1, 2, 1)
 
-        if self.second_plot is True:
+        if second_plot is True:
             self.gridlayout.addWidget(self.canvas_down, 1, 1)
 
         # START BUTTON
@@ -300,7 +301,7 @@ class StartingGui(QWidget):
                 self.line_edit_p_cure = QLineEdit(self)
                 self.line_edit_p_cure.setText(str(self.p_cure))
 
-                self.p_cure_validator = QIntValidator(1, 4, self)
+                self.p_cure_validator = QIntValidator(2, 4, self)
                 self.line_edit_p_cure.setValidator(self.p_cure_validator)
 
                 # q_cure LABEL
@@ -326,7 +327,7 @@ class StartingGui(QWidget):
 
             self.gridlayout.addWidget(self.log, 1, 0)
 
-        elif self.name == "DBSCAN" :
+        elif self.name == "DBSCAN":
             self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setGeometry(900, 60, 350, 400)
             self.log.setStyleSheet(
@@ -518,7 +519,6 @@ class StartingGui(QWidget):
         if (self.name == "OPTICS") or (self.name == "DBSCAN"):
 
             if extract is False:
-
                 check_eps = self.eps_validator.validate(self.line_edit_eps.text(), 0)
                 check_mp = self.mp_validator.validate(self.line_edit_mp.text(), 0)
 
@@ -529,7 +529,6 @@ class StartingGui(QWidget):
                                         "The parameter minPTS must be an integer and lie "
                                         "between {0} and {1}.".format(1, 200))
             if self.name == "OPTICS":
-
                 check_eps_extr = self.eps_extr_validator.validate(self.line_edit_eps_extr.text(), 0)
 
                 self.show_error_message(check_eps_extr,
@@ -565,8 +564,70 @@ class StartingGui(QWidget):
                 check_p_cure = self.p_cure_validator.validate(self.line_edit_p_cure.text(), 0)
                 check_q_cure = self.q_cure_validator.validate(self.line_edit_q_cure.text(), 0)
                 self.show_error_message(check_p_cure,
-                                        "The parameter p must be an integer and lie between {0}"
-                                        " and {1}.".format(1, 4))
+                                        "The parameter p can be an {0}, {1} or {2}.".format(2, 3, 4))
                 self.show_error_message(check_q_cure,
                                         "The parameter q must be an integer and lie between {0}"
                                         " and {1}.".format(2, 100))
+
+    def SetWindows(self, number, first_run_boolean):
+
+        self.ax1 = None
+        self.ax2 = None
+        self.ax3 = None
+        self.ax4 = None
+
+        # self.ax1.clear()
+        # self.ax2.clear()
+        # self.ax3.clear()
+        # self.ax4.clear()
+
+        self.canvas_3 = None
+        self.canvas_4 = None
+
+        self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax1 = self.canvas_up.figure.subplots()
+        self.ax1.set_xticks([], [])
+        self.ax1.set_yticks([], [])
+        # self.ax1.set_title(self.name + " procedure")
+
+        self.canvas_2 = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax2 = self.canvas_2.figure.subplots()
+        self.ax2.set_xticks([], [])
+        self.ax2.set_yticks([], [])
+
+        # self.ax.set_title(self.name + " Reachability Plot")
+        # self.ax.set_ylabel("reachability distance")
+
+        if number >= 3:
+            self.canvas_3 = FigureCanvas(Figure(figsize=(12, 5)))
+            self.ax3 = self.canvas_3.figure.subplots()
+            self.ax3.set_xticks([], [])
+            self.ax3.set_yticks([], [])
+        if number == 4:
+            self.canvas_4 = FigureCanvas(Figure(figsize=(12, 5)))
+            self.ax4 = self.canvas_4.figure.subplots()
+            self.ax4.set_xticks([], [])
+            self.ax4.set_yticks([], [])
+
+        if first_run_boolean is True:
+            for i in reversed(range(self.gridlayout_plots.count())):
+                self.gridlayout_plots.itemAt(i).widget().setParent(None)
+
+        self.gridlayout_plots = QGridLayout()
+        self.gridlayout.addLayout(self.gridlayout_plots, 0, 1, 3, 2)
+
+
+        if number == 2:
+            self.gridlayout_plots.addWidget(self.canvas_up, 0, 0)
+            self.gridlayout_plots.addWidget(self.canvas_2, 1, 0)
+
+        elif number == 3:
+            self.gridlayout_plots.addWidget(self.canvas_up, 0, 1)
+            self.gridlayout_plots.addWidget(self.canvas_2, 0, 2)
+            self.gridlayout_plots.addWidget(self.canvas_3, 0, 3)
+
+        elif number == 4:
+            self.gridlayout_plots.addWidget(self.canvas_up, 0, 0)
+            self.gridlayout_plots.addWidget(self.canvas_2, 0, 1)
+            self.gridlayout_plots.addWidget(self.canvas_3, 1, 0)
+            self.gridlayout_plots.addWidget(self.canvas_4, 1, 1)

@@ -13,7 +13,7 @@ from GUI_classes.generic_gui import StartingGui
 
 class AGGLOMERATIVE_class(StartingGui):
     def __init__(self):
-        super(AGGLOMERATIVE_class, self).__init__(name="AGGLOMERATIVE", twinx=False, second_plot=False,
+        super(AGGLOMERATIVE_class, self).__init__(name="AGGLOMERATIVE", twinx=False, first_plot=True, second_plot=False,
                                                   function=self.start_AGGL, extract=False, stretch_plot=True)
 
     def start_AGGL(self):

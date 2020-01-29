@@ -24,14 +24,18 @@ from algorithms.cure import dist_mat_gen_cure, update_mat_cure, sel_rep_fast
 
 class LARGE_CURE_class(StartingGui):
     def __init__(self):
-        super(LARGE_CURE_class, self).__init__(name="LARGE CURE", twinx=False, second_plot=False,
+        super(LARGE_CURE_class, self).__init__(name="LARGE CURE", twinx=False, first_plot=False, second_plot=False,
                                                function=self.start_LARGE_CURE, extract=False, stretch_plot=False)
+        self.first_run_occurred_mod = False
 
-
+        self.canvas_fin = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax_fin = self.canvas_fin.figure.subplots()
+        self.ax_fin.set_xticks([], [])
+        self.ax_fin.set_yticks([], [])
+        self.ax_fin.set_title("LARGE CURE final step")
 
     def start_LARGE_CURE(self):
 
-        self.ax1.cla()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
 
@@ -48,6 +52,8 @@ class LARGE_CURE_class(StartingGui):
         self.n_points = int(self.line_edit_np.text())
 
         self.X = choose_dataset(self.combobox.currentText(), self.n_points)
+
+        self.SetWindows(number=self.p_cure, first_run_boolean=self.first_run_occurred_mod)
 
         # self.button_extract.setEnabled(False)
         self.button_run.setEnabled(False)
@@ -78,7 +84,9 @@ class LARGE_CURE_class(StartingGui):
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
 
-    def point_plot_mod2_gui(self, data, a, reps, level_txt, level2_txt=None,
+        self.first_run_occurred_mod = True
+
+    def point_plot_mod2_gui(self, data, a, reps, ax, canvas, level_txt, level2_txt=None,
                             par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,
                             not_sampled=None, not_sampled_ind=None, n_rep_fin=None, save_plots=False,
                             ind_fig=None):
@@ -110,8 +118,8 @@ class LARGE_CURE_class(StartingGui):
         :return list_keys_diz: if par_index is not None, returns the new indexes of par_index.
 
         """
-        self.ax1.cla()
-        self.ax1.set_title("{} procedure".format(self.name))
+        ax.cla()
+        ax.set_title("{} procedure".format(self.name))
         # diz is used to take the shuffling of data into account, e.g. if the first row doesn'#
         # correspond to point 0: this is useful for the large dataset version of CURE, where data points
         # are randomly sampled, but the initial indices are kept to be plotted.
@@ -119,7 +127,7 @@ class LARGE_CURE_class(StartingGui):
             diz = dict(zip(par_index, [i for i in range(len(par_index))]))
 
         # points that still need to be processed are plotted in lime color
-        self.ax1.scatter(data[:, 0], data[:, 1], s=300, color="lime", edgecolor="black")
+        ax.scatter(data[:, 0], data[:, 1], s=300, color="lime", edgecolor="black")
 
         # drops the totally null columns, so that the number of columns goes to 2*(cardinality of biggest cluster)
         a = a.dropna(1, how="all")
@@ -144,13 +152,13 @@ class LARGE_CURE_class(StartingGui):
                 X_clust = [data[diz[point[j]], 0] for j in range(len(point))]
                 Y_clust = [data[diz[point[j]], 1] for j in range(len(point))]
 
-                self.ax1.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
+                ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
             else:
                 point = [int(i) for i in point]
                 X_clust = [data[point[j], 0] for j in range(len(point))]
                 Y_clust = [data[point[j], 1] for j in range(len(point))]
 
-                self.ax1.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
+                ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
 
         # last merged cluster, so the last element of matrix a
         point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
@@ -163,41 +171,41 @@ class LARGE_CURE_class(StartingGui):
             com = data[point].mean(axis=0)
 
         # plotting the center of mass, marked with an X
-        self.ax1.scatter(com[0], com[1], s=400, color="r", marker="X", edgecolor="black")
+        ax.scatter(com[0], com[1], s=400, color="r", marker="X", edgecolor="black")
 
         # plotting representative points in red
         x_reps = [i[0] for i in reps]
         y_reps = [i[1] for i in reps]
-        self.ax1.scatter(x_reps, y_reps, s=360, color="r", edgecolor="black")
+        ax.scatter(x_reps, y_reps, s=360, color="r", edgecolor="black")
 
         # finding the right measures for the rectangle
         rect_min = data[point].min(axis=0)
         rect_diff = data[point].max(axis=0) - rect_min
 
-        xwidth = self.ax1.axis()[1] - self.ax1.axis()[0]
-        ywidth = self.ax1.axis()[3] - self.ax1.axis()[2]
+        xwidth = ax.axis()[1] - ax.axis()[0]
+        ywidth = ax.axis()[3] - ax.axis()[2]
 
         # adding the rectangle, using two rectangles one above the other to use different colors
         # for the border and for the inside
         if len(point) <= 5:
 
-            self.ax1.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
-                                         rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
-                                         color=color_dict_rect[ind % 18], linewidth=3,
-                                         ec="red"))
+            ax.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                                   rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
+                                   color=color_dict_rect[ind % 18], linewidth=3,
+                                   ec="red"))
         else:
-            encircle(X_clust, Y_clust, ax=self.ax1, color=color_dict_rect[ind % 18], linewidth=3, ec="red", zorder=0)
+            encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 18], linewidth=3, ec="red", zorder=0)
 
         # adding labels to points in the plot
 
         if initial_ind is not None:
             for i, txt in enumerate(initial_ind):
-                self.ax1.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
-                                  va='center')
+                ax.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
+                            va='center')
         else:
             for i, txt in enumerate([i for i in range(len(data))]):
-                self.ax1.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
-                                  va='center')
+                ax.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
+                            va='center')
 
         # adding the annotations
         self.log.appendPlainText("")
@@ -208,10 +216,10 @@ class LARGE_CURE_class(StartingGui):
 
         self.log.appendPlainText("n° clust: " + str(len(a)))
 
-        self.canvas_up.draw()
+        canvas.draw()
 
         if save_plots is True:
-            self.canvas_up.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+            canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
 
         QCoreApplication.processEvents()
 
@@ -219,7 +227,7 @@ class LARGE_CURE_class(StartingGui):
         if last_reps is not None:
 
             # plot all the points in color lime
-            self.ax1.scatter(data[:, 0], data[:, 1], s=300, color="lime", edgecolor="black")
+            ax.scatter(data[:, 0], data[:, 1], s=300, color="lime", edgecolor="black")
 
             # find the centers of mass of the clusters using the matrix a to find which points belong to
             # which cluster
@@ -227,7 +235,7 @@ class LARGE_CURE_class(StartingGui):
             for ind, i in enumerate(range(0, len(a))):
                 point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
                 for j in range(len(point)):
-                    self.ax1.scatter(data[diz[point[j]], 0], data[diz[point[j]], 1], s=350, color=colors[ind % 18])
+                    ax.scatter(data[diz[point[j]], 0], data[diz[point[j]], 1], s=350, color=colors[ind % 18])
                 point = [diz[point[i]] for i in range(len(point))]
                 coms.append(data[point].mean(axis=0))
 
@@ -244,14 +252,14 @@ class LARGE_CURE_class(StartingGui):
                 x = [list(last_reps.values())[i][j][0] for j in range(min(n_rep_fin, len_rep))]
                 y = [list(last_reps.values())[i][j][1] for j in range(min(n_rep_fin, len_rep))]
 
-                self.ax1.scatter(x, y, s=400, color=colors_reps[i], edgecolor="black")
-                self.ax1.scatter(coms[i][0], coms[i][1], s=400, color=colors_reps[i], marker="X", edgecolor="black")
+                ax.scatter(x, y, s=400, color=colors_reps[i], edgecolor="black", zorder=10)
+                ax.scatter(coms[i][0], coms[i][1], s=400, color=colors_reps[i], marker="X", edgecolor="black")
 
                 for num in range(min(n_rep_fin, len_rep)):
-                    self.ax1.add_artist(plt.Circle((x[num], y[num]), xwidth * 0.03,
-                                                   color=colors_reps[i], fill=False, linewidth=3, alpha=0.7))
+                    ax.add_artist(plt.Circle((x[num], y[num]), xwidth * 0.03,
+                                             color=colors_reps[i], fill=False, linewidth=3, alpha=0.7))
 
-                self.ax1.scatter(not_sampled[:, 0], not_sampled[:, 1], s=400, color="lime", edgecolor="black")
+                ax.scatter(not_sampled[:, 0], not_sampled[:, 1], s=400, color="lime", edgecolor="black")
 
             # find the closest representative for not sampled points, and draw an arrow connecting the points
             # to its closest representative
@@ -261,24 +269,24 @@ class LARGE_CURE_class(StartingGui):
                     dist_int.append(dist1(not_sampled[ind], el))
                 ind_min = np.argmin(dist_int)
 
-                self.ax1.arrow(not_sampled[ind][0], not_sampled[ind][1],
-                               flat_reps[ind_min][0] - not_sampled[ind][0], flat_reps[ind_min][1] - not_sampled[ind][1],
-                               length_includes_head=True, head_width=0.03, head_length=0.05)
+                ax.arrow(not_sampled[ind][0], not_sampled[ind][1],
+                         flat_reps[ind_min][0] - not_sampled[ind][0], flat_reps[ind_min][1] - not_sampled[ind][1],
+                         length_includes_head=True, head_width=0.03, head_length=0.05)
 
             # plotting the indexes for each point
             for i, txt in enumerate(initial_ind):
-                self.ax1.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
-                                  va='center')
+                ax.annotate(txt, (data[:, 0][i], data[:, 1][i]), fontsize=10, size=10, ha='center',
+                            va='center')
 
             if not_sampled_ind is not None:
                 for i, txt in enumerate(not_sampled_ind):
-                    self.ax1.annotate(txt, (not_sampled[:, 0][i], not_sampled[:, 1][i]), fontsize=10, size=10,
-                                      ha='center', va='center')
+                    ax.annotate(txt, (not_sampled[:, 0][i], not_sampled[:, 1][i]), fontsize=10, size=10,
+                                ha='center', va='center')
 
-            self.canvas_up.draw()
+            canvas.draw()
 
             if save_plots is True:
-                self.canvas_up.figure.savefig(
+                canvas.figure.savefig(
                     './Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
 
             QCoreApplication.processEvents()
@@ -290,7 +298,7 @@ class LARGE_CURE_class(StartingGui):
 
             return list_keys_diz
 
-    def cure_gui(self, data, k, plotting=True, preprocessed_data=None,
+    def cure_gui(self, data, k, ax, canvas, plotting=True, preprocessed_data=None,
                  partial_index=None, n_rep_finalclust=None, not_sampled=None, not_sampled_ind=None, delay=0):
         """
         CURE algorithm: hierarchical agglomerative clustering using representatives.
@@ -312,8 +320,8 @@ class LARGE_CURE_class(StartingGui):
 
 
         """
-        self.ax1.cla()
-        self.ax1.set_title("{} procedure".format(self.name))
+        ax.cla()
+        ax.set_title("{} procedure".format(self.name))
 
         index_for_saving_plots = 0
         # starting from raw data
@@ -441,7 +449,7 @@ class LARGE_CURE_class(StartingGui):
                                                                              len(list(rep.values())[i])))
                                       for i in range(len(rep))}
 
-                        partial_index = self.point_plot_mod2_gui(data=data, a=a, reps=rep[name],
+                        partial_index = self.point_plot_mod2_gui(data=data, a=a, reps=rep[name], ax=ax, canvas=canvas,
                                                                  level_txt=levels[-1], par_index=partial_index,
                                                                  u=u, u_cl=u_cl, initial_ind=initial_index,
                                                                  last_reps=final_reps, not_sampled=not_sampled,
@@ -451,13 +459,14 @@ class LARGE_CURE_class(StartingGui):
 
                     # in the intermediate steps of the large dataset version
                     else:
-                        partial_index = self.point_plot_mod2_gui(data=data, a=a, reps=rep[name],
+                        partial_index = self.point_plot_mod2_gui(data=data, a=a, reps=rep[name], ax=ax, canvas=canvas,
                                                                  level_txt=levels[-1], par_index=partial_index,
                                                                  u=u, u_cl=u_cl, initial_ind=initial_index,
                                                                  save_plots=self.save_plots,
                                                                  ind_fig=index_for_saving_plots)
                 else:
-                    self.point_plot_mod2_gui(a=a, reps=rep[name], level_txt=levels[-1], save_plots=self.save_plots,
+                    self.point_plot_mod2_gui(a=a, reps=rep[name], ax=ax, canvas=canvas, level_txt=levels[-1],
+                                             save_plots=self.save_plots,
                                              ind_fig=index_for_saving_plots)
 
             index_for_saving_plots += 1
@@ -498,8 +507,8 @@ class LARGE_CURE_class(StartingGui):
         while True:
             try:
                 self.log.appendPlainText("")
-                self.log.appendPlainText("new f: {}".format(f))
-                self.log.appendPlainText("new d: {}".format(d))
+                self.log.appendPlainText("new f: {}".format(round(f, 4)))
+                self.log.appendPlainText("new d: {}".format(round(d, 4)))
                 n = ceil(self.Chernoff_Bounds_gui(u_min=u_min, f=f, N=len(self.X), k=self.n_clust, d=d))
                 b_sampled = b.sample(n, random_state=42)
                 break
@@ -527,6 +536,8 @@ class LARGE_CURE_class(StartingGui):
             self.log.appendPlainText("q was automatically set to: {}".format(self.q_cure))
 
         if (n / (self.p_cure * self.q_cure)) < 2 * self.n_clust:
+            self.log.appendPlainText("")
+            self.log.appendPlainText("CAUTION")
             self.log.appendPlainText("n/pq is less than 2k, results could be wrong")
 
         # form the partitions
@@ -547,10 +558,20 @@ class LARGE_CURE_class(StartingGui):
         partial_rep1 = []
         partial_a1 = []
 
+        dict_axes = {2: [self.ax1, self.ax2], 3: [self.ax1, self.ax2, self.ax3],
+                     4: [self.ax1, self.ax2, self.ax3, self.ax4]}
+
+        dict_canvas = {2: [self.canvas_up, self.canvas_2], 3: [self.canvas_up, self.canvas_2, self.canvas_3],
+                       4: [self.canvas_up, self.canvas_2, self.canvas_3, self.canvas_4]}
+
+        p_dict_list = dict_axes[int(self.p_cure)]
+        p_dict_canvas = dict_canvas[int(self.p_cure)]
+
         for i in range(self.p_cure):
             self.log.appendPlainText("")
             self.log.appendPlainText("partition number: {}".format(i + 1))
-            clusters, rep, mat_a = self.cure_gui(data=b_partitions[i].values, k=k_prov,
+            clusters, rep, mat_a = self.cure_gui(data=b_partitions[i].values, k=k_prov, ax=p_dict_list[i],
+                                                 canvas=p_dict_canvas[i],
                                                  partial_index=b_partitions[i].index, delay=delay)
             partial_clust1.append(clusters)
             partial_rep1.append(rep)
@@ -584,7 +605,12 @@ class LARGE_CURE_class(StartingGui):
 
         # final_clustering
         prep_data = [clust_tot, rep_tot, a_tot, X_dist_tot]
-        clusters, rep, mat_a = self.cure_gui(b_sampled.values, k=self.n_clust, preprocessed_data=prep_data,
+
+        self.openFinalStepWindow(ax=self.ax_fin, canvas=self.canvas_fin)
+
+        clusters, rep, mat_a = self.cure_gui(b_sampled.values, k=self.n_clust, ax=self.ax_fin,
+                                             canvas=self.canvas_fin,
+                                             preprocessed_data=prep_data,
                                              partial_index=b_sampled.index, n_rep_finalclust=n_rep_finalclust,
                                              not_sampled=b_notsampled.values,
                                              not_sampled_ind=b_notsampled.index, delay=delay)
@@ -615,5 +641,29 @@ class LARGE_CURE_class(StartingGui):
 
         self.log.appendPlainText(msg)
 
-
         return res
+
+    def openFinalStepWindow(self, ax, canvas):
+        self.w = FinalStepWindow(ax=ax, canvas=canvas)
+        self.w.show()
+        # self.hide()
+
+
+from PyQt5.QtWidgets import QLabel, QWidget, QMainWindow
+from matplotlib.backends.backend_qt5agg import FigureCanvas
+from matplotlib.figure import Figure
+
+
+class FinalStepWindow(QMainWindow):
+    def __init__(self, ax, canvas):
+        super().__init__()
+        self.setWindowTitle("prova prova")
+
+        canvas.draw()
+
+        # if save_plots is True:
+        #     canvas.figure.savefig(
+        #         './Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+
+        QCoreApplication.processEvents()
+

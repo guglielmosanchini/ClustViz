@@ -17,7 +17,7 @@ from GUI_classes.generic_gui import StartingGui
 
 class OPTICS_class(StartingGui):
     def __init__(self):
-        super(OPTICS_class, self).__init__(name="OPTICS", twinx=True, second_plot=True,
+        super(OPTICS_class, self).__init__(name="OPTICS", twinx=True, first_plot=True, second_plot=True,
                                            function=self.start_OPTICS, extract=True)
 
     def start_OPTICS(self):
