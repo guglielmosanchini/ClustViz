@@ -189,8 +189,14 @@ class StartingGui(QWidget):
         elif self.name == "CLARA":
             self.n_medoids = 3
             self.dist_clara = "fast_euclidean"
+
         elif self.name == "PAM":
             self.n_medoids = 3
+
+        elif self.name == "CLARANS":
+            self.n_medoids = 3
+            self.numlocal_clarans = 5
+            self.maxneighbors_clarans = 5
 
     def label_initialization(self):
 
@@ -297,7 +303,7 @@ class StartingGui(QWidget):
             self.alpha_cure_validator = QDoubleValidator(0, 1, 4, self)
             self.line_edit_alpha_cure.setValidator(self.alpha_cure_validator)
 
-            if (self.name == "LARGE CURE"):
+            if self.name == "LARGE CURE":
                 # p_cure LABEL
                 self.label_p_cure = QLabel(self)
                 self.label_p_cure.setText("p:")
@@ -323,7 +329,7 @@ class StartingGui(QWidget):
                 self.q_cure_validator = QIntValidator(2, 100, self)
                 self.line_edit_q_cure.setValidator(self.q_cure_validator)
 
-        elif (self.name == "CLARA") or (self.name == "PAM"):
+        elif (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
 
             # n_medoids LABEL
             self.label_n_medoids = QLabel(self)
@@ -350,6 +356,31 @@ class StartingGui(QWidget):
                 self.combobox_distances_clara.addItem("manhattan")
                 self.combobox_distances_clara.addItem("cosine")
 
+            if self.name == "CLARANS":
+                # numlocal_clarans LABEL
+                self.label_numlocal_clarans = QLabel(self)
+                self.label_numlocal_clarans.setText("num_iter:")
+                self.label_numlocal_clarans.setToolTip("The number of local minima obtained (amount of iterations "
+                                                        "for solving the problem).")
+
+                self.line_edit_numlocal_clarans = QLineEdit(self)
+                self.line_edit_numlocal_clarans.setText(str(self.numlocal_clarans))
+
+                self.numlocal_clarans_validator = QIntValidator(1, 1000, self)
+                self.line_edit_numlocal_clarans.setValidator(self.numlocal_clarans_validator)
+
+                # maxneighbors_clarans LABEL
+                self.label_maxneighbors_clarans = QLabel(self)
+                self.label_maxneighbors_clarans.setText("max_neigh:")
+                self.label_maxneighbors_clarans.setToolTip("The maximum number of neighbors examined. This heavily "
+                                                           "affects runtime")
+
+                self.line_edit_maxneighbors_clarans = QLineEdit(self)
+                self.line_edit_maxneighbors_clarans.setText(str(self.maxneighbors_clarans))
+
+                self.maxneighbors_clarans_validator = QIntValidator(1, 1000, self)
+                self.line_edit_maxneighbors_clarans.setValidator(self.maxneighbors_clarans_validator)
+
     def log_initialization(self):
         if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE"):
             self.log = QPlainTextEdit("SEED QUEUE")
@@ -360,7 +391,7 @@ class StartingGui(QWidget):
 
             self.gridlayout.addWidget(self.log, 1, 0)
 
-        elif (self.name == "DBSCAN") or (self.name == "CLARA") or (self.name == "PAM"):
+        elif (self.name == "DBSCAN") or (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
             self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setGeometry(900, 60, 350, 400)
             self.log.setStyleSheet(
@@ -370,7 +401,7 @@ class StartingGui(QWidget):
             self.log.setFixedHeight(335)
             if self.name == "DBSCAN":
                 self.gridlayout.addWidget(self.log, 1, 0)
-            elif (self.name == "CLARA") or (self.name == "PAM"):
+            elif (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
                 self.gridlayout.addWidget(self.log, 1, 1)
 
         elif (self.name == "CURE") or (self.name == "LARGE CURE"):
@@ -458,7 +489,7 @@ class StartingGui(QWidget):
                 self.gridlayout_but.addWidget(self.checkbox_saveimg, 8, 0, 1, 2)
                 self.gridlayout_but.addWidget(self.checkbox_gif, 8, 2, 1, 2)
                 self.gridlayout_but.addWidget(self.button_delete_pics, 9, 0, 1, 4)
-            elif (self.name == "CURE"):
+            elif self.name == "CURE":
                 self.gridlayout_but.addWidget(self.button_run, 5, 0, 1, 2)
 
                 self.gridlayout_but.addWidget(self.label_slider, 6, 0, 1, 2)
@@ -501,17 +532,38 @@ class StartingGui(QWidget):
             self.gridlayout_but.addWidget(self.checkbox_gif, 5, 1)
             self.gridlayout_but.addWidget(self.button_delete_pics, 6, 0, 1, 0)
 
+        elif self.name == "CLARANS":
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_n_medoids, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_n_medoids, 2, 1)
+            self.gridlayout_but.addWidget(self.label_numlocal_clarans, 3, 0)
+            self.gridlayout_but.addWidget(self.line_edit_numlocal_clarans, 3, 1)
+            self.gridlayout_but.addWidget(self.label_maxneighbors_clarans, 4, 0)
+            self.gridlayout_but.addWidget(self.line_edit_maxneighbors_clarans, 4, 1)
+
+            self.gridlayout_but.addWidget(self.button_run, 5, 0)
+
+            self.gridlayout_but.addWidget(self.label_slider, 6, 0)
+            self.gridlayout_but.addWidget(self.slider, 6, 1)
+            self.gridlayout_but.addWidget(self.checkbox_saveimg, 7, 0)
+            self.gridlayout_but.addWidget(self.checkbox_gif, 7, 1)
+            self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 0)
+
     def checkBoxChangedAction(self, state):
-        if (Qt.Checked == state):
+        if Qt.Checked == state:
             self.save_plots = True
             self.checkbox_gif.setEnabled(True)
 
             try:
                 os.mkdir('./Images/{}_{:02}'.format(self.name, self.ind_run))
-                print("new folder")
+                # print("new folder")
 
             except OSError as error:
-                print(error)
+                pass
+                # print(error)
         else:
             self.checkbox_gif.setEnabled(False)
             self.save_plots = False
@@ -534,7 +586,7 @@ class StartingGui(QWidget):
             return
 
     def GIFChangedAction(self, state):
-        if (Qt.Checked == state):
+        if Qt.Checked == state:
             self.make_gif = True
         else:
             self.make_gif = False
@@ -639,12 +691,26 @@ class StartingGui(QWidget):
                                         "The parameter q must be an integer and lie between {0}"
                                         " and {1}.".format(2, 100))
 
-        elif (self.name == "CLARA") or (self.name == "PAM"):
+        elif (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
             check_n_medoids = self.n_medoids_validator.validate(self.line_edit_n_medoids.text(), 0)
 
             self.show_error_message(check_n_medoids,
                                     "The parameter n_medoids must be an integer and lie between "
                                     "{0} and {1}".format(2, 1000))
+
+            if self.name == "CLARANS":
+
+                check_numlocal_clarans = self.numlocal_clarans_validator.validate(
+                    self.line_edit_numlocal_clarans.text(), 0)
+                check_maxneighbors_clarans = self.maxneighbors_clarans_validator.validate(
+                    self.line_edit_maxneighbors_clarans.text(), 0)
+
+                self.show_error_message(check_numlocal_clarans,
+                                        "The parameter num_iter must be an integer and lie between "
+                                        "{0} and {1}".format(1, 1000))
+                self.show_error_message(check_maxneighbors_clarans,
+                                        "The parameter max_neigh must be an integer and lie between "
+                                        "{0} and {1}".format(1, 1000))
 
     def SetWindows(self, number, first_run_boolean):
         """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount

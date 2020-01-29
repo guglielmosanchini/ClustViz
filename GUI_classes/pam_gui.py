@@ -92,6 +92,7 @@ class KMedoids_gui:
         self.__random_state = random_state
 
     def fit(self, data):
+        self.log.appendPlainText("")
         self.log.appendPlainText("fitting")
         self.__data = data
         self.__set_data_type()
@@ -110,8 +111,8 @@ class KMedoids_gui:
         if self.delay != 0:
             pause_execution(self.delay)
 
-        self.plot_pam(data=self.__data, cl=self.clusters, ax=self.ax, canvas=self.canvas, ind_run=self.ind_run,
-                      ind_fig=0, save_plots=self.save_fig)
+        self.plot_pam_gui(data=self.__data, cl=self.clusters, ax=self.ax, canvas=self.canvas, ind_run=self.ind_run,
+                          ind_fig=0, save_plots=self.save_fig)
 
         self.__update_clusters()
 
@@ -119,7 +120,7 @@ class KMedoids_gui:
         for i in range(self.max_iter):  # to stop if convergence isn't reached whithin max_iter iterations
 
             self.log.appendPlainText("")
-            self.log.appendPlainText("iteration n°: {}".format(i))
+            self.log.appendPlainText("iteration n°: {}".format(i+1))
             # compute distance obtained by swapping medoids in the clusters
             cluster_dist_with_new_medoids = self.__swap_and_recalculate_clusters()
             # if the new sum of cluster_distances is smaller than the old one
@@ -130,8 +131,9 @@ class KMedoids_gui:
                 self.log.appendPlainText("clusters: {}".format(self.clusters))
                 if self.delay != 0:
                     pause_execution(self.delay)
-                self.plot_pam(data=self.__data, cl=self.clusters, ax=self.ax, canvas=self.canvas, ind_run=self.ind_run,
-                              ind_fig=i+1, save_plots=self.save_fig)
+                self.plot_pam_gui(data=self.__data, cl=self.clusters, ax=self.ax, canvas=self.canvas,
+                                  ind_run=self.ind_run,
+                                  ind_fig=i + 1, save_plots=self.save_fig)
                 # print("clusters_distances: ", self.cluster_distances)
             else:
                 # if the sum of cluster_distances doesn't improve, terminate the algorithm
@@ -180,7 +182,8 @@ class KMedoids_gui:
                     cluster_list[self.clusters[medoid].index(data_index)] = medoid
                     # compute new cluster distance obtained by swapping the medoid
                     new_distance = self.calculate_inter_cluster_distance(data_index, cluster_list)
-                    if new_distance < self.cluster_distances[medoid]:  # if this new distance is smaller than the previous one
+                    if new_distance < self.cluster_distances[
+                        medoid]:  # if this new distance is smaller than the previous one
                         self.log.appendPlainText("new better medoid: {}".format(data_index))
                         cluster_dist[data_index] = new_distance
                         is_shortest_medoid_found = True
@@ -286,7 +289,7 @@ class KMedoids_gui:
         else:
             raise ValueError('Invalid input')
 
-    def plot_pam(self, data, ax, canvas, cl, ind_run, ind_fig, name="PAM", save_plots=False):
+    def plot_pam_gui(self, data, ax, canvas, cl, ind_run, ind_fig, name="PAM", save_plots=False):
         """
         Scatterplot of data points, with colors according to cluster labels.
         Centers of mass of the clusters are marked with an X.
@@ -298,6 +301,8 @@ class KMedoids_gui:
         ax.clear()
         if ind_fig is not None:
             ax.set_title("{} run number {}".format(name, ind_fig + 1))
+        else:
+            ax.set_title("{} final clusters".format(name))
 
         # all points are plotted in white
         ax.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")

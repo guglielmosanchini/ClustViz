@@ -11,7 +11,7 @@ from GUI_classes.agglomerative_gui import AGGLOMERATIVE_class
 from GUI_classes.cure_gui import CURE_class
 from GUI_classes.cure_large_gui import LARGE_CURE_class
 from GUI_classes.clara_gui import CLARA_class
-# from GUI_classes.clarans_gui import CLARANS_class
+from GUI_classes.clarans_gui import CLARANS_class
 # from GUI_classes.birch_gui import BIRCH_class
 from GUI_classes.pam_gui import PAM_class
 # from GUI_classes.denclue_gui import DENCLUE_class
@@ -185,7 +185,14 @@ class Main_Window(QWidget):
         self.change_button_status(index - 1)
 
     def open_CLARANS(self):
-        pass
+        """Open CLARANS_tab and disable its button in the Initial Tab"""
+        self.CLARANS_tab = CLARANS_class()
+        self.tabs.addTab(self.CLARANS_tab, "CLARANS")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["CLARANS"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_PAM(self):
         """Open PAM_tab and disable its button in the Initial Tab"""
