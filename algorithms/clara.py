@@ -301,7 +301,7 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
 
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    # just as a habit, it actually doesnt plot anything because points are white with thite edgecolor
+    # just as a habit, it actually doesnt plot anything because points are white with white edgecolor
     plt.scatter(full.iloc[:, 0], full.iloc[:, 1], s=300, color="white", edgecolor="white")
 
     colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
@@ -317,28 +317,10 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
         plt.scatter(data.loc[el, 0], data.loc[el, 1], s=500, color="red", marker="X", edgecolor="black")
 
     # plot indexes of points in plot
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
+    for i, txt in enumerate([i for i in range(len(full))]):
+        ax.annotate(txt, (full.iloc[i, 0], full.iloc[i, 1]), fontsize=10, size=10, ha='center', va='center')
 
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
-    for i, txt in enumerate(range(len(full))):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (full.iloc[i, 0] - xw1, full.iloc[i, 1] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (full.iloc[i, 0] - xw2, full.iloc[i, 1] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (full.iloc[i, 0] - xw3, full.iloc[i, 1] - yw3), fontsize=9, size=9)
-
-    if equal_axis_scale == True:
-        plt.gca().set_aspect('equal', adjustable='box')
+    if equal_axis_scale is True:
+        ax.set_aspect('equal', adjustable='box')
 
     plt.show()

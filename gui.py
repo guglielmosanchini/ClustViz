@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout,
     QVBoxLayout, QTabBar
 
 from PyQt5.QtGui import QFont
-
+# import qdarkstyle
 import sys
 
 from GUI_classes.optics_gui import OPTICS_class
@@ -10,11 +10,31 @@ from GUI_classes.dbscan_gui import DBSCAN_class
 from GUI_classes.agglomerative_gui import AGGLOMERATIVE_class
 from GUI_classes.cure_gui import CURE_class
 from GUI_classes.cure_large_gui import LARGE_CURE_class
-
+from GUI_classes.clara_gui import CLARA_class
+# from GUI_classes.clarans_gui import CLARANS_class
+# from GUI_classes.birch_gui import BIRCH_class
+from GUI_classes.pam_gui import PAM_class
+# from GUI_classes.denclue_gui import DENCLUE_class
+# from GUI_classes.chameleon_gui import CHAMELEON_class
 
 # TODO: button images
 # TODO: play/pause button
 # TODO: comment everything
+
+# Back up the reference to the exceptionhook
+sys._excepthook = sys.excepthook
+
+
+def my_exception_hook(exctype, value, traceback):
+    # Print the error and traceback
+    print(exctype, value, traceback)
+    # Call the normal Exception hook after
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
+# Set the exception hook to our wrapping function
+sys.excepthook = my_exception_hook
 
 
 class Main_Window(QWidget):
@@ -29,6 +49,12 @@ class Main_Window(QWidget):
         self.AGGLOMERATIVE_tab = None
         self.CURE_tab = None
         self.LARGE_CURE_tab = None
+        self.CLARA_tab = None
+        self.CLARANS_tab = None
+        self.DENCLUE_tab = None
+        self.CHAMELEON_tab = None
+        self.PAM_tab = None
+        self.BIRCH_tab = None
         # current index and current dictionary of open tabs
         self.current_index = 0
         self.open_tab_dict = {}
@@ -149,13 +175,27 @@ class Main_Window(QWidget):
         self.change_button_status(index - 1)
 
     def open_CLARA(self):
-        pass
+        """Open CLARA_tab and disable its button in the Initial Tab"""
+        self.CLARA_tab = CLARA_class()
+        self.tabs.addTab(self.CLARA_tab, "CLARA")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["CLARA"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_CLARANS(self):
         pass
 
     def open_PAM(self):
-        pass
+        """Open PAM_tab and disable its button in the Initial Tab"""
+        self.PAM_tab = PAM_class()
+        self.tabs.addTab(self.PAM_tab, "PAM")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["PAM"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_CHAMELEON(self):
         pass
@@ -212,4 +252,8 @@ if __name__ == '__main__':
     win.update()
     # setup stylesheet
     # run
-    sys.exit(app.exec_())
+    try:
+        sys.exit(app.exec_())
+    except:
+        print("Exiting")
+

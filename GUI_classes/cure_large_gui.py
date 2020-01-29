@@ -89,7 +89,7 @@ class LARGE_CURE_class(StartingGui):
     def point_plot_mod2_gui(self, data, a, reps, ax, canvas, level_txt, level2_txt=None,
                             par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,
                             not_sampled=None, not_sampled_ind=None, n_rep_fin=None, save_plots=False,
-                            ind_fig=None):
+                            ind_fig=None, ind_fig_bis=None):
         """
         Scatter-plot of input data points, colored according to the cluster they belong to.
         A rectangle with red borders is displayed around the last merged cluster; representative points
@@ -119,7 +119,10 @@ class LARGE_CURE_class(StartingGui):
 
         """
         ax.cla()
-        ax.set_title("{} procedure".format(self.name))
+        if ind_fig_bis is not None:
+            ax.set_title("partition {}".format(ind_fig_bis + 1))
+        else:
+            ax.set_title("final step")
         # diz is used to take the shuffling of data into account, e.g. if the first row doesn'#
         # correspond to point 0: this is useful for the large dataset version of CURE, where data points
         # are randomly sampled, but the initial indices are kept to be plotted.
@@ -219,7 +222,13 @@ class LARGE_CURE_class(StartingGui):
         canvas.draw()
 
         if save_plots is True:
-            canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+
+            if ind_fig_bis is not None:
+                canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}_{:02}.png'.format(self.name, self.ind_run,
+                                                                                     ind_fig_bis, ind_fig))
+            else:
+                canvas.figure.savefig('./Images/{}_{:02}/fig_fin_{:02}.png'.format(self.name, self.ind_run,
+                                                                                   ind_fig))
 
         QCoreApplication.processEvents()
 
@@ -286,8 +295,7 @@ class LARGE_CURE_class(StartingGui):
             canvas.draw()
 
             if save_plots is True:
-                canvas.figure.savefig(
-                    './Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+                canvas.figure.savefig('./Images/{}_{:02}/fig_fin.png'.format(self.name, self.ind_run))
 
             QCoreApplication.processEvents()
 
@@ -299,7 +307,8 @@ class LARGE_CURE_class(StartingGui):
             return list_keys_diz
 
     def cure_gui(self, data, k, ax, canvas, plotting=True, preprocessed_data=None,
-                 partial_index=None, n_rep_finalclust=None, not_sampled=None, not_sampled_ind=None, delay=0):
+                 partial_index=None, n_rep_finalclust=None, not_sampled=None, not_sampled_ind=None,
+                 delay=0, ind_fig_bis=None):
         """
         CURE algorithm: hierarchical agglomerative clustering using representatives.
         :param data: input data.
@@ -321,7 +330,6 @@ class LARGE_CURE_class(StartingGui):
 
         """
         ax.cla()
-        ax.set_title("{} procedure".format(self.name))
 
         index_for_saving_plots = 0
         # starting from raw data
@@ -426,7 +434,7 @@ class LARGE_CURE_class(StartingGui):
             del rep[u]
             del rep[u_cl]
 
-            if plotting == True:
+            if plotting is True:
                 if delay != 0:
                     pause_execution(self.delay)
 
@@ -455,7 +463,8 @@ class LARGE_CURE_class(StartingGui):
                                                                  last_reps=final_reps, not_sampled=not_sampled,
                                                                  not_sampled_ind=not_sampled_ind,
                                                                  n_rep_fin=n_rep_finalclust, save_plots=self.save_plots,
-                                                                 ind_fig=index_for_saving_plots)
+                                                                 ind_fig=index_for_saving_plots,
+                                                                 ind_fig_bis=ind_fig_bis)
 
                     # in the intermediate steps of the large dataset version
                     else:
@@ -463,11 +472,12 @@ class LARGE_CURE_class(StartingGui):
                                                                  level_txt=levels[-1], par_index=partial_index,
                                                                  u=u, u_cl=u_cl, initial_ind=initial_index,
                                                                  save_plots=self.save_plots,
-                                                                 ind_fig=index_for_saving_plots)
+                                                                 ind_fig=index_for_saving_plots,
+                                                                 ind_fig_bis=ind_fig_bis)
                 else:
                     self.point_plot_mod2_gui(a=a, reps=rep[name], ax=ax, canvas=canvas, level_txt=levels[-1],
                                              save_plots=self.save_plots,
-                                             ind_fig=index_for_saving_plots)
+                                             ind_fig=index_for_saving_plots, ind_fig_bis=ind_fig_bis)
 
             index_for_saving_plots += 1
 
@@ -572,7 +582,7 @@ class LARGE_CURE_class(StartingGui):
             self.log.appendPlainText("partition number: {}".format(i + 1))
             clusters, rep, mat_a = self.cure_gui(data=b_partitions[i].values, k=k_prov, ax=p_dict_list[i],
                                                  canvas=p_dict_canvas[i],
-                                                 partial_index=b_partitions[i].index, delay=delay)
+                                                 partial_index=b_partitions[i].index, delay=delay, ind_fig_bis=i)
             partial_clust1.append(clusters)
             partial_rep1.append(rep)
             partial_a1.append(mat_a)
@@ -606,14 +616,14 @@ class LARGE_CURE_class(StartingGui):
         # final_clustering
         prep_data = [clust_tot, rep_tot, a_tot, X_dist_tot]
 
-        self.openFinalStepWindow(ax=self.ax_fin, canvas=self.canvas_fin)
+        self.openFinalStepWindow(canvas=self.canvas_fin)
 
         clusters, rep, mat_a = self.cure_gui(b_sampled.values, k=self.n_clust, ax=self.ax_fin,
                                              canvas=self.canvas_fin,
                                              preprocessed_data=prep_data,
                                              partial_index=b_sampled.index, n_rep_finalclust=n_rep_finalclust,
                                              not_sampled=b_notsampled.values,
-                                             not_sampled_ind=b_notsampled.index, delay=delay)
+                                             not_sampled_ind=b_notsampled.index, delay=delay, ind_fig_bis=None)
 
         return clusters, rep, mat_a
 
@@ -643,27 +653,21 @@ class LARGE_CURE_class(StartingGui):
 
         return res
 
-    def openFinalStepWindow(self, ax, canvas):
-        self.w = FinalStepWindow(ax=ax, canvas=canvas)
+    def openFinalStepWindow(self,canvas):
+        self.w = FinalStepWindow(canvas=canvas)
         self.w.show()
-        # self.hide()
 
 
-from PyQt5.QtWidgets import QLabel, QWidget, QMainWindow
+from PyQt5.QtWidgets import QMainWindow
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
 
 
 class FinalStepWindow(QMainWindow):
-    def __init__(self, ax, canvas):
+    def __init__(self, canvas):
         super().__init__()
-        self.setWindowTitle("prova prova")
+        self.setWindowTitle("Final Step")
+        self.setGeometry(300, 200, 1000, 400)
 
+        self.setCentralWidget(canvas)
         canvas.draw()
-
-        # if save_plots is True:
-        #     canvas.figure.savefig(
-        #         './Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
-
-        QCoreApplication.processEvents()
-

@@ -18,7 +18,7 @@ from GUI_classes.utils_gui import LabeledSlider
 
 class StartingGui(QWidget):
     def __init__(self, name, twinx, first_plot, second_plot, function, stretch_plot=False,
-                 extract=False, partition=False):
+                 extract=False):
         super().__init__()
 
         self.name = name
@@ -186,6 +186,12 @@ class StartingGui(QWidget):
                 self.p_cure = 2
                 self.q_cure = 2
 
+        elif self.name == "CLARA":
+            self.n_medoids = 3
+            self.dist_clara = "fast_euclidean"
+        elif self.name == "PAM":
+            self.n_medoids = 3
+
     def label_initialization(self):
 
         if (self.name == "OPTICS") or (self.name == "DBSCAN"):
@@ -317,6 +323,33 @@ class StartingGui(QWidget):
                 self.q_cure_validator = QIntValidator(2, 100, self)
                 self.line_edit_q_cure.setValidator(self.q_cure_validator)
 
+        elif (self.name == "CLARA") or (self.name == "PAM"):
+
+            # n_medoids LABEL
+            self.label_n_medoids = QLabel(self)
+            self.label_n_medoids.setText("n_medoids:")
+            self.label_n_medoids.setToolTip("The desired number of medoids to use "
+                                            "(corresponding to the desired number of clusters).")
+
+            self.line_edit_n_medoids = QLineEdit(self)
+            self.line_edit_n_medoids.setText(str(self.n_medoids))
+
+            self.n_medoids_validator = QIntValidator(2, 1000, self)
+            self.line_edit_n_medoids.setValidator(self.n_medoids_validator)
+
+            if self.name == "CLARA":
+                # distance LABEL
+                self.label_distances_clara = QLabel(self)
+                self.label_distances_clara.setText("distance:")
+                self.label_distances_clara.setToolTip("Choose among four distances to perform CLARA.")
+
+                # COMBOBOX of possible distances to use
+                self.combobox_distances_clara = QComboBox(self)
+                self.combobox_distances_clara.addItem("fast_euclidean")
+                self.combobox_distances_clara.addItem("euclidean")
+                self.combobox_distances_clara.addItem("manhattan")
+                self.combobox_distances_clara.addItem("cosine")
+
     def log_initialization(self):
         if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE"):
             self.log = QPlainTextEdit("SEED QUEUE")
@@ -327,7 +360,7 @@ class StartingGui(QWidget):
 
             self.gridlayout.addWidget(self.log, 1, 0)
 
-        elif self.name == "DBSCAN":
+        elif (self.name == "DBSCAN") or (self.name == "CLARA") or (self.name == "PAM"):
             self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setGeometry(900, 60, 350, 400)
             self.log.setStyleSheet(
@@ -335,7 +368,10 @@ class StartingGui(QWidget):
                                    color: #000000;
                                    font-family: Courier;}""")
             self.log.setFixedHeight(335)
-            self.gridlayout.addWidget(self.log, 1, 0)
+            if self.name == "DBSCAN":
+                self.gridlayout.addWidget(self.log, 1, 0)
+            elif (self.name == "CLARA") or (self.name == "PAM"):
+                self.gridlayout.addWidget(self.log, 1, 1)
 
         elif (self.name == "CURE") or (self.name == "LARGE CURE"):
             self.log = QPlainTextEdit("{} LOG".format(self.name))
@@ -343,8 +379,8 @@ class StartingGui(QWidget):
                 """QPlainTextEdit {background-color: #FFF;
                                    color: #000000;
                                    font-family: Courier;}""")
-
-            self.gridlayout.addWidget(self.log, 1, 0)
+            self.log.setFixedWidth(220)
+            self.gridlayout.addWidget(self.log, 1, 0, 1, 2)
 
     def buttons_groupbox_initialization(self):
 
@@ -430,6 +466,40 @@ class StartingGui(QWidget):
                 self.gridlayout_but.addWidget(self.checkbox_saveimg, 7, 0, 1, 2)
                 self.gridlayout_but.addWidget(self.checkbox_gif, 7, 2, 1, 2)
                 self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 4)
+
+        elif self.name == "CLARA":
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_n_medoids, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_n_medoids, 2, 1)
+            self.gridlayout_but.addWidget(self.label_distances_clara, 3, 0)
+            self.gridlayout_but.addWidget(self.combobox_distances_clara, 3, 1)
+
+            self.gridlayout_but.addWidget(self.button_run, 4, 0)
+
+            self.gridlayout_but.addWidget(self.label_slider, 5, 0)
+            self.gridlayout_but.addWidget(self.slider, 5, 1)
+            self.gridlayout_but.addWidget(self.checkbox_saveimg, 6, 0)
+            self.gridlayout_but.addWidget(self.checkbox_gif, 6, 1)
+            self.gridlayout_but.addWidget(self.button_delete_pics, 7, 0, 1, 0)
+
+        elif self.name == "PAM":
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_n_medoids, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_n_medoids, 2, 1)
+
+            self.gridlayout_but.addWidget(self.button_run, 3, 0)
+
+            self.gridlayout_but.addWidget(self.label_slider, 4, 0)
+            self.gridlayout_but.addWidget(self.slider, 4, 1)
+            self.gridlayout_but.addWidget(self.checkbox_saveimg, 5, 0)
+            self.gridlayout_but.addWidget(self.checkbox_gif, 5, 1)
+            self.gridlayout_but.addWidget(self.button_delete_pics, 6, 0, 1, 0)
 
     def checkBoxChangedAction(self, state):
         if (Qt.Checked == state):
@@ -569,17 +639,24 @@ class StartingGui(QWidget):
                                         "The parameter q must be an integer and lie between {0}"
                                         " and {1}.".format(2, 100))
 
+        elif (self.name == "CLARA") or (self.name == "PAM"):
+            check_n_medoids = self.n_medoids_validator.validate(self.line_edit_n_medoids.text(), 0)
+
+            self.show_error_message(check_n_medoids,
+                                    "The parameter n_medoids must be an integer and lie between "
+                                    "{0} and {1}".format(2, 1000))
+
     def SetWindows(self, number, first_run_boolean):
+        """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount
+        of subplots to display all the partitions, according to the user's input of p, which is here called number.
+
+        :param number: how many subplots to do (can be 2, 3 or 4).
+        :param first_run_boolean: if True, delete previous widgets (plots) before replotting."""
 
         self.ax1 = None
         self.ax2 = None
         self.ax3 = None
         self.ax4 = None
-
-        # self.ax1.clear()
-        # self.ax2.clear()
-        # self.ax3.clear()
-        # self.ax4.clear()
 
         self.canvas_3 = None
         self.canvas_4 = None
@@ -588,15 +665,11 @@ class StartingGui(QWidget):
         self.ax1 = self.canvas_up.figure.subplots()
         self.ax1.set_xticks([], [])
         self.ax1.set_yticks([], [])
-        # self.ax1.set_title(self.name + " procedure")
 
         self.canvas_2 = FigureCanvas(Figure(figsize=(12, 5)))
         self.ax2 = self.canvas_2.figure.subplots()
         self.ax2.set_xticks([], [])
         self.ax2.set_yticks([], [])
-
-        # self.ax.set_title(self.name + " Reachability Plot")
-        # self.ax.set_ylabel("reachability distance")
 
         if number >= 3:
             self.canvas_3 = FigureCanvas(Figure(figsize=(12, 5)))
@@ -609,13 +682,13 @@ class StartingGui(QWidget):
             self.ax4.set_xticks([], [])
             self.ax4.set_yticks([], [])
 
+        # this removes all widgets (plots) before replotting
         if first_run_boolean is True:
             for i in reversed(range(self.gridlayout_plots.count())):
                 self.gridlayout_plots.itemAt(i).widget().setParent(None)
 
         self.gridlayout_plots = QGridLayout()
         self.gridlayout.addLayout(self.gridlayout_plots, 0, 1, 3, 2)
-
 
         if number == 2:
             self.gridlayout_plots.addWidget(self.canvas_up, 0, 0)
