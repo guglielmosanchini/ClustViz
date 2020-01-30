@@ -1,23 +1,23 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QCoreApplication
 import random
-import scipy
-import itertools
-import graphviz
 
 from pyclustering.cluster.encoder import type_encoding
 from pyclustering.utils import euclidean_distance_square
 
 from GUI_classes.utils_gui import choose_dataset, pause_execution
 from GUI_classes.pam_gui import KMedoids_gui
-from algorithms.clarans import compute_cost_clarans
 
-from GUI_classes.generic_gui import StartingGui
+
+from GUI_classes.generic_gui import StartingGui, GraphWindow
 
 
 class CLARANS_class(StartingGui):
     def __init__(self):
         super(CLARANS_class, self).__init__(name="CLARANS", twinx=False, first_plot=True, second_plot=False,
                                             function=self.start_CLARANS, extract=False, stretch_plot=False)
+
+        self.example_index = 0
+        self.button_examples_graph.clicked.connect(lambda: self.openGraphWindow(self.example_index))
 
     def start_CLARANS(self):
         self.ax1.cla()
@@ -39,6 +39,8 @@ class CLARANS_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.button_examples_graph.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -61,10 +63,21 @@ class CLARANS_class(StartingGui):
             self.generate_GIF()
 
         self.button_run.setEnabled(True)
+        self.button_examples_graph.setEnabled(True)
         self.checkbox_saveimg.setEnabled(True)
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
+
+    def openGraphWindow(self, ind):
+        self.w = GraphWindow(example_index=ind)
+
+        if ind != 9:
+            self.example_index += 1
+        else:
+            self.example_index = 0
+        self.w.show()
 
 
 class clarans_gui:
@@ -389,41 +402,4 @@ class clarans_gui:
         return estimation
 
 
-def plot_tree_clarans_gui(data, k):
-    """
-    Plots G_{k,n} as in the paper of CLARANS; only to use with small input data.
 
-    :param data: input DataFrame.
-    :param k: number of points in each combination (possible set of medoids).
-    """
-
-    n = len(data)
-    num_points = int(scipy.special.binom(n, k))
-    num_neigh = k * (n - k)
-
-    if (num_points > 50) or (num_neigh > 10):
-        print("Either graph nodes are more than 50 or neighbors are more than 10, the graph would be too big")
-        return
-
-    # all possibile combinations of k elements from input data
-    name_nodes = list(itertools.combinations(list(data.index), k))
-
-    dot = graphviz.Digraph(comment='Clustering')
-
-    # draw nodes, also adding the configuration cost
-    for i in range(num_points):
-        tot_cost, meds = compute_cost_clarans(data, list(name_nodes[i]))
-        tc = round(tot_cost, 3)
-
-        dot.node(str(name_nodes[i]), str(name_nodes[i]) + ": " + str(tc))
-
-    # only connect nodes if they have k-1 common elements
-    for i in range(num_points):
-        for j in range(num_points):
-            if i != j:
-                if len(set(list(name_nodes[i])) & set(list(name_nodes[j]))) == k - 1:
-                    dot.edge(str(name_nodes[i]), str(name_nodes[j]))
-
-    graph = graphviz.Source(dot)  # .view()
-
-    display(graph)

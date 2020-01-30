@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-#from tqdm import tqdm
+# from tqdm import tqdm
 from tqdm.auto import tqdm
 from algorithms.chameleon.visualization import *
 
@@ -19,12 +19,13 @@ def knn_graph(df, k, verbose=False):
     iterpoints = tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1:k+1]  # second through kth closest
+        closests = np.argsort(distances)[1:k + 1]  # second through kth closest
         for c in closests:
             g.add_edge(i, c, weight=1.0 / distances[c], similarity=int(1.0 / distances[c] * 1e4))
         g.node[i]['pos'] = p
     g.graph['edge_weight_attr'] = 'similarity'
     return g
+
 
 def knn_graph_sym(df, k, verbose=False):
     points = [p[1:] for p in df.itertuples()]
@@ -34,10 +35,10 @@ def knn_graph_sym(df, k, verbose=False):
     iterpoints = tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1:k+1]  # second through kth closest
+        closests = np.argsort(distances)[1:k + 1]  # second through kth closest
         for c in closests:
             distances2 = list(map(lambda x: euclidean_distance(points[c], x), points))
-            closests2 = np.argsort(distances2)[1:k+1]
+            closests2 = np.argsort(distances2)[1:k + 1]
             if i in closests2:
                 g.add_edge(i, c, weight=1.0 / distances[c], similarity=int(1.0 / distances[c] * 1e4))
         g.node[i]['pos'] = p
@@ -78,7 +79,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
             if parts[i] == 1:
                 graph.node[p]['cluster'] = clusters + 1
                 new_part_cnt = new_part_cnt + 1
-        if plotting == True:
+        if plotting is True:
             plot2d_graph(graph)
         cnts[maxc] = cnts[maxc] - new_part_cnt
         cnts[clusters + 1] = new_part_cnt

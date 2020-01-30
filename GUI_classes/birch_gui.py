@@ -1,4 +1,6 @@
 from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel
 from pyclustering.cluster import cluster_visualizer
 
 from GUI_classes.utils_gui import choose_dataset, pause_execution
@@ -10,11 +12,13 @@ from pyclustering.utils import linear_sum, square_sum
 
 import numpy as np
 import graphviz
+from shutil import rmtree
+
+from GUI_classes.generic_gui import StartingGui
+
 import os
 
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
-
-from GUI_classes.generic_gui import StartingGui
 
 
 class BIRCH_class(StartingGui):
@@ -22,12 +26,17 @@ class BIRCH_class(StartingGui):
         super(BIRCH_class, self).__init__(name="BIRCH", twinx=False, first_plot=True, second_plot=False,
                                           function=self.start_BIRCH, extract=False, stretch_plot=False)
 
-        self.canvas_graphviz = FigureCanvas(Figure(figsize=(12, 5)))
-        self.ax_gv = self.canvas_up.figure.subplots()
-        self.ax_gv.set_xticks([], [])
-        self.ax_gv.set_yticks([], [])
+        # self.canvas_graphviz = FigureCanvas(Figure(figsize=(12, 5)))
+        # self.ax_gv = self.canvas_up.figure.subplots()
+        # self.ax_gv.set_xticks([], [])
+        # self.ax_gv.set_yticks([], [])
+
+        self.label_graphviz = QLabel(self)
+        self.label_graphviz.setFixedSize(1100, 250)
+        self.gridlayout.addWidget(self.label_graphviz, 1, 1)
 
     def start_BIRCH(self):
+
         self.ax1.cla()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
@@ -48,6 +57,7 @@ class BIRCH_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -61,14 +71,10 @@ class BIRCH_class(StartingGui):
 
         self.checkbox_gif.setEnabled(False)
 
-        # CLARA = ClaraClustering_gui(log=self.log, ax=self.ax1, canvas=self.canvas_up, save_fig=self.save_plots,
-        #                             ind_run=self.ind_run, delay=self.delay)
-        #
-        # CLARA.clara(self.X, self.n_medoids, self.dist_clara)
         birch_instance = birch_gui(self.X.tolist(), self.n_clust, initial_diameter=self.initial_diameter,
                                    max_node_entries=self.max_node_entries, branching_factor=self.branching_factor,
                                    log=self.log, ax=self.ax1, canvas=self.canvas_up, save_fig=self.save_plots,
-                                   ind_run=self.ind_run, delay=self.delay)
+                                   ind_run=self.ind_run, delay=self.delay, label_graphviz=self.label_graphviz)
 
         birch_instance.process(plotting=True)
 
@@ -80,9 +86,10 @@ class BIRCH_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
 
-def plot_tree_fin_gui(tree, log, info=True):
+def plot_tree_fin_gui(tree, log, ind_run, ind_fig, label_graphviz, save_plots=False, info=True):
     """
     Plot the final CFtree built by BIRCH. Leaves are colored, and every node displays the
     total number of elements in its child nodes.
@@ -155,7 +162,7 @@ def plot_tree_fin_gui(tree, log, info=True):
             lett.append(prov[i] + prov[j])
 
     # creating the tree
-    dot = graphviz.Digraph(comment='Clustering')
+    dot = graphviz.Digraph(comment='Clustering', format="png")
     # root
     dot.node(lett[0], str(feat_num[0][0]))
 
@@ -189,9 +196,19 @@ def plot_tree_fin_gui(tree, log, info=True):
         dot.edge(lett[a], lett[b + i + 1])
         a += 1
 
-    graph = graphviz.Source(dot)
-    # show tree
-    graph.view()
+    # graph = graphviz.Source(dot)
+    # graph.view()
+    dot.render(filename='./Images/BIRCH_{:02}/graph_{:02}'.format(ind_run, ind_fig))
+
+    pixmap = QPixmap('./Images/BIRCH_{:02}/graph_{:02}.png'.format(ind_run, ind_fig))
+    label_graphviz.setScaledContents(True)
+    label_graphviz.setPixmap(pixmap)
+
+    folder = './Images/BIRCH_{:02}'.format(ind_run)
+    if save_plots is False:
+        rmtree(folder)
+
+    QCoreApplication.processEvents()
 
 
 def plot_birch_leaves_gui(tree, data, ax, canvas, ind_run, ind_fig, name="BIRCH", save_plots=False):
@@ -214,8 +231,8 @@ def plot_birch_leaves_gui(tree, data, ax, canvas, ind_run, ind_fig, name="BIRCH"
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
               16: "gainsboro", 17: "peachpuff"}
 
-    # plot every point in white
-    ax.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")
+    # plot every point in white with white edgecolor (invisible)
+    ax.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="white")
 
     # for every leaf
     for i, el in enumerate(tree.get_level_nodes(tree.height - 1)):
@@ -248,7 +265,7 @@ def plot_birch_leaves_gui(tree, data, ax, canvas, ind_run, ind_fig, name="BIRCH"
 class birch_gui:
 
     def __init__(self, data, number_clusters, branching_factor, max_node_entries, initial_diameter,
-                 log, ax, canvas, save_fig, ind_run, delay,
+                 log, ax, canvas, save_fig, ind_run, delay, label_graphviz,
                  type_measurement=measurement_type.CENTROID_EUCLIDEAN_DISTANCE,
                  entry_size_limit=200, diameter_multiplier=1.5, ccore=True):
         """!
@@ -280,6 +297,7 @@ class birch_gui:
         self.save_fig = save_fig
         self.ind_run = ind_run
         self.delay = delay
+        self.label_graphviz = label_graphviz
 
         self.__pointer_data = data
         self.__number_clusters = number_clusters
@@ -310,6 +328,14 @@ class birch_gui:
         """
         self.index_for_saving_plot = 0
         self.__insert_data(plotting=plotting)
+
+        plot_tree_fin_gui(tree=self.__tree, log=self.log, ind_run=self.ind_run,
+                          ind_fig=self.index_for_saving_plot, label_graphviz=self.label_graphviz,
+                          save_plots=self.save_fig)
+        plot_birch_leaves_gui(tree=self.__tree, data=self.__pointer_data, ax=self.ax, canvas=self.canvas,
+                              ind_run=self.ind_run, ind_fig=self.index_for_saving_plot,
+                              save_plots=self.save_fig)
+
         self.__extract_features()
 
         # in line with specification modify hierarchical algorithm should be used for further clustering
@@ -335,7 +361,8 @@ class birch_gui:
         """!
         @brief Returns list of allocated clusters, each cluster contains indexes of objects in list of data.
 
-        @remark Allocated noise can be returned only after data processing (use method process() before). Otherwise empty list is returned.
+        @remark Allocated noise can be returned only after data processing (use method process() before).
+        Otherwise empty list is returned.
 
         @return (list) List of allocated clusters.
 
@@ -418,7 +445,9 @@ class birch_gui:
             if (index_point != 0) and (plotting is True):
                 if self.delay != 0:
                     pause_execution(self.delay)
-                plot_tree_fin_gui(self.__tree, log=self.log)
+                plot_tree_fin_gui(tree=self.__tree, log=self.log, ind_run=self.ind_run,
+                                  ind_fig=self.index_for_saving_plot, label_graphviz=self.label_graphviz,
+                                  save_plots=self.save_fig)
                 plot_birch_leaves_gui(tree=self.__tree, data=self.__pointer_data, ax=self.ax, canvas=self.canvas,
                                       ind_run=self.ind_run, ind_fig=self.index_for_saving_plot,
                                       save_plots=self.save_fig)
@@ -427,7 +456,7 @@ class birch_gui:
             self.log.appendPlainText("")
             self.log.appendPlainText("index: {}".format(index_point))
             point = self.__pointer_data[index_point]
-            self.log.appendPlainText("point {}".format(point))
+            self.log.appendPlainText("point [{}, {}]".format(round(point[0], 2), round(point[1], 2)))
             self.__tree.insert_cluster([point])
 
             if self.__tree.amount_entries > self.__entry_size_limit:
@@ -713,7 +742,7 @@ class cftree_gui:
             if child_node_updation is True:
                 self.log.appendPlainText("try merge_nearest_successors")
                 # Splitting has been finished, check for possibility to merge (at least we have already two children).
-                if (self.__merge_nearest_successors(self.__root) is True):
+                if self.__merge_nearest_successors(self.__root) is True:
                     self.__amount_nodes -= 1
 
     def find_nearest_leaf(self, entry, search_node=None):
@@ -778,7 +807,7 @@ class cftree_gui:
         # Try to absorb by the entity
         index_nearest_entry = search_node.get_nearest_index_entry(entry, self.__type_measurement)
         self.log.appendPlainText("index_nearest_entry: {}".format(index_nearest_entry))
-        self.log.appendPlainText("nearest entry: {}".format(search_node.entries[index_nearest_entry]))
+        # self.log.appendPlainText("nearest entry: {}".format(search_node.entries[index_nearest_entry]))
         merged_entry = search_node.entries[index_nearest_entry] + entry
 
         self.log.appendPlainText("diameter: {}".format(merged_entry.get_diameter()))
@@ -807,10 +836,10 @@ class cftree_gui:
 
     def __insert_for_noneleaf_node(self, entry, search_node):
         """!
-        @brief Recursive insert entry from none-leaf node to the tree.
+        @brief Recursive insert entry from non-leaf node to the tree.
 
         @param[in] entry (cfentry): Clustering feature.
-        @param[in] search_node (cfnode): None-leaf node from that insertion should be started.
+        @param[in] search_node (cfnode): Non-leaf node from that insertion should be started.
 
         @return (bool) True if number of nodes at the below level is changed, otherwise False.
 
@@ -820,8 +849,8 @@ class cftree_gui:
 
         min_key = lambda child_node: child_node.get_distance(search_node, self.__type_measurement)
         nearest_child_node = min(search_node.successors, key=min_key)
-        self.log.appendPlainText("nearestchildnode: {}".format(nearest_child_node))
-        self.log.appendPlainText("recursive insert in !!! insert_for_nonleaf!!!")
+        # self.log.appendPlainText("nearestchildnode: {}".format(nearest_child_node))
+        # self.log.appendPlainText("recursive insert entry from non-leaf node to the tree")
         child_node_updation = self.__recursive_insert(entry, nearest_child_node)
 
         # Update clustering feature of none-leaf node.
@@ -853,9 +882,9 @@ class cftree_gui:
             self.__amount_nodes += 1
             node_amount_updation = True
 
-        elif (child_node_updation is True):
+        elif child_node_updation is True:
             # Splitting has been finished, check for possibility to merge (at least we have already two children).
-            if (self.__merge_nearest_successors(search_node) is True):
+            if self.__merge_nearest_successors(search_node) is True:
                 self.__amount_nodes -= 1
 
         return node_amount_updation
@@ -929,7 +958,7 @@ class cftree_gui:
         @return (list) New pair of non-leaf nodes [non_leaf_node1, non_leaf_node2].
 
         """
-        self.log.appendPlainText("split non leaf")
+        self.log.appendPlainText("split non-leaf node")
         [farthest_node1, farthest_node2] = node.get_farthest_successors(self.__type_measurement)
 
         # create new non-leaf nodes
@@ -963,11 +992,11 @@ class cftree_gui:
         @warning Splitted node is transformed to non_leaf.
 
         """
-        self.log.appendPlainText("split leaf")
+        self.log.appendPlainText("split leaf node")
         # search farthest pair of entries
         [farthest_entity1, farthest_entity2] = node.get_farthest_entries(self.__type_measurement)
-        self.log.appendPlainText("farthest1: {}".format(farthest_entity1))
-        self.log.appendPlainText("farthest2: {}".format(farthest_entity2))
+        # self.log.appendPlainText("farthest1: {}".format(farthest_entity1))
+        # self.log.appendPlainText("farthest2: {}".format(farthest_entity2))
 
         # create new nodes
         new_node1 = leaf_node(farthest_entity1, node.parent, [farthest_entity1], None)
@@ -984,8 +1013,8 @@ class cftree_gui:
                 else:
                     new_node2.insert_entry(entity)
 
-        self.log.appendPlainText("new_node1: {}".format(new_node1))
-        self.log.appendPlainText("new_node2: {}".format(new_node2))
+        # self.log.appendPlainText("new_node1: {}".format(new_node1))
+        # self.log.appendPlainText("new_node2: {}".format(new_node2))
 
         return [new_node1, new_node2]
 
@@ -1011,4 +1040,3 @@ class cftree_gui:
             visualizer.append_cluster(centers, None, markersize=(self.height - level + 1) * 5)
 
         visualizer.show()
-

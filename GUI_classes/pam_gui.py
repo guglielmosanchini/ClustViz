@@ -31,6 +31,7 @@ class PAM_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -57,6 +58,7 @@ class PAM_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
 
 class KMedoids_gui:

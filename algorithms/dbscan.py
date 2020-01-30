@@ -110,7 +110,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
         plt.scatter(df_sub.x, df_sub.y, color=colors[lab % 12], s=300, edgecolor="black")
 
     # plot circles around noise, colored according to the cluster they belong to
-    if noise_circle == True:
+    if noise_circle is True:
 
         df_noise = df[df.label == -1]
 
@@ -168,8 +168,6 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
     processed = []
 
-    processed_list = []
-
     # for every point in the dataset
     for point in X_dict:
 
@@ -180,14 +178,14 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
             # scan its neighborhood
             N = scan_neigh1_mod(X_dict, X_dict[point], eps)
 
-            if print_details == True:
+            if print_details is True:
                 print("len(N): ", len(N))
             # if there are less than minPTS in its neighborhood, classify it as noise
             if len(N) < minPTS:
 
                 ClustDict.update({point: -1})
 
-                if plotting == True:
+                if plotting is True:
                     point_plot_mod(data, X_dict, point, eps, ClustDict)
             # else if it is a Core point
             else:
@@ -196,7 +194,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 # put it in the cluster dictionary
                 ClustDict.update({point: clust_id})
 
-                if plotting == True:
+                if plotting is True:
                     point_plot_mod(data, X_dict, point, eps, ClustDict)
                 # add it to the temporary processed list
                 processed_list = [point]
@@ -205,7 +203,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 # until the neighborhood is empty
                 while len(N) > 0:
 
-                    if print_details == True:
+                    if print_details is True:
                         print("len(N) in while loop: ", len(N))
                     # take a random point in neighborhood
                     n = random.choice(list(N.keys()))
@@ -223,7 +221,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                         # scan its neighborhood
                         N_2 = scan_neigh1_mod(X_dict, X_dict[n], eps)
 
-                        if print_details == True:
+                        if print_details is True:
                             print("len N2: ", len(N_2))
                         # if it is a core point
                         if len(N_2) >= minPTS:
@@ -238,7 +236,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                     if (n not in ClustDict) or (ClustDict[n] == -1):
                         ClustDict.update({n: clust_id})
 
-                    if plotting == True:
-                        point_plot_mod(data, X_dict, X_dict[n][0], X_dict[n][1], eps, ClustDict)
+                    if plotting is True:
+                        point_plot_mod(data, X_dict, n, eps, ClustDict)
 
     return ClustDict

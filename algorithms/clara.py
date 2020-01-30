@@ -223,9 +223,9 @@ class ClaraClustering(object):
         :param _nsamp: The number of samples.
         :return: The best score, the medoids.
         """
-        # this function tries _nsamp different configurations of initial medoids and chooses the one with the lowest cost
+        # this function tries _nsamp different configurations of initial medoids and chooses the one with the lowest
+        # cost
         print("cheating at sampling")
-        size = len(_df)
         score_holder = []
         medoid_holder = []
         for _ in range(_nsamp):  # 17 by default

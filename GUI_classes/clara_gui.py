@@ -32,6 +32,7 @@ class CLARA_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -58,6 +59,7 @@ class CLARA_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
 
 class ClaraClustering_gui(object):
@@ -115,7 +117,7 @@ class ClaraClustering_gui(object):
             else:
                 sampling_idx = random.sample([i for i in range(size)], 40 + _k * 2)
             # take the corresponding rows from input dataframe _df
-            prov_dic = {i: sampling_idx[i] for i in range(40 + _k * 2)}
+            # prov_dic = {i: sampling_idx[i] for i in range(40 + _k * 2)}
             # print(prov_dic)
             sampling_data = []
             for idx in sampling_idx:
@@ -306,7 +308,8 @@ class ClaraClustering_gui(object):
         :param _nsamp: The number of samples.
         :return: The best score, the medoids.
         """
-        # this function tries _nsamp different configurations of initial medoids and chooses the one with the lowest cost
+        # this function tries _nsamp different configurations of initial medoids and chooses the one with the lowest
+        # cost
         self.log.appendPlainText("cheating at sampling")
         size = len(_df)
         score_holder = []
@@ -375,8 +378,14 @@ class ClaraClustering_gui(object):
         centers of mass of the clusters are marked with an X.
 
         :param data: input data sample as dataframe.
+        :param ax: axis on which to plot.
         :param cl: cluster dictionary.
         :param full: full input dataframe.
+        :param canvas: figure where to plot.
+        :param ind_run: how many times the algorithm has run.
+        :param name: name of the algorithm.
+        :param save_plots: if True, save the plots produced.
+
 
         """
         ax.clear()

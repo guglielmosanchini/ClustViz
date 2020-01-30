@@ -17,6 +17,7 @@ class AGGLOMERATIVE_class(StartingGui):
                                                   function=self.start_AGGL, extract=False, stretch_plot=True)
 
     def start_AGGL(self):
+
         self.ax1.cla()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
@@ -35,6 +36,7 @@ class AGGLOMERATIVE_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -58,6 +60,7 @@ class AGGLOMERATIVE_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
     def point_plot_mod_gui(self, a, level_txt, level2_txt=None, save_plots=False, ind_fig=None):
         """

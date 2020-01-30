@@ -43,10 +43,10 @@ class CURE_class(StartingGui):
 
         self.X = choose_dataset(self.combobox.currentText(), self.n_points)
 
-        # self.button_extract.setEnabled(False)
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -71,6 +71,7 @@ class CURE_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
     def point_plot_mod2_gui(self, a, reps, level_txt, level2_txt=None,
                             par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,

@@ -69,7 +69,7 @@ def FindPoint(x1, y1, x2, y2, x, y):
 
 def FindRect(point, coord_dict):
     for k, v in coord_dict.items():
-        if FindPoint(v[0], v[1], v[2], v[3], point[0], point[1]) == True:
+        if FindPoint(v[0], v[1], v[2], v[3], point[0], point[1]) is True:
             return k
     return None
 
@@ -79,7 +79,7 @@ def form_populated_cubes(a, b, c, d, data):
     lin_sum = [0, 0]
     points = []
     for el in data:
-        if FindPoint(a, b, c, d, el[0], el[1]) == True:
+        if FindPoint(a, b, c, d, el[0], el[1]) is True:
             N_c += 1
             lin_sum[0] += el[0]
             lin_sum[1] += el[1]
@@ -172,7 +172,7 @@ def plot_grid_rect(data, s, cube_kind="populated", color_grids=True):
 
         (a, b, c, d) = ckc[key]
 
-        if color_grids == True:
+        if color_grids is True:
             if key in list(cl.keys()):
                 color_or_not = True if cl[key][0] > 0 else False
             else:
@@ -233,7 +233,7 @@ def connect_cubes(hp_cubes, cubes, s, dist="euclidean"):
 
             if k1 != k2:
 
-                if check_connection(c1, c2, s, dist) == True:
+                if check_connection(c1, c2, s, dist) is True:
                     rel_keys.append([k1, k2])
         i += 1
 
@@ -303,7 +303,7 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
         for j, b in enumerate(range(prec * 10)):
             z[i, j] = gauss_dens(x=np.array([xx[i][a], yy[i][b]]), D=data, s=s)
 
-    if three == True:
+    if three is True:
         ax = plt.axes(projection="3d")
         ax.plot_surface(xx, yy, z, cmap='winter', edgecolor='none')
         plt.show()
@@ -311,7 +311,7 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
         CS = ax.contour(xx, yy, z, cmap='winter', edgecolor='none')
         ax.clabel(CS, inline=1, fontsize=10)
 
-        if (scatter == True) and (three == False):
+        if (scatter is True) and (three is False):
             plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, edgecolor="black", color="yellow", alpha=0.6)
 
         plt.show()
@@ -332,7 +332,7 @@ def assign_cluster(data, others, attractor, clust_dict, processed):
         else:
             processed.append(point_index)
 
-        if attractor[1] == True:
+        if attractor[1] is True:
             clust_dict[point_index] = attractor[0]
         else:
             clust_dict[point_index] = [-1]
@@ -355,26 +355,10 @@ def plot_infl(data, s, xi, prec=3):
 
     plt.axhline(xi, color="red", linewidth=2)
 
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
+    # add indexes to points in plot
     for i, txt in enumerate(range(len(data))):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (i - xw1, z[i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (i - xw2, z[i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (i - xw3, z[i] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (i, z[i]), fontsize=10, size=10, ha='center', va='center')
+
     plt.show()
 
 
@@ -518,26 +502,9 @@ def plot_clust_dict(data, lab_dict):
         plt.scatter(df_dens_attr.loc[i]["x"], df_dens_attr.loc[i]["y"], color="red", marker="X", s=300,
                     edgecolor="black")
 
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
+    # add indexes to points in plot
     for i, txt in enumerate(range(len(data))):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (np.array(data)[i, 0] - xw1, np.array(data)[i, 1] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (np.array(data)[i, 0] - xw2, np.array(data)[i, 1] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (np.array(data)[i, 0] - xw3, np.array(data)[i, 1] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (np.array(data)[i, 0], np.array(data)[i, 1]), fontsize=10, size=10, ha='center', va='center')
 
     plt.show()
 
@@ -560,7 +527,7 @@ def extract_cluster_labels(data, cld, tol=2):
             da_list[i] = -1
         else:
             for k, coord in lr.items():
-                if similarity(coord, el, tol) == True:
+                if similarity(coord, el, tol) is True:
                     da_list[i] = da_list[k]
 
     keys = list(Counter(da_list).keys())
@@ -594,7 +561,7 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
     print("Number of highly populated cubes: ", len(hpc))
     new_cubes = connect_cubes(hpc, z, s=s)
 
-    if plotting == True:
+    if plotting is True:
         plot_grid_rect(data, s=s, cube_kind="populated")
         plot_grid_rect(data, s=s, cube_kind="highly_populated")
 
@@ -627,7 +594,7 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
 
     lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
 
-    if plotting == True:
+    if plotting is True:
         plot_clust_dict(data, coord_df)
 
     return lab

@@ -228,17 +228,24 @@ class birch:
         """!
         @brief Constructor of clustering algorithm BIRCH.
 
-        @param[in] data (list): Input data presented as list of points (objects), where each point should be represented by list or tuple.
+        @param[in] data (list): Input data presented as list of points (objects), where each point
+        should be represented by list or tuple.
         @param[in] number_clusters (uint): Number of clusters that should be allocated.
-        @param[in] branching_factor (uint): Maximum number of successor that might be contained by each non-leaf node in CF-Tree.
-        @param[in] max_node_entries (uint): Maximum number of entries that might be contained by each leaf node in CF-Tree.
-        @param[in] initial_diameter (double): Initial diameter that used for CF-Tree construction, it can be increase if entry_size_limit is exceeded.
+        @param[in] branching_factor (uint): Maximum number of successor that might be contained
+        by each non-leaf node in CF-Tree.
+        @param[in] max_node_entries (uint): Maximum number of entries that might be contained
+        by each leaf node in CF-Tree.
+        @param[in] initial_diameter (double): Initial diameter that used for CF-Tree construction,
+        it can be increase if entry_size_limit is exceeded.
         @param[in] type_measurement (measurement_type): Type measurement used for calculation distance metrics.
-        @param[in] entry_size_limit (uint): Maximum number of entries that can be stored in CF-Tree, if it is exceeded during creation then diameter is increased and CF-Tree is rebuilt.
-        @param[in] diameter_multiplier (double): Multiplier that is used for increasing diameter when entry_size_limit is exceeded.
+        @param[in] entry_size_limit (uint): Maximum number of entries that can be stored in CF-Tree,
+        if it is exceeded during creation then diameter is increased and CF-Tree is rebuilt.
+        @param[in] diameter_multiplier (double): Multiplier that is used for increasing diameter
+         when entry_size_limit is exceeded.
         @param[in] ccore (bool): If True than CCORE (C++ part of the library) will be used for solving the problem.
 
-        @remark Despite eight arguments only the first two are mandatory, others can be ommitted. In this case default values are used for instance creation.
+        @remark Despite eight arguments only the first two are mandatory, others can be ommitted.
+        In this case default values are used for instance creation.
 
         """
 
@@ -294,7 +301,8 @@ class birch:
         """!
         @brief Returns list of allocated clusters, each cluster contains indexes of objects in list of data.
 
-        @remark Allocated noise can be returned only after data processing (use method process() before). Otherwise empty list is returned.
+        @remark Allocated noise can be returned only after data processing (use method process() before).
+        Otherwise empty list is returned.
 
         @return (list) List of allocated clusters.
 
@@ -374,7 +382,7 @@ class birch:
         """
 
         for index_point in range(0, len(self.__pointer_data)):
-            if (index_point != 0) and (plotting == True):
+            if (index_point != 0) and (plotting is True):
                 plot_tree_fin(self.__tree)
                 plot_birch_leaves(self.__tree, data=self.__pointer_data)
 
@@ -461,7 +469,8 @@ class birch:
         @brief Find nearest entry for specified point.
 
         @param[in] point (list): Pointer to point from input dataset.
-        @param[in] feature_collection (list): Feature collection that is used for obtaining nearest feature for the specified point.
+        @param[in] feature_collection (list): Feature collection that is used for
+        obtaining nearest feature for the specified point.
 
         @return (double, uint) Tuple of distance to nearest entry to the specified point and index of that entry.
 

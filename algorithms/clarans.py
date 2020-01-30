@@ -43,14 +43,14 @@ class clarans:
     """
 
     def __init__(self, data, number_clusters, numlocal, maxneighbor):
-        """!
-        @brief Constructor of clustering algorithm CLARANS.
-        @details The higher the value of maxneighbor, the closer is CLARANS to K-Medoids, and the longer is each search of a local minima.
+        """! @brief Constructor of clustering algorithm CLARANS. @details The higher the value of maxneighbor,
+        the closer is CLARANS to K-Medoids, and the longer is each search of a local minima.
 
-        @param[in] data (list): Input data that is presented as list of points (objects), each point should be represented by list or tuple.
+        @param[in] data (list): Input data that is presented as list of points (objects), each point should be
+        represented by list or tuple.
         @param[in] number_clusters (uint): Amount of clusters that should be allocated.
-        @param[in] numlocal (uint): The number of local minima obtained (amount of iterations for solving the problem).
-        @param[in] maxneighbor (uint): The maximum number of neighbors examined.
+        @param[in] numlocal (uint): The number of local minima obtained (amount of iterations for solving the
+        problem). @param[in] maxneighbor (uint): The maximum number of neighbors examined.
 
         """
 
@@ -121,7 +121,7 @@ class clarans:
                 self.__optimal_medoids = self.__current[:]
                 self.__optimal_estimation = estimation
 
-                if plotting == True:
+                if plotting is True:
                     self.__update_clusters(self.__optimal_medoids)
                     plot_pam(self.__pointer_data,
                              dict(zip(self.__optimal_medoids, self.__clusters)))
@@ -129,14 +129,14 @@ class clarans:
             else:
                 print(
                     "Configuration found does not improve current best one because its cost is {0}".format(estimation))
-                if plotting == True:
+                if plotting is True:
                     self.__update_clusters(self.__current[:])
                     plot_pam(self.__pointer_data,
                              dict(zip(self.__current[:], self.__clusters)))
 
         self.__update_clusters(self.__optimal_medoids)
 
-        if plotting == True:
+        if plotting is True:
             print("FINAL RESULT:")
             plot_pam(self.__pointer_data,
                      dict(zip(self.__optimal_medoids, self.__clusters)))
@@ -147,7 +147,8 @@ class clarans:
         """!
         @brief Returns allocated clusters by the algorithm.
 
-        @remark Allocated clusters can be returned only after data processing (use method process()), otherwise empty list is returned.
+        @remark Allocated clusters can be returned only after data processing (use method process()), otherwise empty
+        list is returned.
 
         @return (list) List of allocated clusters, each cluster contains indexes of objects in list of data.
 
@@ -188,7 +189,7 @@ class clarans:
         """
 
         self.__belong = [0] * len(self.__pointer_data)
-        self.__clusters = [[] for i in range(len(medoids))]
+        self.__clusters = [[] for _ in range(len(medoids))]
         for index_point in range(len(self.__pointer_data)):
             index_optim = -1
             dist_optim = 0.0
@@ -262,9 +263,10 @@ class clarans:
                             candidate_cost += distance_candidate - distance_current
 
                     elif point_cluster_index == other_medoid_cluster_index:
-                        # case 3 ('nearest medoid' is the representative object of that cluster and object is more similar to 'nearest' than to 'candidate'):
+                        # case 3 ('nearest medoid' is the representative object of that cluster and object is more
+                        # similar to 'nearest' than to 'candidate'):
                         if distance_candidate > distance_nearest:
-                            pass;
+                            pass
 
                         # case 4:
                         else:
@@ -291,7 +293,8 @@ class clarans:
         """!
         @brief Finds the another nearest medoid for the specified point that is different from the specified medoid.
 
-        @param[in] point_index: index of point in dataspace for that searching of medoid in current list of medoids is perfomed.
+        @param[in] point_index: index of point in dataspace for that searching of medoid in current list of medoids
+        is performed.
         @param[in] current_medoid_index: index of medoid that shouldn't be considered as a nearest.
 
         @return (uint) index of the another nearest medoid for the point.
@@ -336,7 +339,6 @@ def compute_cost_clarans(data, _cur_choice):
         :param _cur_choice: The current set of medoid choices.
         :return: The total configuration cost, the medoids.
         """
-    size = len(data)
     total_cost = 0.0
     medoids = {}
     for idx in _cur_choice:
@@ -374,16 +376,10 @@ def plot_tree_clarans(data, k):
         print("Either graph nodes are more than 50 or neighbors are more than 10, the graph would be too big")
         return
 
-    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
-              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
-
     # all possibile combinations of k elements from input data
     name_nodes = list(itertools.combinations(list(data.index), k))
 
     dot = graphviz.Digraph(comment='Clustering')
-
-    name_list = [i for i in range(num_points)]
 
     # draw nodes, also adding the configuration cost
     for i in range(num_points):
@@ -400,5 +396,4 @@ def plot_tree_clarans(data, k):
                     dot.edge(str(name_nodes[i]), str(name_nodes[j]))
 
     graph = graphviz.Source(dot)  # .view()
-
     display(graph)

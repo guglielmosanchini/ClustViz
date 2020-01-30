@@ -36,6 +36,7 @@ class DBSCAN_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
+        self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
             self.ind_run += 1
@@ -63,6 +64,7 @@ class DBSCAN_class(StartingGui):
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
+        self.slider.setEnabled(True)
 
     def update_log(self, point=None, msg=None, initial=False, noise=False, change_current=False, change_subcurrent=False):
         """ Take care of the log, updating it with information about the current point being examined,

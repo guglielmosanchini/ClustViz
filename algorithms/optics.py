@@ -5,7 +5,7 @@ from collections import OrderedDict
 import pandas as pd
 
 
-def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
+def point_plot(X, X_dict, o, eps, processed=None, col='yellow'):
     """
     Plots a scatter plot of points, where the point (x,y) is light black and
     surrounded by a red circle of radius eps, where processed point are plotted
@@ -14,8 +14,7 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
 
     :param X: input array.
     :param X_dict: input dictionary version of X.
-    :param x: x-coordinate of the point that is currently inspected.
-    :param y: y-coordinate of the point that is currently inspected.
+    :param o: coordinates of the point that is currently inspected.
     :param eps: radius of the circle to plot around the point (x,y).
     :param processed: already processed points, to plot in col
     :param col: color to use for processed points, yellow by default.
@@ -32,9 +31,9 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
             plt.scatter(X_dict[i][0], X_dict[i][1], color=col, s=300)
 
     # plot last added point in black and surround it with a red circle
-    plt.scatter(x=x, y=y, s=400, color="black", alpha=0.4)
+    plt.scatter(x=X_dict[o][0], y=X_dict[o][1], s=400, color="black", alpha=0.4)
 
-    circle1 = plt.Circle((x, y), eps, color='r', fill=False, linewidth=3, alpha=0.7)
+    circle1 = plt.Circle((X_dict[o][0], X_dict[o][1]), eps, color='r', fill=False, linewidth=3, alpha=0.7)
     ax.add_artist(circle1)
 
     # add indexes to points in plot
@@ -43,8 +42,6 @@ def point_plot(X, X_dict, x, y, eps, processed=None, col='yellow'):
 
     plt.show()
 
-
-# point_plot(X, dict(zip([str(i) for i in range(len(X))], X)), X[0,0], X[0,1], eps=0.3)
 
 def dist1(x, y):
     """Original euclidean distance"""
@@ -161,7 +158,7 @@ def reach_plot(data, ClustDist, eps):
     # if the value is infinity, the height will be eps*1.15 by default
     for key, value in ClustDist.items():
 
-        if np.isinf(value) == True:
+        if np.isinf(value) is True:
 
             plot_dic[key] = eps * 1.15
 
@@ -240,11 +237,11 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
 
         CoreDist.update({o: minPTSdist(X_dict, o, minPTS, eps)})
 
-        if plot == True:
+        if plot is True:
 
-            point_plot(X, X_dict, X_dict[o][0], X_dict[o][1], eps, processed)
+            point_plot(X, X_dict, o, eps, processed)
 
-            if plot_reach == True:
+            if plot_reach is True:
                 reach_plot(X_dict, ClustDist, eps)
 
         # mark o as processed
@@ -354,8 +351,6 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax1.set_xlabel("")
     ax1.set_ylabel("")
 
-    xmin, xmax, ymin, ymax = ax1.axis()
-
     for i, txt in enumerate([i for i in range(len(X))]):
         ax1.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
 
@@ -364,7 +359,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
     for key, value in ClustDist.items():
 
-        if np.isinf(value) == True:
+        if np.isinf(value) is True:
 
             plot_dic[key] = eps * 1.15
 

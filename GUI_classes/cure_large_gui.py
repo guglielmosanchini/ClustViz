@@ -17,9 +17,12 @@ import matplotlib.pyplot as plt
 
 from GUI_classes.utils_gui import choose_dataset, pause_execution, encircle, convert_colors
 
-from GUI_classes.generic_gui import StartingGui
+from GUI_classes.generic_gui import StartingGui, FinalStepWindow
 
 from algorithms.cure import dist_mat_gen_cure, update_mat_cure, sel_rep_fast
+
+from matplotlib.backends.backend_qt5agg import FigureCanvas
+from matplotlib.figure import Figure
 
 
 class LARGE_CURE_class(StartingGui):
@@ -295,7 +298,8 @@ class LARGE_CURE_class(StartingGui):
             canvas.draw()
 
             if save_plots is True:
-                canvas.figure.savefig('./Images/{}_{:02}/fig_fin.png'.format(self.name, self.ind_run))
+                canvas.figure.savefig(
+                    './Images/{}_{:02}/fig_fin_{:02}.png'.format(self.name, self.ind_run, ind_fig + 1))
 
             QCoreApplication.processEvents()
 
@@ -653,21 +657,9 @@ class LARGE_CURE_class(StartingGui):
 
         return res
 
-    def openFinalStepWindow(self,canvas):
+    def openFinalStepWindow(self, canvas):
         self.w = FinalStepWindow(canvas=canvas)
         self.w.show()
 
 
-from PyQt5.QtWidgets import QMainWindow
-from matplotlib.backends.backend_qt5agg import FigureCanvas
-from matplotlib.figure import Figure
 
-
-class FinalStepWindow(QMainWindow):
-    def __init__(self, canvas):
-        super().__init__()
-        self.setWindowTitle("Final Step")
-        self.setGeometry(300, 200, 1000, 400)
-
-        self.setCentralWidget(canvas)
-        canvas.draw()

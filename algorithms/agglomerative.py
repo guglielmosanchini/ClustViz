@@ -297,24 +297,23 @@ def compute_var_sing(df, centroids):
     return var_int
 
 
-def compute_ward_ij(X, df):
+def compute_ward_ij(data, df):
     """
     Compute difference in total within-cluster variance, with squared euclidean
     distance, and finds the best cluster according to Ward criterion.
 
-    :param X: input data array.
-    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+    :param data: input data array.
+    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the data and y
                 coordinates of each point.
     :return: (i,j) indices of best cluster (the one for which the increase in intra-cluster variance is minimum)
              new_summ: new total intra-cluster variance
              par_var: increment in total intra-cluster variance, i.e. minimum increase in total intra-cluster variance
     """
 
-    even_num = [i for i in range(2, len(X) + 1) if i % 2 == 0]
+    even_num = [i for i in range(2, len(data) + 1) if i % 2 == 0]
 
-    (centroids, summ) = compute_var(X, df)
+    (centroids, summ) = compute_var(data, df)
     variances = {}
-    D = pd.DataFrame()
     k = 0
     ind = list(df.index)
 
@@ -333,7 +332,6 @@ def compute_ward_ij(X, df):
                 valid = [d[i] for i in range(len(d)) if np.isinf(d[i]).sum() != 2]
                 # print(valid)
                 centroid = np.mean(valid, axis=0)
-                var_intz = []
                 var_int_par = []
                 for el in valid:
                     var_int_par.append(dist1(el, centroid) ** 2)
@@ -359,7 +357,7 @@ def sl_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if np.isnan(i) == False]
+    distances = [i for i in distances if np.isnan(i) is False]
     return np.min(distances)
 
 
@@ -369,7 +367,7 @@ def cl_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
+    distances = [i for i in distances if (np.isnan(i) is False) and (np.isinf(i) is False)]
     return np.max(distances)
 
 
@@ -379,7 +377,7 @@ def avg_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
+    distances = [i for i in distances if (np.isnan(i) is False) and (np.isinf(i) is False)]
     return np.mean(distances)
 
 

@@ -58,7 +58,7 @@ class KMedoids:
             # compute distance obtained by swapping medoids in the clusters
             cluster_dist_with_new_medoids = self.__swap_and_recalculate_clusters()
             # if the new sum of cluster_distances is smaller than the old one
-            if self.__is_new_cluster_dist_small(cluster_dist_with_new_medoids) == True:
+            if self.__is_new_cluster_dist_small(cluster_dist_with_new_medoids) is True:
                 print("new is smaller")
                 # compute clusters and cluster_distance with new medoids
                 self.clusters, self.cluster_distances = self.__calculate_clusters(self.medoids)
@@ -91,7 +91,7 @@ class KMedoids:
     def calculate_distance_of_clusters(self, cluster_dist=None):
         """if no argument is provided, just sum the distances of the existing cluster_distances, else sum the distances
         of the input cluster_distances """
-        if cluster_dist == None:
+        if cluster_dist is None:
             cluster_dist = self.cluster_distances
         dist = 0
         for medoid in cluster_dist.keys():
@@ -113,14 +113,14 @@ class KMedoids:
                     cluster_list[self.clusters[medoid].index(data_index)] = medoid
                     # compute new cluster distance obtained by swapping the medoid
                     new_distance = self.calculate_inter_cluster_distance(data_index, cluster_list)
-                    if new_distance < self.cluster_distances[
-                        medoid]:  # if this new distance is smaller than the previous one
+                    # if this new distance is smaller than the previous one
+                    if new_distance < self.cluster_distances[medoid]:
                         print("new better medoid: ", data_index)
                         cluster_dist[data_index] = new_distance
                         is_shortest_medoid_found = True
                         break  # exit for loop for this medoid, since a better one has been found
             # if no better medoid has been found, keep the current one
-            if is_shortest_medoid_found == False:
+            if is_shortest_medoid_found is False:
                 print("no better medoids found, keep: ", medoid)
                 cluster_dist[medoid] = self.cluster_distances[medoid]
         print("cluster_dist: ", cluster_dist)
@@ -202,8 +202,8 @@ class KMedoids:
 
     def __get_distance(self, x1, x2):
         """computes euclidean distance, with an initial transformation based on input data"""
-        a = self.__data[x1].toarray() if self.__is_csr == True else np.array(self.__data[x1])
-        b = self.__data[x2].toarray() if self.__is_csr == True else np.array(self.__data[x2])
+        a = self.__data[x1].toarray() if self.__is_csr is True else np.array(self.__data[x1])
+        b = self.__data[x2].toarray() if self.__is_csr is True else np.array(self.__data[x2])
         return np.linalg.norm(a - b)
 
     def __set_data_type(self):
@@ -249,29 +249,12 @@ def plot_pam(data, cl, equal_axis_scale=False):
     for i, el in enumerate(list(cl.keys())):
         plt.scatter(np.array(data)[el, 0], np.array(data)[el, 1], s=500, color="red", marker="X", edgecolor="black")
 
-    # plot indexes of points in plot
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
+    # add indexes to points in plot
+    for i, txt in enumerate([i for i in range(len(data))]):
+        ax.annotate(txt, (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
+                    fontsize=10, size=10, ha='center', va='center')
 
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
-    for i, txt in enumerate(range(len(data))):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw1, np.array(data)[:, 1][i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw2, np.array(data)[:, 1][i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw3, np.array(data)[:, 1][i] - yw3), fontsize=9, size=9)
-
-    if equal_axis_scale == True:
-        plt.gca().set_aspect('equal', adjustable='box')
+    if equal_axis_scale is True:
+        ax.set_aspect('equal', adjustable='box')
 
     plt.show()

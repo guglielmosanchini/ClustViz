@@ -15,7 +15,7 @@ from GUI_classes.clarans_gui import CLARANS_class
 from GUI_classes.birch_gui import BIRCH_class
 from GUI_classes.pam_gui import PAM_class
 # from GUI_classes.denclue_gui import DENCLUE_class
-# from GUI_classes.chameleon_gui import CHAMELEON_class
+from GUI_classes.chameleon_gui import CHAMELEON_class
 
 # TODO: button images
 # TODO: play/pause button
@@ -204,7 +204,14 @@ class Main_Window(QWidget):
         self.change_button_status(index - 1)
 
     def open_CHAMELEON(self):
-        pass
+        """Open CHAMELEON_tab and disable its button in the Initial Tab"""
+        self.CHAMELEON_tab = CHAMELEON_class()
+        self.tabs.addTab(self.CHAMELEON_tab, "CHAMELEON")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["CHAMELEON"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_BIRCH(self):
         """Open BIRCH_tab and disable its button in the Initial Tab"""
@@ -217,7 +224,14 @@ class Main_Window(QWidget):
         self.change_button_status(index - 1)
 
     def open_DENCLUE(self):
-        pass
+        """Open DENCLUE_tab and disable its button in the Initial Tab"""
+        self.DENCLUE_tab = DENCLUE_class()
+        self.tabs.addTab(self.DENCLUE_tab, "DENCLUE")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["DENCLUE"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def closeTab(self, currentIndex):
         """Close the selected tab and reenable its button in the Initial Tab"""

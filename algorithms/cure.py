@@ -521,7 +521,7 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
         del rep[u]
         del rep[u_cl]
 
-        if plotting == True:
+        if plotting is True:
 
             dim1 = int(a.loc[u].notna().sum())
             # update the matrix a with the new cluster
@@ -704,7 +704,6 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
         print("n/pq is less than 2k, results could be wrong")
 
     # form the partitions
-    z = round(n / p)
     lin_sp = np.linspace(0, n, p + 1, dtype="int")
     # lin_sp
     b_partitions = []

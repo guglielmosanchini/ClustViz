@@ -1,5 +1,4 @@
 import itertools
-import numpy as np
 import pandas as pd
 from collections import OrderedDict
 from tqdm.auto import tqdm
@@ -82,10 +81,10 @@ def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
                 continue
             ms = merge_score2(graph, gi, gj, a, b, m_fact)
             if verbose:
-                print("Merge score: %f" % (ms))
+                print("Merge score: %f" % ms)
             if ms > max_score:
                 if verbose:
-                    print("Better than: %f" % (max_score))
+                    print("Better than: %f" % max_score)
                 max_score = ms
                 ci, cj = i, j
 
@@ -115,7 +114,7 @@ def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
     if k is None:
         k = 1
 
-    print("Building kNN graph (k = %d)..." % (knn))
+    print("Building kNN graph (k = %d)..." % knn)
     graph_knn = knn_graph_sym(df, knn, verbose)
 
     plot2d_graph(graph_knn, print_clust=False)
@@ -150,7 +149,7 @@ def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
     print("dendr_height", dendr_height)
     res = rebuild_labels(df)
 
-    if auto_extract == True:
+    if auto_extract is True:
         extract_optimal_n_clust(dendr_height, m)
 
     return res, dendr_height

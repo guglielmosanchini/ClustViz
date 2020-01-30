@@ -703,7 +703,8 @@ class leaf_node(cfnode):
         @brief Find nearest index of nearest entry of node for the specified entry.
 
         @param[in] entry (cfentry): Entry that is used for calculation distance.
-        @param[in] type_measurement (measurement_type): Measurement type that is used for obtaining nearest entry to the specified.
+        @param[in] type_measurement (measurement_type): Measurement type that is
+        used for obtaining nearest entry to the specified.
 
         @return (uint) Index of nearest entry of node for the specified entry.
 
@@ -724,7 +725,8 @@ class leaf_node(cfnode):
         @brief Find nearest entry of node for the specified entry.
 
         @param[in] entry (cfentry): Entry that is used for calculation distance.
-        @param[in] type_measurement (measurement_type): Measurement type that is used for obtaining nearest entry to the specified.
+        @param[in] type_measurement (measurement_type): Measurement type that is
+        used for obtaining nearest entry to the specified.
 
         @return (cfentry) Nearest entry of node for the specified entry.
 
@@ -883,7 +885,8 @@ class cftree:
 
     def insert_cluster(self, cluster):
         """!
-        @brief Insert cluster that is represented as list of points where each point is represented by list of coordinates.
+        @brief Insert cluster that is represented as list of points where each point is
+        represented by list of coordinates.
         @details Clustering feature is created for that cluster and inserted to the tree.
 
         @param[in] cluster (list): Cluster that is represented by list of points that should be inserted to the tree.
@@ -901,7 +904,7 @@ class cftree:
 
         """
         print("insert entry")
-        if (self.__root is None):
+        if self.__root is None:
             print("first time")
             node = leaf_node(entry, None, [entry], None)
 
@@ -918,7 +921,7 @@ class cftree:
             if child_node_updation is True:
                 print("try merge_nearest_successors")
                 # Splitting has been finished, check for possibility to merge (at least we have already two children).
-                if (self.__merge_nearest_successors(self.__root) is True):
+                if self.__merge_nearest_successors(self.__root) is True:
                     self.__amount_nodes -= 1
 
     def find_nearest_leaf(self, entry, search_node=None):
@@ -926,7 +929,8 @@ class cftree:
         @brief Search nearest leaf to the specified clustering feature.
 
         @param[in] entry (cfentry): Clustering feature.
-        @param[in] search_node (cfnode): Node from that searching should be started, if None then search process will be started for the root.
+        @param[in] search_node (cfnode): Node from that searching should be started, if None
+        then search process will be started for the root.
 
         @return (leaf_node) Nearest node to the specified clustering feature.
 
@@ -1058,9 +1062,9 @@ class cftree:
             self.__amount_nodes += 1
             node_amount_updation = True
 
-        elif (child_node_updation is True):
+        elif child_node_updation is True:
             # Splitting has been finished, check for possibility to merge (at least we have already two children).
-            if (self.__merge_nearest_successors(search_node) is True):
+            if self.__merge_nearest_successors(search_node) is True:
                 self.__amount_nodes -= 1
 
         return node_amount_updation
@@ -1089,7 +1093,7 @@ class cftree:
 
                 merging_result = True
 
-        if merging_result == True:
+        if merging_result is True:
             print("merging successful")
         else:
             print("merging not successful")
@@ -1199,7 +1203,8 @@ class cftree:
          @brief Shows feature distribution.
          @details Only features in 1D, 2D, 3D space can be visualized.
 
-         @param[in] data (list): List of points that will be used for visualization, if it not specified than feature will be displayed only.
+         @param[in] data (list): List of points that will be used for visualization,
+         if it not specified than feature will be displayed only.
 
          """
         visualizer = cluster_visualizer()

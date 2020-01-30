@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
-    QLineEdit, QPlainTextEdit, QWidget, QCheckBox, QMessageBox
+    QLineEdit, QPlainTextEdit, QWidget, QCheckBox, QMessageBox, QVBoxLayout, QMainWindow
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPixmap
 from imageio import mimsave, imread
 import os
 from shutil import rmtree
@@ -363,6 +363,11 @@ class StartingGui(QWidget):
                 self.combobox_distances_clara.addItem("cosine")
 
             if self.name == "CLARANS":
+                # graph examples BUTTON
+                self.button_examples_graph = QPushButton("GRAPH", self)
+                self.button_examples_graph.setEnabled(True)
+                self.button_examples_graph.setToolTip("See some examples of CLARANS graphs G_{k,n} as in the paper.")
+
                 # numlocal_clarans LABEL
                 self.label_numlocal_clarans = QLabel(self)
                 self.label_numlocal_clarans.setText("num_iter:")
@@ -431,13 +436,13 @@ class StartingGui(QWidget):
             self.line_edit_initial_diameter = QLineEdit(self)
             self.line_edit_initial_diameter.setText(str(self.initial_diameter))
 
-            self.initial_diameter_validator = QDoubleValidator(0, 10, 4, self)
+            self.initial_diameter_validator = QDoubleValidator(0, 1000, 4, self)
             self.line_edit_initial_diameter.setValidator(self.initial_diameter_validator)
 
     def log_initialization(self):
-        log_list = ["DBSCAN", "CLARA", "PAM", "CLARANS", "BIRCH"]
+        log_list = ["DBSCAN", "CLARA", "PAM", "CLARANS"]
 
-        if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE"):
+        if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE") or (self.name == "BIRCH"):
             self.log = QPlainTextEdit("SEED QUEUE")
             self.log.setStyleSheet(
                 """QPlainTextEdit {background-color: #FFF;
@@ -600,6 +605,7 @@ class StartingGui(QWidget):
             self.gridlayout_but.addWidget(self.line_edit_maxneighbors_clarans, 4, 1)
 
             self.gridlayout_but.addWidget(self.button_run, 5, 0)
+            self.gridlayout_but.addWidget(self.button_examples_graph, 5, 1)
 
             self.gridlayout_but.addWidget(self.label_slider, 6, 0)
             self.gridlayout_but.addWidget(self.slider, 6, 1)
@@ -674,10 +680,21 @@ class StartingGui(QWidget):
         images = []
         fig_list = [pic for pic in os.listdir(png_dir) if (pic.startswith('fig')) & ('fin' not in pic)]
         fig_list.sort()
-        fin_list = [pic for pic in os.listdir(png_dir) if 'fig_fin' in pic]
+        fin_list = [pic for pic in os.listdir(png_dir) if 'graph' in pic]
         fin_list.sort()
+
+        if self.name == "BIRCH":
+            graphviz_list = [pic for pic in os.listdir(png_dir) if ('graph' in pic) and (pic.endswith('.png'))]
+            graphviz_list.sort()
+
         if len(fin_list) != 0:
-            list_for_gif = fig_list + [fin_list[-1]]
+
+            if (self.name != "LARGE CURE") and (self.name != "BIRCH"):
+                list_for_gif = fig_list + [fin_list[-1]]
+            elif self.name == "LARGE CURE":
+                list_for_gif = fig_list + fin_list
+            elif self.name == "BIRCH":
+                list_for_gif = fig_list
         else:
             list_for_gif = fig_list
 
@@ -690,6 +707,14 @@ class StartingGui(QWidget):
         else:
             duration = 0.25
         mimsave(png_dir + '/movie.gif', images, duration=duration)
+
+        if self.name == "BIRCH":
+            images = []
+            for file_name in graphviz_list:
+                file_path = os.path.join(png_dir, file_name)
+                images.append(imread(file_path))
+
+            mimsave(png_dir + '/movie2.gif', images, duration=duration)
 
     def changedValue(self):
         size = self.slider.sl.value()
@@ -808,7 +833,7 @@ class StartingGui(QWidget):
 
             self.show_error_message(check_initial_diameter,
                                     "The parameter init_diam must lie between {0} and {1}, and can have a maximum of"
-                                    " {2} decimal places.".format(0, 10, 4))
+                                    " {2} decimal places.".format(0, 1000, 4))
 
     def SetWindows(self, number, first_run_boolean):
         """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount
@@ -868,3 +893,33 @@ class StartingGui(QWidget):
             self.gridlayout_plots.addWidget(self.canvas_2, 0, 1)
             self.gridlayout_plots.addWidget(self.canvas_3, 1, 0)
             self.gridlayout_plots.addWidget(self.canvas_4, 1, 1)
+
+
+class GraphWindow(QMainWindow):
+    def __init__(self, example_index):
+        super().__init__()
+
+        self.setWindowTitle("Graph example {}".format(example_index + 1))
+        self.setGeometry(300, 200, 500, 400)
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        lay = QVBoxLayout(self.central_widget)
+
+        self.label_graphviz = QLabel(self)
+        self.label_graphviz.setFixedSize(500, 400)
+        pixmap = QPixmap('./Images/ClaransGraphExamples/graph_{:02}.png'.format(example_index))
+        self.label_graphviz.setScaledContents(True)
+        self.label_graphviz.setPixmap(pixmap)
+
+        lay.addWidget(self.label_graphviz)
+        self.show()
+
+
+class FinalStepWindow(QMainWindow):
+    def __init__(self, canvas):
+        super().__init__()
+        self.setWindowTitle("Final Step")
+        self.setGeometry(300, 200, 1000, 400)
+
+        self.setCentralWidget(canvas)
+        canvas.draw()

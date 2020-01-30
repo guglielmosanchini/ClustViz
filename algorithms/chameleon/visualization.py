@@ -1,7 +1,5 @@
 import networkx as nx
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize
 from collections import Counter
 
 
@@ -18,7 +16,7 @@ def plot2d_graph(graph, print_clust=True):
     cmc = Counter(el).most_common()
     c = [colors[i % len(colors)] for i in el]
 
-    if print_clust == True:
+    if print_clust is True:
         print("clusters: ", cmc)
 
     if len(el) != 0:  # is set
@@ -30,7 +28,7 @@ def plot2d_graph(graph, print_clust=True):
 
 
 def plot2d_data(df, col_i=None):
-    if (len(df.columns) > 3):
+    if len(df.columns) > 3:
         print("Plot Warning: more than 2 dimensions!")
 
     df.plot(kind='scatter', c=df['cluster'], cmap='gist_rainbow', x=0, y=1)
