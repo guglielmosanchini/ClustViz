@@ -46,7 +46,7 @@ def plot_tree_fin(tree, info=False):
 
     height = tree.height
 
-    if info == True:
+    if info is True:
         print("Tree height is {0}".format(height))
         print("Number of nodes: {0}".format(tree.amount_nodes))
         print("Number of leaves: {0}".format(len(tree.leafes)))
@@ -79,7 +79,7 @@ def plot_tree_fin(tree, info=False):
             except:
                 pass
 
-        return (features, features_num, succ_num)
+        return features, features_num, succ_num
 
     # collecting data for each tree level except bottom
     feat = []
@@ -100,8 +100,8 @@ def plot_tree_fin(tree, info=False):
         single_entries.append(sing_ent_prov)
 
     # creating names for nodes
-    prov = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z".split(
-        " ")
+    prov = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c " \
+           "d e f g h i j k l m n o p q r s t u v w x y z".split(" ")
     lett = []
     for i in range(len(prov)):
         for j in range(len(prov)):
@@ -166,7 +166,7 @@ def plot_birch_leaves(tree, data):
               6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 
-    # plot evry point in white
+    # plot every point in white
     plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")
 
     # for every leaf
@@ -175,35 +175,17 @@ def plot_birch_leaves(tree, data):
         for entry in el.entries:
             # if it is a single point, plot it with its color
             if entry.number_points == 1:
-                plt.scatter(entry.linear_sum[0], entry.linear_sum[1], color=colors[i % 17], s=300, edgecolor="black")
+                plt.scatter(entry.linear_sum[0], entry.linear_sum[1], color=colors[i % 18], s=300, edgecolor="black")
             # else, plot the entry centroid as a cross and leave the points white
             else:
-                plt.scatter(entry.get_centroid()[0], entry.get_centroid()[1], color=colors[i % 17], marker="X", s=200)
+                plt.scatter(entry.get_centroid()[0], entry.get_centroid()[1], color=colors[i % 18], marker="X", s=200)
                 plt.annotate(entry.number_points, (entry.get_centroid()[0], entry.get_centroid()[1]), fontsize=18)
 
     # plot indexes of points in plot
-    xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    xw1 = xwidth * 0.01
-    yw1 = ywidth * 0.01
-
-    xw2 = xwidth * 0.005
-    yw2 = ywidth * 0.01
-
-    xw3 = xwidth * 0.01
-    yw3 = ywidth * 0.01
-
     for i, txt in enumerate(range(len(data))):
-        if len(str(txt)) == 2:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw1, np.array(data)[:, 1][i] - yw1), fontsize=12, size=12)
-        elif len(str(txt)) == 1:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw2, np.array(data)[:, 1][i] - yw2), fontsize=12, size=12)
-        else:
-            ax.annotate(txt, (np.array(data)[:, 0][i] - xw3, np.array(data)[:, 1][i] - yw3), fontsize=9, size=9)
+        ax.annotate(txt, (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
+                    fontsize=10, size=10, ha='center', va='center')
 
-    # plt.gca().set_aspect('equal', adjustable='box')#print(el.entries)
     plt.show()
 
 

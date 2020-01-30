@@ -120,9 +120,9 @@ class LARGE_CURE_class(StartingGui):
         """
         ax.cla()
         if ind_fig_bis is not None:
-            ax.set_title("partition {}".format(ind_fig_bis + 1))
+            ax.set_title("CURE partition {}".format(ind_fig_bis + 1))
         else:
-            ax.set_title("final step")
+            ax.set_title("CURE final step")
         # diz is used to take the shuffling of data into account, e.g. if the first row doesn'#
         # correspond to point 0: this is useful for the large dataset version of CURE, where data points
         # are randomly sampled, but the initial indices are kept to be plotted.

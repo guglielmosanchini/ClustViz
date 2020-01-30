@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout,
     QVBoxLayout, QTabBar
 
 from PyQt5.QtGui import QFont
-# import qdarkstyle
+import qdarkstyle
 import sys
 
 from GUI_classes.optics_gui import OPTICS_class
@@ -12,7 +12,7 @@ from GUI_classes.cure_gui import CURE_class
 from GUI_classes.cure_large_gui import LARGE_CURE_class
 from GUI_classes.clara_gui import CLARA_class
 from GUI_classes.clarans_gui import CLARANS_class
-# from GUI_classes.birch_gui import BIRCH_class
+from GUI_classes.birch_gui import BIRCH_class
 from GUI_classes.pam_gui import PAM_class
 # from GUI_classes.denclue_gui import DENCLUE_class
 # from GUI_classes.chameleon_gui import CHAMELEON_class
@@ -61,11 +61,11 @@ class Main_Window(QWidget):
         # fonts
         font = QFont()
         font.setFamily("Arial")
-        font.setPointSize(14)
+        font.setPointSize(12)
 
         font_title = QFont()
         font_title.setFamily("Arial")
-        font_title.setPointSize(18)
+        font_title.setPointSize(14)
         # tab widget initializer
         self.tabs = QTabWidget()
         self.tabs.setFont(font)
@@ -132,7 +132,6 @@ class Main_Window(QWidget):
         self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
-        # self.hide()
 
     def open_DBSCAN(self):
         """Open DBSCAN_tab and disable its button in the Initial Tab"""
@@ -208,7 +207,14 @@ class Main_Window(QWidget):
         pass
 
     def open_BIRCH(self):
-        pass
+        """Open BIRCH_tab and disable its button in the Initial Tab"""
+        self.BIRCH_tab = BIRCH_class()
+        self.tabs.addTab(self.BIRCH_tab, "BIRCH")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["BIRCH"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
 
     def open_DENCLUE(self):
         pass
@@ -251,14 +257,14 @@ class main(QMainWindow):
 
 
 if __name__ == '__main__':
-    # create the application and the main window
+
+    # QApplication.setStyle('Fusion')
     app = QApplication(sys.argv)
     # pg.setConfigOption('background', 'w')
-    # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     win = main()
     win.update()
-    # setup stylesheet
-    # run
+
     try:
         sys.exit(app.exec_())
     except:

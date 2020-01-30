@@ -198,6 +198,12 @@ class StartingGui(QWidget):
             self.numlocal_clarans = 5
             self.maxneighbors_clarans = 5
 
+        elif self.name == "BIRCH":
+            self.n_clust = 3
+            self.branching_factor = 5
+            self.max_node_entries = 5
+            self.initial_diameter = 0.1
+
     def label_initialization(self):
 
         if (self.name == "OPTICS") or (self.name == "DBSCAN"):
@@ -361,7 +367,7 @@ class StartingGui(QWidget):
                 self.label_numlocal_clarans = QLabel(self)
                 self.label_numlocal_clarans.setText("num_iter:")
                 self.label_numlocal_clarans.setToolTip("The number of local minima obtained (amount of iterations "
-                                                        "for solving the problem).")
+                                                       "for solving the problem).")
 
                 self.line_edit_numlocal_clarans = QLineEdit(self)
                 self.line_edit_numlocal_clarans.setText(str(self.numlocal_clarans))
@@ -381,7 +387,56 @@ class StartingGui(QWidget):
                 self.maxneighbors_clarans_validator = QIntValidator(1, 1000, self)
                 self.line_edit_maxneighbors_clarans.setValidator(self.maxneighbors_clarans_validator)
 
+        elif self.name == "BIRCH":
+            # n_clust LABEL
+            self.label_n_clust = QLabel(self)
+            self.label_n_clust.setText("n_clust:")
+            self.label_n_clust.setToolTip("The desired number of clusters to partition the dataset into.")
+
+            self.line_edit_n_clust = QLineEdit(self)
+            self.line_edit_n_clust.setText(str(self.n_clust))
+
+            self.n_clust_validator = QIntValidator(1, 1000, self)
+            self.line_edit_n_clust.setValidator(self.n_clust_validator)
+
+            # branching_factor LABEL
+            self.label_branching_factor = QLabel(self)
+            self.label_branching_factor.setText("branch_fact:")
+            self.label_branching_factor.setToolTip("The branching factor is the maximum number of successor "
+                                                   "that might be contained by each non-leaf node in CF-Tree.")
+
+            self.line_edit_branching_factor = QLineEdit(self)
+            self.line_edit_branching_factor.setText(str(self.branching_factor))
+
+            self.branching_factor_validator = QIntValidator(2, 10, self)
+            self.line_edit_branching_factor.setValidator(self.branching_factor_validator)
+
+            # max_node_entries LABEL
+            self.label_max_node_entries = QLabel(self)
+            self.label_max_node_entries.setText("max_node_ent:")
+            self.label_max_node_entries.setToolTip("The maximum number of entries that might be contained "
+                                                   "by each leaf node in CF-Tree.")
+
+            self.line_edit_max_node_entries = QLineEdit(self)
+            self.line_edit_max_node_entries.setText(str(self.max_node_entries))
+
+            self.max_node_entries_validator = QIntValidator(1, 10, self)
+            self.line_edit_max_node_entries.setValidator(self.max_node_entries_validator)
+
+            # initial_diameter LABEL
+            self.label_initial_diameter = QLabel(self)
+            self.label_initial_diameter.setText("init_diam:")
+            self.label_initial_diameter.setToolTip("The initial diameter that is used for CF-Tree construction.")
+
+            self.line_edit_initial_diameter = QLineEdit(self)
+            self.line_edit_initial_diameter.setText(str(self.initial_diameter))
+
+            self.initial_diameter_validator = QDoubleValidator(0, 10, 4, self)
+            self.line_edit_initial_diameter.setValidator(self.initial_diameter_validator)
+
     def log_initialization(self):
+        log_list = ["DBSCAN", "CLARA", "PAM", "CLARANS", "BIRCH"]
+
         if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE"):
             self.log = QPlainTextEdit("SEED QUEUE")
             self.log.setStyleSheet(
@@ -391,7 +446,7 @@ class StartingGui(QWidget):
 
             self.gridlayout.addWidget(self.log, 1, 0)
 
-        elif (self.name == "DBSCAN") or (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
+        elif self.name in log_list:
             self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setGeometry(900, 60, 350, 400)
             self.log.setStyleSheet(
@@ -401,7 +456,7 @@ class StartingGui(QWidget):
             self.log.setFixedHeight(335)
             if self.name == "DBSCAN":
                 self.gridlayout.addWidget(self.log, 1, 0)
-            elif (self.name == "CLARA") or (self.name == "PAM") or (self.name == "CLARANS"):
+            else:
                 self.gridlayout.addWidget(self.log, 1, 1)
 
         elif (self.name == "CURE") or (self.name == "LARGE CURE"):
@@ -552,6 +607,28 @@ class StartingGui(QWidget):
             self.gridlayout_but.addWidget(self.checkbox_gif, 7, 1)
             self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 0)
 
+        elif self.name == "BIRCH":
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_n_clust, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_n_clust, 2, 1)
+            self.gridlayout_but.addWidget(self.label_branching_factor, 3, 0)
+            self.gridlayout_but.addWidget(self.line_edit_branching_factor, 3, 1)
+            self.gridlayout_but.addWidget(self.label_max_node_entries, 4, 0)
+            self.gridlayout_but.addWidget(self.line_edit_max_node_entries, 4, 1)
+            self.gridlayout_but.addWidget(self.label_initial_diameter, 5, 0)
+            self.gridlayout_but.addWidget(self.line_edit_initial_diameter, 5, 1)
+
+            self.gridlayout_but.addWidget(self.button_run, 6, 0)
+
+            self.gridlayout_but.addWidget(self.label_slider, 7, 0)
+            self.gridlayout_but.addWidget(self.slider, 7, 1)
+            self.gridlayout_but.addWidget(self.checkbox_saveimg, 8, 0)
+            self.gridlayout_but.addWidget(self.checkbox_gif, 8, 1)
+            self.gridlayout_but.addWidget(self.button_delete_pics, 9, 0, 1, 0)
+
     def checkBoxChangedAction(self, state):
         if Qt.Checked == state:
             self.save_plots = True
@@ -699,7 +776,6 @@ class StartingGui(QWidget):
                                     "{0} and {1}".format(2, 1000))
 
             if self.name == "CLARANS":
-
                 check_numlocal_clarans = self.numlocal_clarans_validator.validate(
                     self.line_edit_numlocal_clarans.text(), 0)
                 check_maxneighbors_clarans = self.maxneighbors_clarans_validator.validate(
@@ -711,6 +787,28 @@ class StartingGui(QWidget):
                 self.show_error_message(check_maxneighbors_clarans,
                                         "The parameter max_neigh must be an integer and lie between "
                                         "{0} and {1}".format(1, 1000))
+
+        elif self.name == "BIRCH":
+            check_n_clust = self.n_clust_validator.validate(self.line_edit_n_clust.text(), 0)
+            check_branching_factor = self.branching_factor_validator.validate(self.line_edit_branching_factor.text(), 0)
+            check_max_node_entries = self.max_node_entries_validator.validate(self.line_edit_max_node_entries.text(), 0)
+            check_initial_diameter = self.initial_diameter_validator.validate(self.line_edit_initial_diameter.text(), 0)
+
+            self.show_error_message(check_n_clust,
+                                    "The parameter n_clust must be an integer and lie between "
+                                    "{0} and {1}".format(1, 1000))
+
+            self.show_error_message(check_branching_factor,
+                                    "The parameter branch_fact must be an integer and lie between "
+                                    "{0} and {1}".format(2, 10))
+
+            self.show_error_message(check_max_node_entries,
+                                    "The parameter max_nod_ent must be an integer and lie between "
+                                    "{0} and {1}".format(1, 10))
+
+            self.show_error_message(check_initial_diameter,
+                                    "The parameter init_diam must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 10, 4))
 
     def SetWindows(self, number, first_run_boolean):
         """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount
