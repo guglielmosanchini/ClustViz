@@ -14,8 +14,9 @@ from GUI_classes.clara_gui import CLARA_class
 from GUI_classes.clarans_gui import CLARANS_class
 from GUI_classes.birch_gui import BIRCH_class
 from GUI_classes.pam_gui import PAM_class
-# from GUI_classes.denclue_gui import DENCLUE_class
-from GUI_classes.chameleon_gui import CHAMELEON_class
+from GUI_classes.denclue_gui import DENCLUE_class
+# from GUI_classes.chameleon_gui import CHAMELEON_class
+# from GUI_classes.chameleon2_gui import CHAMELEON2_class
 
 # TODO: button images
 # TODO: play/pause button
@@ -53,6 +54,7 @@ class Main_Window(QWidget):
         self.CLARANS_tab = None
         self.DENCLUE_tab = None
         self.CHAMELEON_tab = None
+        self.CHAMELEON2_tab = None
         self.PAM_tab = None
         self.BIRCH_tab = None
         # current index and current dictionary of open tabs
@@ -88,12 +90,12 @@ class Main_Window(QWidget):
         # buttons and functions dictionaries
         self.button_dictionary = {1: "OPTICS", 2: "DBSCAN", 3: "AGGLOMERATIVE", 4: "DENCLUE",
                                   5: "CURE", 6: "LARGE CURE", 7: "PAM", 8: "CLARA", 9: "CLARANS", 10: "BIRCH",
-                                  11: "CHAMELEON"}
+                                  11: "CHAMELEON", 12: "CHAMELEON2"}
         self.swapped_button_dictionary = dict([(value, key) for key, value in self.button_dictionary.items()])
 
         self.functions = {1: self.open_OPTICS, 2: self.open_DBSCAN, 3: self.open_AGGLOMERATIVE, 4: self.open_DENCLUE,
                           5: self.open_CURE, 6: self.open_LARGE_CURE, 7: self.open_PAM, 8: self.open_CLARA,
-                          9: self.open_CLARANS, 10: self.open_BIRCH, 11: self.open_CHAMELEON}
+                          9: self.open_CLARANS, 10: self.open_BIRCH, 11: self.open_CHAMELEON, 12: self.open_CHAMELEON2}
 
         # buttons
         self.initial_tab.buttons = []
@@ -213,6 +215,16 @@ class Main_Window(QWidget):
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
+    def open_CHAMELEON2(self):
+        """Open CHAMELEON2_tab and disable its button in the Initial Tab"""
+        self.CHAMELEON2_tab = CHAMELEON2_class()
+        self.tabs.addTab(self.CHAMELEON2_tab, "CHAMELEON2")
+        self.current_index += 1
+        index = self.swapped_button_dictionary["CHAMELEON2"]
+        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.tabs.setCurrentIndex(self.current_index)
+        self.change_button_status(index - 1)
+
     def open_BIRCH(self):
         """Open BIRCH_tab and disable its button in the Initial Tab"""
         self.BIRCH_tab = BIRCH_class()
@@ -283,4 +295,3 @@ if __name__ == '__main__':
         sys.exit(app.exec_())
     except:
         print("Exiting")
-

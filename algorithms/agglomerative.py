@@ -357,7 +357,7 @@ def sl_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if np.isnan(i) is False]
+    distances = [i for i in distances if np.isnan(i) == False]
     return np.min(distances)
 
 
@@ -367,7 +367,7 @@ def cl_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) is False) and (np.isinf(i) is False)]
+    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
     return np.max(distances)
 
 
@@ -377,7 +377,7 @@ def avg_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) is False) and (np.isinf(i) is False)]
+    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
     return np.mean(distances)
 
 

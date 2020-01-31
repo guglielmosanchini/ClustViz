@@ -204,6 +204,23 @@ class StartingGui(QWidget):
             self.max_node_entries = 5
             self.initial_diameter = 0.1
 
+        elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
+            self.n_clust = 3
+            self.knn_cham = 6,
+            self.init_clust_cham = 10
+            self.alpha_cham = 2
+
+            if self.name == "CHAMELEON2":
+                self.beta_cham = 1
+                self.m_fact = 1000
+
+        elif self.name == "DENCLUE":
+            self.sigma_denclue = 1
+            self.xi_denclue = 2
+            self.xi_c_denclue = 3
+            self.tol_denclue = 2
+            self.prec_denclue = 20
+
     def label_initialization(self):
 
         if (self.name == "OPTICS") or (self.name == "DBSCAN"):
@@ -439,17 +456,172 @@ class StartingGui(QWidget):
             self.initial_diameter_validator = QDoubleValidator(0, 1000, 4, self)
             self.line_edit_initial_diameter.setValidator(self.initial_diameter_validator)
 
+        elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
+            # n_clust LABEL
+            self.label_n_clust = QLabel(self)
+            self.label_n_clust.setText("n_clust:")
+            self.label_n_clust.setToolTip("The desired number of clusters to partition the dataset into.")
+
+            self.line_edit_n_clust = QLineEdit(self)
+            self.line_edit_n_clust.setText(str(self.n_clust))
+
+            self.n_clust_validator = QIntValidator(1, 1000, self)
+            self.line_edit_n_clust.setValidator(self.n_clust_validator)
+
+            # knn_cham LABEL
+            self.label_knn_cham = QLabel(self)
+            self.label_knn_cham.setText("k of KNN:")
+            self.label_knn_cham.setToolTip("The number of neighbors to consider when building the KNN-Graph.")
+
+            self.line_edit_knn_cham = QLineEdit(self)
+            self.line_edit_knn_cham.setText(str(self.knn_cham))
+
+            self.knn_cham_validator = QIntValidator(1, 1000, self)
+            self.line_edit_knn_cham.setValidator(self.knn_cham_validator)
+
+            # init_clust_cham LABEL
+            self.label_init_clust_cham = QLabel(self)
+            self.label_init_clust_cham.setText("init_clust:")
+            self.label_init_clust_cham.setToolTip("The number of clusters to reach in the initial phase.")
+
+            self.line_edit_init_clust_cham = QLineEdit(self)
+            self.line_edit_init_clust_cham.setText(str(self.init_clust_cham))
+
+            self.init_clust_cham_validator = QIntValidator(1, 1000, self)
+            self.line_edit_init_clust_cham.setValidator(self.init_clust_cham_validator)
+
+            # alpha_cham LABEL
+            self.label_alpha_cham = QLabel(self)
+            self.label_alpha_cham.setText("alpha:")
+            self.label_alpha_cham.setToolTip("The exponent of relative closeness.")
+
+            self.line_edit_alpha_cham = QLineEdit(self)
+            self.line_edit_alpha_cham.setText(str(self.alpha_cham))
+
+            self.alpha_cham_validator = QDoubleValidator(0, 1000, 4, self)
+            self.line_edit_alpha_cham.setValidator(self.alpha_cham_validator)
+
+            if self.name == "CHAMELEON2":
+                # beta_cham LABEL
+                self.label_beta_cham = QLabel(self)
+                self.label_beta_cham.setText("beta:")
+                self.label_beta_cham.setToolTip("The exponent of relative connectivity.")
+
+                self.line_edit_beta_cham = QLineEdit(self)
+                self.line_edit_beta_cham.setText(str(self.beta_cham))
+
+                self.beta_cham_validator = QDoubleValidator(0, 1000, self)
+                self.line_edit_beta_cham.setValidator(self.beta_cham_validator)
+
+                # m_fact LABEL
+                self.label_m_fact = QLabel(self)
+                self.label_m_fact.setText("m_fact:")
+                self.label_m_fact.setToolTip("The weight to assign to single-point clusters.")
+
+                self.line_edit_m_fact = QLineEdit(self)
+                self.line_edit_m_fact.setText(str(self.m_fact))
+
+                self.m_fact_validator = QIntValidator(0, 1000000, self)
+                self.line_edit_m_fact.setValidator(self.m_fact_validator)
+
+        elif self.name == "DENCLUE":
+            # sigma_denclue LABEL
+            self.label_sigma_denclue = QLabel(self)
+            self.label_sigma_denclue.setText("sigma (\u03C3):")
+            self.label_sigma_denclue.setToolTip("This parameter determines the influence of a point "
+                                                "in its neighborhood. The higher sigma, the lower the influence.")
+
+            self.line_edit_sigma_denclue = QLineEdit(self)
+            self.line_edit_sigma_denclue.setText(str(self.sigma_denclue))
+
+            self.sigma_denclue_validator = QDoubleValidator(0, 1000, 4, self)
+            self.line_edit_sigma_denclue.setValidator(self.sigma_denclue_validator)
+
+            # xi_denclue LABEL
+            self.label_xi_denclue = QLabel(self)
+            self.label_xi_denclue.setText("xi (\u03BE):")
+            self.label_xi_denclue.setToolTip("This parameter determines the minimum density level for "
+                                             "a density attractor to be significant. The higher xi, the less clusters"
+                                             "are obtained.")
+
+            self.line_edit_xi_denclue = QLineEdit(self)
+            self.line_edit_xi_denclue.setText(str(self.xi_denclue))
+
+            self.xi_denclue_validator = QDoubleValidator(0, 1000, 4, self)
+            self.line_edit_xi_denclue.setValidator(self.xi_denclue_validator)
+
+            # xi_c_denclue LABEL
+            self.label_xi_c_denclue = QLabel(self)
+            self.label_xi_c_denclue.setText("xi_c (\u03BE_c) :")
+            self.label_xi_c_denclue.setToolTip("This parameter is a second outlier bound to determine which"
+                                               "cubes are highly populated. The lower xi_c, the more highly "
+                                               "populated cubes.")
+
+            self.line_edit_xi_c_denclue = QLineEdit(self)
+            self.line_edit_xi_c_denclue.setText(str(self.xi_c_denclue))
+
+            self.xi_c_denclue_validator = QDoubleValidator(0, 1000, 4, self)
+            self.line_edit_xi_c_denclue.setValidator(self.xi_c_denclue_validator)
+
+            # tol_denclue LABEL
+            self.label_tol_denclue = QLabel(self)
+            self.label_tol_denclue.setText("tol :")
+            self.label_tol_denclue.setToolTip("Tolerance for the hill_climbing algorithm.")
+
+            self.line_edit_tol_denclue = QLineEdit(self)
+            self.line_edit_tol_denclue.setText(str(self.tol_denclue))
+
+            self.tol_denclue_validator = QDoubleValidator(0, 1000, 4, self)
+            self.line_edit_tol_denclue.setValidator(self.tol_denclue_validator)
+
+            # prec_denclue LABEL
+            self.label_prec_denclue = QLabel(self)
+            self.label_prec_denclue.setText("prec :")
+            self.label_prec_denclue.setToolTip("Precision for plotting. The higher prec, the more precise the plots "
+                                               "are, but it will take longer for them to be displayed. ALERT: it is "
+                                               "best not to set this over 30.")
+
+            self.line_edit_prec_denclue = QLineEdit(self)
+            self.line_edit_prec_denclue.setText(str(self.prec_denclue))
+
+            self.prec_denclue_validator = QIntValidator(0, 100, self)
+            self.line_edit_prec_denclue.setValidator(self.prec_denclue_validator)
+
+            # 5 checkboxes to choose which plots to display
+            self.checkbox_pop_cubes = QCheckBox("pop cubes")
+            self.checkbox_pop_cubes.setToolTip("Check it to show the plot of populated cubes.")
+
+            self.checkbox_highly_pop_cubes = QCheckBox("highly pop cubes")
+            self.checkbox_highly_pop_cubes.setToolTip("Check it to show the picture of highly populated cubes.")
+
+            self.checkbox_contour = QCheckBox("contour")
+            self.checkbox_contour.setToolTip("Check it to show the countour plot of the influence function.")
+
+            self.checkbox_3dplot = QCheckBox("3d plot")
+            self.checkbox_3dplot.setToolTip("Check it to show a 3d plot of the influence function.")
+
+            self.checkbox_clusters = QCheckBox("clusters")
+            self.checkbox_clusters.setToolTip("Check it show a final plot of the clusters found using DENCLUE.")
+
     def log_initialization(self):
         log_list = ["DBSCAN", "CLARA", "PAM", "CLARANS"]
+        log_list2 = ["OPTICS", "AGGLOMERATIVE", "BIRCH", "CHAMELEON", "CHAMELEON2", "DENCLUE"]
 
-        if (self.name == "OPTICS") or (self.name == "AGGLOMERATIVE") or (self.name == "BIRCH"):
-            self.log = QPlainTextEdit("SEED QUEUE")
+        if self.name in log_list2:
+            if self.name == "OPTICS":
+                self.log = QPlainTextEdit("SEED QUEUE")
+            else:
+                self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setStyleSheet(
                 """QPlainTextEdit {background-color: #FFF;
                                    color: #000000;
                                    font-family: Courier;}""")
 
-            self.gridlayout.addWidget(self.log, 1, 0)
+            if self.name != "DENCLUE":
+                self.gridlayout.addWidget(self.log, 1, 0)
+            elif self.name == "DENCLUE":
+                self.log.setFixedWidth(220)
+                self.gridlayout.addWidget(self.log, 2, 0, 1, 2)
 
         elif self.name in log_list:
             self.log = QPlainTextEdit("{} LOG".format(self.name))
@@ -476,7 +648,11 @@ class StartingGui(QWidget):
     def buttons_groupbox_initialization(self):
 
         self.groupbox_buttons = QGroupBox("Parameters")
-        self.groupbox_buttons.setFixedSize(220, 400)
+
+        if self.name != "DENCLUE":
+            self.groupbox_buttons.setFixedSize(220, 400)
+        elif self.name == "DENCLUE":
+            self.groupbox_buttons.setFixedWidth(220)
 
         self.gridlayout.addWidget(self.groupbox_buttons, 0, 0)
 
@@ -634,6 +810,77 @@ class StartingGui(QWidget):
             self.gridlayout_but.addWidget(self.checkbox_saveimg, 8, 0)
             self.gridlayout_but.addWidget(self.checkbox_gif, 8, 1)
             self.gridlayout_but.addWidget(self.button_delete_pics, 9, 0, 1, 0)
+
+        elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_n_clust, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_n_clust, 2, 1)
+            self.gridlayout_but.addWidget(self.label_knn_cham, 3, 0)
+            self.gridlayout_but.addWidget(self.line_edit_knn_cham, 3, 1)
+            self.gridlayout_but.addWidget(self.label_init_clust_cham, 4, 0)
+            self.gridlayout_but.addWidget(self.line_edit_init_clust_cham, 4, 1)
+            self.gridlayout_but.addWidget(self.label_alpha_cham, 5, 0)
+            self.gridlayout_but.addWidget(self.line_edit_alpha_cham, 5, 1)
+
+            if self.name == "CHAMELEON":
+
+                self.gridlayout_but.addWidget(self.button_run, 6, 0)
+
+                self.gridlayout_but.addWidget(self.label_slider, 7, 0)
+                self.gridlayout_but.addWidget(self.slider, 7, 1)
+                self.gridlayout_but.addWidget(self.checkbox_saveimg, 8, 0)
+                self.gridlayout_but.addWidget(self.checkbox_gif, 8, 1)
+                self.gridlayout_but.addWidget(self.button_delete_pics, 9, 0, 1, 0)
+
+            elif self.name == "CHAMELEON2":
+                self.gridlayout_but.addWidget(self.label_beta_cham, 6, 0)
+                self.gridlayout_but.addWidget(self.line_edit_beta_cham, 6, 1)
+                self.gridlayout_but.addWidget(self.label_m_fact, 7, 0)
+                self.gridlayout_but.addWidget(self.line_edit_m_fact, 7, 1)
+
+                self.gridlayout_but.addWidget(self.button_run, 8, 0)
+
+                self.gridlayout_but.addWidget(self.label_slider, 9, 0)
+                self.gridlayout_but.addWidget(self.slider, 9, 1)
+                self.gridlayout_but.addWidget(self.checkbox_saveimg, 10, 0)
+                self.gridlayout_but.addWidget(self.checkbox_gif, 10, 1)
+                self.gridlayout_but.addWidget(self.button_delete_pics, 11, 0, 1, 0)
+
+        elif self.name == "DENCLUE":
+
+            self.groupbox_plots_denclue = QGroupBox("Plotting options")
+            self.gridlayout.addWidget(self.groupbox_plots_denclue, 1, 0)
+            self.groupbox_plots_denclue.setFixedWidth(220)
+            self.gridlayout_plot_checkboxes = QGridLayout(self.groupbox_plots_denclue)
+
+            self.gridlayout_but.addWidget(self.label_ds, 0, 0)
+            self.gridlayout_but.addWidget(self.combobox, 0, 1)
+            self.gridlayout_but.addWidget(self.label_np, 1, 0)
+            self.gridlayout_but.addWidget(self.line_edit_np, 1, 1)
+            self.gridlayout_but.addWidget(self.label_sigma_denclue, 2, 0)
+            self.gridlayout_but.addWidget(self.line_edit_sigma_denclue, 2, 1)
+            self.gridlayout_but.addWidget(self.label_xi_denclue, 3, 0)
+            self.gridlayout_but.addWidget(self.line_edit_xi_denclue, 3, 1)
+            self.gridlayout_but.addWidget(self.label_xi_c_denclue, 4, 0)
+            self.gridlayout_but.addWidget(self.line_edit_xi_c_denclue, 4, 1)
+            self.gridlayout_but.addWidget(self.label_tol_denclue, 5, 0)
+            self.gridlayout_but.addWidget(self.line_edit_tol_denclue, 5, 1)
+            self.gridlayout_but.addWidget(self.label_prec_denclue, 6, 0)
+            self.gridlayout_but.addWidget(self.line_edit_prec_denclue, 6, 1)
+
+            self.gridlayout_but.addWidget(self.button_run, 7, 0)
+            # self.gridlayout_but.addWidget(self.label_slider, 7, 1)
+            self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 0)
+
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_pop_cubes, 0, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_highly_pop_cubes, 0, 1)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_contour, 1, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_3dplot, 1, 1)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_clusters, 2, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_saveimg, 2, 1)
 
     def checkBoxChangedAction(self, state):
         if Qt.Checked == state:
@@ -835,8 +1082,63 @@ class StartingGui(QWidget):
                                     "The parameter init_diam must lie between {0} and {1}, and can have a maximum of"
                                     " {2} decimal places.".format(0, 1000, 4))
 
+        elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
+
+            check_n_clust = self.n_clust_validator.validate(self.line_edit_n_clust.text(), 0)
+            check_knn_cham = self.knn_cham_validator.validate(self.line_edit_knn_cham.text(), 0)
+            check_init_clust_cham = self.init_clust_cham_validator.validate(self.line_edit_init_clust_cham.text(), 0)
+            check_alpha_cham = self.alpha_cham_validator.validate(self.line_edit_alpha_cham.text(), 0)
+
+            self.show_error_message(check_n_clust,
+                                    "The parameter n_clust must be an integer and lie between "
+                                    "{0} and {1}".format(1, 1000))
+            self.show_error_message(check_knn_cham,
+                                    "The parameter k of Knn must be an integer and lie between "
+                                    "{0} and {1}".format(1, 1000))
+            self.show_error_message(check_init_clust_cham,
+                                    "The parameter init_clust must be an integer and lie between "
+                                    "{0} and {1}".format(1, 1000))
+            self.show_error_message(check_alpha_cham,
+                                    "The parameter alpha must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 1000, 4))
+
+            if self.name == "CHAMELEON2":
+                check_beta_cham = self.beta_cham_validator.validate(self.line_edit_beta_cham.text(), 0)
+                check_m_fact = self.m_fact_validator.validate(self.line_edit_m_fact.text(), 0)
+
+                self.show_error_message(check_beta_cham,
+                                        "The parameter beta must lie between {0} and {1}, and can have a maximum of"
+                                        " {2} decimal places.".format(0, 1000, 4))
+                self.show_error_message(check_m_fact,
+                                        "The parameter m_fact must be an integer and lie between "
+                                        "{0} and {1}".format(1, 1000000))
+
+        elif self.name == "DENCLUE":
+
+            check_sigma_denclue = self.sigma_denclue_validator.validate(self.line_edit_sigma_denclue.text(), 0)
+            check_xi_denclue = self.xi_denclue_validator.validate(self.line_edit_xi_denclue.text(), 0)
+            check_xi_c_denclue = self.xi_c_denclue_validator.validate(self.line_edit_xi_c_denclue.text(), 0)
+            check_tol_denclue = self.tol_denclue_validator.validate(self.line_edit_tol_denclue.text(), 0)
+            check_prec_denclue = self.prec_denclue_validator.validate(self.line_edit_prec_denclue.text(), 0)
+
+            self.show_error_message(check_sigma_denclue,
+                                    "The parameter sigma must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 1000, 4))
+            self.show_error_message(check_xi_denclue,
+                                    "The parameter xi must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 1000, 4))
+            self.show_error_message(check_xi_c_denclue,
+                                    "The parameter xi_c must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 1000, 4))
+            self.show_error_message(check_tol_denclue,
+                                    "The parameter tol must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 1000, 4))
+            self.show_error_message(check_prec_denclue,
+                                    "The parameter prec must lie between {0} and {1}, and can have a maximum of"
+                                    " {2} decimal places.".format(0, 100, 4))
+
     def SetWindows(self, number, first_run_boolean):
-        """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount
+        """This is used for LARGE_CURE and DENCLUE clustering algorithms: it serves the purpose of creating the right amount
         of subplots to display all the partitions, according to the user's input of p, which is here called number.
 
         :param number: how many subplots to do (can be 2, 3 or 4).

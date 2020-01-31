@@ -550,7 +550,7 @@ def extract_cluster_labels(data, cld, tol=2):
     return fin_labels, df
 
 
-def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
+def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", prec=20, plotting=True):
     clust_dict = {}
     processed = []
 
@@ -565,9 +565,9 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", plotting=True):
         plot_grid_rect(data, s=s, cube_kind="populated")
         plot_grid_rect(data, s=s, cube_kind="highly_populated")
 
-        plot_3d_or_contour(data, s=s, three=False, scatter=True, prec=20)
+        plot_3d_or_contour(data, s=s, three=False, scatter=True, prec=prec)
 
-        plot_3d_both(data, s=s, xi=xi, prec=20)
+        plot_3d_both(data, s=s, xi=xi, prec=prec)
 
     points_to_process = [item for sublist in np.array(list(new_cubes.values()))[:, 2] for item in sublist]
 
