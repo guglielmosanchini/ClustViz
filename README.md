@@ -46,7 +46,11 @@ not supported in the GUI version, and may be impossible to use in a Windows envi
 
 8) The script **gui** starts the GUI for the visualization of clustering algorithms.
 
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/Images/README_pics/pic1_gui.JPG" width="450" height="350">
 
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/Images/README_pics/pic2_gui.JPG" width="450" height="350">
+
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/Images/README_pics/pic3_gui.JPG" width="450" height="350">
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
