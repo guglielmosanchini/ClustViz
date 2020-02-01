@@ -81,7 +81,7 @@ class AGGLOMERATIVE_class(StartingGui):
 
         a = a.dropna(1, how="all")
 
-        colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
+        colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
                   4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
 

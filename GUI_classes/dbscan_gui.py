@@ -112,7 +112,7 @@ class DBSCAN_class(StartingGui):
 
         """
 
-        colors = {-1: 'red', 0: 'lightblue', 1: 'beige', 2: 'yellow', 3: 'grey',
+        colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
                   4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'lime'}
 
@@ -172,7 +172,7 @@ class DBSCAN_class(StartingGui):
                                y=[i[0][1] for i in list(new_dict.values())],
                                label=[i[1] for i in list(new_dict.values())]), index=new_dict.keys())
 
-        colors = {-1: 'red', 0: 'lightblue', 1: 'beige', 2: 'yellow', 3: 'grey',
+        colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
                   4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'lime'}
 

@@ -485,7 +485,7 @@ def density_attractor(data, x, coord_dict, tot_cubes, s, xi, delta=0.05, max_ite
 def plot_clust_dict(data, lab_dict):
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
               6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
               16: "gainsboro", 17: "peachpuff", 18: "lime", 19: "peru",
@@ -543,6 +543,8 @@ def extract_cluster_labels(data, cld, tol=2):
     fin_labels = [label_dict[i] for i in da_list]
 
     df = pd.DataFrame(l_mod)
+    if len(Counter(fin_labels)) == 1:
+        df["added"] = [np.nan]* len(df)
     df.columns = ["x", "y"]
     df["label"] = fin_labels
     # df.groupby("label").mean()
@@ -569,7 +571,10 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", prec=20, plotting=Tr
 
         plot_3d_both(data, s=s, xi=xi, prec=prec)
 
-    points_to_process = [item for sublist in np.array(list(new_cubes.values()))[:, 2] for item in sublist]
+    if len(new_cubes) != 0:
+        points_to_process = [item for sublist in np.array(list(new_cubes.values()))[:, 2] for item in sublist]
+    else:
+        points_to_process = []
 
     initial_noise = []
     for elem in data:

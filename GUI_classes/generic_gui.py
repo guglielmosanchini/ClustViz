@@ -5,6 +5,7 @@ from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPixmap
 from imageio import mimsave, imread
 import os
 from shutil import rmtree
+import numpy as np
 
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
@@ -219,7 +220,7 @@ class StartingGui(QWidget):
             self.xi_denclue = 2
             self.xi_c_denclue = 3
             self.tol_denclue = 2
-            self.prec_denclue = 20
+            self.prec_denclue = 5
 
     def label_initialization(self):
 
@@ -377,7 +378,7 @@ class StartingGui(QWidget):
                 self.combobox_distances_clara.addItem("fast_euclidean")
                 self.combobox_distances_clara.addItem("euclidean")
                 self.combobox_distances_clara.addItem("manhattan")
-                self.combobox_distances_clara.addItem("cosine")
+                # self.combobox_distances_clara.addItem("cosine")
 
             if self.name == "CLARANS":
                 # graph examples BUTTON
@@ -587,9 +588,10 @@ class StartingGui(QWidget):
             self.prec_denclue_validator = QIntValidator(0, 100, self)
             self.line_edit_prec_denclue.setValidator(self.prec_denclue_validator)
 
-            # 5 checkboxes to choose which plots to display
-            self.checkbox_pop_cubes = QCheckBox("pop cubes")
-            self.checkbox_pop_cubes.setToolTip("Check it to show the plot of populated cubes.")
+            # 4 checkboxes to choose which plots to display
+
+            # self.checkbox_pop_cubes = QCheckBox("pop cubes")
+            # self.checkbox_pop_cubes.setToolTip("Check it to show the plot of populated cubes.")
 
             self.checkbox_highly_pop_cubes = QCheckBox("highly pop cubes")
             self.checkbox_highly_pop_cubes.setToolTip("Check it to show the picture of highly populated cubes.")
@@ -875,12 +877,12 @@ class StartingGui(QWidget):
             # self.gridlayout_but.addWidget(self.label_slider, 7, 1)
             self.gridlayout_but.addWidget(self.button_delete_pics, 8, 0, 1, 0)
 
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_pop_cubes, 0, 0)
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_highly_pop_cubes, 0, 1)
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_contour, 1, 0)
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_3dplot, 1, 1)
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_clusters, 2, 0)
-            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_saveimg, 2, 1)
+            # self.gridlayout_plot_checkboxes.addWidget(self.checkbox_pop_cubes, 0, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_highly_pop_cubes, 0, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_contour, 0, 1)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_3dplot, 1, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_clusters, 1, 1)
+            self.gridlayout_plot_checkboxes.addWidget(self.checkbox_saveimg, 2, 0)
 
     def checkBoxChangedAction(self, state):
         if Qt.Checked == state:
@@ -1138,7 +1140,7 @@ class StartingGui(QWidget):
                                     " {2} decimal places.".format(0, 100, 4))
 
     def SetWindows(self, number, first_run_boolean):
-        """This is used for LARGE_CURE and DENCLUE clustering algorithms: it serves the purpose of creating the right amount
+        """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount
         of subplots to display all the partitions, according to the user's input of p, which is here called number.
 
         :param number: how many subplots to do (can be 2, 3 or 4).
@@ -1196,6 +1198,71 @@ class StartingGui(QWidget):
             self.gridlayout_plots.addWidget(self.canvas_3, 1, 0)
             self.gridlayout_plots.addWidget(self.canvas_4, 1, 1)
 
+    def SetWindowsDENCLUE(self, pic_list, first_run_boolean):
+        """ Analogous of SetWindows but for DENCLUE algorithm."""
+
+        # for el in self.axes_list:
+        #     el.clear()
+
+        self.canvas_list = []
+        self.axes_list = []
+        for i in range(4):
+            self.canvas_list.append(FigureCanvas(Figure(figsize=(14, 6))))
+            if i == 2:
+                self.axes_list.append(self.canvas_list[i].figure.add_subplot(111, projection='3d'))
+            else:
+                self.axes_list.append(self.canvas_list[i].figure.subplots())
+
+            self.axes_list[i].set_xticks([], [])
+            self.axes_list[i].set_yticks([], [])
+
+        self.axes_list[0].set_title("Highly populated cubes")
+        self.axes_list[1].set_title("Scatterplot with Countour plot")
+        self.axes_list[2].set_title('3D surface with 2D contour plot projections')
+        self.axes_list[3].set_title("DENCLUE clusters")
+
+        canvas_list = self.canvas_list
+
+        if first_run_boolean is True:
+            for i in reversed(range(self.gridlayout_plots.count())):
+                self.gridlayout_plots.itemAt(i).widget().setParent(None)
+
+        self.gridlayout_plots = QGridLayout()
+        self.gridlayout.addLayout(self.gridlayout_plots, 0, 1, 3, 2)
+
+        pic_indexes = [i for i, j in enumerate(pic_list) if j == 1]
+
+        if np.sum(pic_list) == 1:
+            self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+
+        elif np.sum(pic_list) == 2:
+            if 2 in pic_indexes:
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 0, 1)
+            else:
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 1, 0)
+
+        elif np.sum(pic_list) == 3:
+            if 2 in pic_indexes:
+                if 3 in pic_indexes:
+                    self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+                    self.gridlayout_plots.addWidget(canvas_list[pic_indexes[-1]], 1, 0)
+                    # 2 outside
+                else:
+                    self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+                    self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 1, 0)
+                    # 2 outside
+            else:
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+                self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 1, 0)
+                # 3 outside
+
+        elif np.sum(pic_list) == 4:
+            self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
+            self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 1, 0)
+            # 2 and 3 outside
+
 
 class GraphWindow(QMainWindow):
     def __init__(self, example_index):
@@ -1218,9 +1285,9 @@ class GraphWindow(QMainWindow):
 
 
 class FinalStepWindow(QMainWindow):
-    def __init__(self, canvas):
+    def __init__(self, canvas, window_title="Final Step"):
         super().__init__()
-        self.setWindowTitle("Final Step")
+        self.setWindowTitle(window_title)
         self.setGeometry(300, 200, 1000, 400)
 
         self.setCentralWidget(canvas)

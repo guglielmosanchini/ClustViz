@@ -58,7 +58,7 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
     # drops the totally null columns, so that the number of columns goes to 2*(cardinality of biggest cluster)
     a = a.dropna(1, how="all")
 
-    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
+    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
               4: 'pink', 5: 'turquoise', 6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
     color_dict_rect = convert_colors(colors, alpha=0.3)

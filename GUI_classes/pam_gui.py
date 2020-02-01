@@ -309,7 +309,7 @@ class KMedoids_gui:
         # all points are plotted in white
         ax.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")
 
-        colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey',
+        colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
                   4: 'pink', 5: 'turquoise', 6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro",
                   17: "peachpuff"}

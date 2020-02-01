@@ -5,7 +5,7 @@ from collections import Counter
 
 def plot2d_graph(graph, print_clust=True):
     pos = nx.get_node_attributes(graph, 'pos')
-    colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
               6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
               11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
               16: "gainsboro", 17: "peachpuff", 18: "lime", 19: "peru",
