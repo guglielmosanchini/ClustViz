@@ -476,8 +476,9 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
     # while the desired number of clusters has not been reached
     while len(heap) > k:
 
-        # find minimum value of heap queu, which stores clusters according to the distance from
+        # find minimum value of heap queue, which stores clusters according to the distance from
         # their closest cluster
+
         list_argmin = list(X_dist1.apply(lambda x: np.argmin(x)).values)
         list_min = list(X_dist1.min(axis=0).values)
         heap = dict(zip(list(X_dist1.index), list_min))
@@ -488,7 +489,8 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
         u = min(heap, key=heap.get)
         levels.append(heap[u])
         del heap[u]
-        u_cl = closest[u]
+        #u_cl = str(closest[u])
+        u_cl = X_dist1.columns[closest[u]]
         del closest[u]
 
         # form the new cluster

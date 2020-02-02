@@ -380,7 +380,8 @@ class CURE_class(StartingGui):
             u = min(heap, key=heap.get)
             levels.append(heap[u])
             del heap[u]
-            u_cl = closest[u]
+            # u_cl = closest[u]
+            u_cl = X_dist1.columns[closest[u]]
             del closest[u]
 
             # form the new cluster

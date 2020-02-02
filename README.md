@@ -28,6 +28,16 @@ Just open the notebook **Clustering_visualization_notebook** and run whatever se
 Alternatively, run the script **gui.py** to open a GUI built with PyQt5 and use it to explore the clustering algorithms; currently, Chameleon and Chameleon2 are
 not supported in the GUI version, and may be impossible to use in a Windows environment due to difficulties in installing METIS.
 
+To run BIRCH algorithm, the open source visualization software Graphviz is required. To install it, write in the command line
+```python
+pip install graphviz
+```
+and then, after installing Graphviz from the official webpage (https://graphviz.gitlab.io/download/) or using HomeBrew,
+the PATH variable has to be modified as follows (replace the string accordingly to the path where you installed Graphviz):
+```python
+import os
+os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin'
+```
 ## Repository structure
 
 1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
