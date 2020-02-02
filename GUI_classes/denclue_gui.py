@@ -29,6 +29,10 @@ class DENCLUE_class(StartingGui):
         self.checkbox_3dplot.stateChanged.connect(lambda: self.number_of_plots_gui(2))
         self.checkbox_clusters.stateChanged.connect(lambda: self.number_of_plots_gui(3))
 
+        # influence plot
+        self.button_infl_denclue.clicked.connect(lambda: self.plot_infl_gui(ax=self.ax_infl,
+                                                                            canvas=self.canvas_infl))
+
     def number_of_plots_gui(self, number):
         # if number == 0:
         #     if self.checkbox_pop_cubes.isChecked():
@@ -149,13 +153,13 @@ class DENCLUE_class(StartingGui):
 
         for num, point in enumerate(points_to_process):
 
-            if num == int(len(points_to_process)/4):
+            if num == int(len(points_to_process) / 4):
                 self.log.appendPlainText("hill-climb progress: 25%")
                 QCoreApplication.processEvents()
-            if num == int(len(points_to_process)/2):
+            if num == int(len(points_to_process) / 2):
                 self.log.appendPlainText("hill-climb progress: 50%")
                 QCoreApplication.processEvents()
-            if num == int((len(points_to_process)/4)*3):
+            if num == int((len(points_to_process) / 4) * 3):
                 self.log.appendPlainText("hill-climb progress: 75%")
                 QCoreApplication.processEvents()
 
@@ -272,13 +276,13 @@ class DENCLUE_class(StartingGui):
 
         for i, a in enumerate(range(prec * 10)):
 
-            if i == int((prec*10)/4):
+            if i == int((prec * 10) / 4):
                 self.log.appendPlainText("3dplot progress: 25%")
                 QCoreApplication.processEvents()
-            if i == (prec*10)/2:
+            if i == (prec * 10) / 2:
                 self.log.appendPlainText("3dplot progress: 50%")
                 QCoreApplication.processEvents()
-            if i == int(((prec*10)/4)*3):
+            if i == int(((prec * 10) / 4) * 3):
                 self.log.appendPlainText("3dplot progress: 75%")
                 QCoreApplication.processEvents()
 
@@ -355,13 +359,13 @@ class DENCLUE_class(StartingGui):
         z = np.empty((prec * 10, prec * 10))
         for i, a in enumerate(range(prec * 10)):
 
-            if i == int((prec*10)/4):
+            if i == int((prec * 10) / 4):
                 self.log.appendPlainText("contour progress: 25%")
                 QCoreApplication.processEvents()
-            if i == (prec*10)/2:
+            if i == (prec * 10) / 2:
                 self.log.appendPlainText("contour progress: 50%")
                 QCoreApplication.processEvents()
-            if i == int(((prec*10)/4)*3):
+            if i == int(((prec * 10) / 4) * 3):
                 self.log.appendPlainText("contour progress: 75%")
                 QCoreApplication.processEvents()
 
@@ -391,6 +395,63 @@ class DENCLUE_class(StartingGui):
                 canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
 
             QCoreApplication.processEvents()
+
+    def plot_infl_gui(self, ax, canvas):
+
+        ax.clear()
+        self.log.clear()
+        self.log.appendPlainText("{} LOG".format(self.name))
+        self.log.appendPlainText("")
+
+        self.verify_input_parameters()
+
+        if self.param_check is False:
+            return
+
+        self.n_points = int(self.line_edit_np.text())
+        self.sigma_denclue = float(self.line_edit_sigma_denclue.text())
+        self.xi_denclue = float(self.line_edit_xi_denclue.text())
+
+        self.X = choose_dataset(self.combobox.currentText(), self.n_points)
+
+        data = self.X
+        s = self.sigma_denclue
+        xi = self.xi_denclue
+
+        ax.set_title("Significance of possible density attractors")
+
+        z = []
+        for a, b in zip(np.array(data)[:, 0], np.array(data)[:, 1]):
+            z.append(gauss_dens(x=np.array([a, b]), D=data, s=s))
+
+        x_plot = [i for i in range(len(data))]
+
+        X_over = [x_plot[j] for j in range(len(data)) if z[j] >= xi]
+        Y_over = [z[j] for j in range(len(data)) if z[j] >= xi]
+
+        X_under = [x_plot[j] for j in range(len(data)) if z[j] < xi]
+        Y_under = [z[j] for j in range(len(data)) if z[j] < xi]
+
+        ax.scatter(X_over, Y_over, s=300, color="green", edgecolor="black",
+                   alpha=0.7, label="possibly significant")
+
+        ax.scatter(X_under, Y_under, s=300, color="yellow", edgecolor="black",
+                   alpha=0.7, label="not significant")
+
+        ax.axhline(xi, color="red", linewidth=2, label="xi")
+
+        ax.set_ylabel("influence")
+
+        # add indexes to points in plot
+        for i, txt in enumerate(range(len(data))):
+            ax.annotate(txt, (i, z[i]), fontsize=10, size=10, ha='center', va='center')
+
+        ax.legend()
+        self.openFinalStepWindow_4(canvas=canvas)
+
+        canvas.draw()
+
+        QCoreApplication.processEvents()
 
     def plot_clust_dict_gui(self, data, lab_dict, ax, canvas, save_plots, ind_fig):
 
@@ -443,3 +504,7 @@ class DENCLUE_class(StartingGui):
     def openFinalStepWindow_3(self, canvas):
         self.w3 = FinalStepWindow(canvas=canvas, window_title="Clustering")
         self.w3.show()
+
+    def openFinalStepWindow_4(self, canvas):
+        self.w4 = FinalStepWindow(canvas=canvas, window_title="Influence function")
+        self.w4.show()

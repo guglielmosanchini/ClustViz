@@ -340,8 +340,10 @@ def assign_cluster(data, others, attractor, clust_dict, processed):
     return clust_dict, processed
 
 
-def plot_infl(data, s, xi, prec=3):
+def plot_infl(data, s, xi):
     fig, ax = plt.subplots(figsize=(14, 6))
+
+    ax.set_title("Significance of possible density attractors")
 
     z = []
     for a, b in zip(np.array(data)[:, 0], np.array(data)[:, 1]):
@@ -349,16 +351,27 @@ def plot_infl(data, s, xi, prec=3):
 
     x_plot = [i for i in range(len(data))]
 
-    for j in range(len(data)):
-        plt.scatter(x_plot[j], z[j], s=300, color="green" if z[j] >= xi else "yellow",
-                    edgecolor="black", alpha=0.7)
+    X_over = [x_plot[j] for j in range(len(data)) if z[j] >= xi]
+    Y_over = [z[j] for j in range(len(data)) if z[j] >= xi]
 
-    plt.axhline(xi, color="red", linewidth=2)
+    X_under = [x_plot[j] for j in range(len(data)) if z[j] < xi]
+    Y_under = [z[j] for j in range(len(data)) if z[j] < xi]
+
+    plt.scatter(X_over, Y_over, s=300, color="green", edgecolor="black",
+                alpha=0.7, label="possibly significant")
+
+    plt.scatter(X_under, Y_under, s=300, color="yellow", edgecolor="black",
+                alpha=0.7, label="not significant")
+
+    plt.axhline(xi, color="red", linewidth=2, label="xi")
+
+    ax.set_ylabel("influence")
 
     # add indexes to points in plot
     for i, txt in enumerate(range(len(data))):
         ax.annotate(txt, (i, z[i]), fontsize=10, size=10, ha='center', va='center')
 
+    ax.legend()
     plt.show()
 
 
@@ -544,7 +557,7 @@ def extract_cluster_labels(data, cld, tol=2):
 
     df = pd.DataFrame(l_mod)
     if len(Counter(fin_labels)) == 1:
-        df["added"] = [np.nan]* len(df)
+        df["added"] = [np.nan] * len(df)
     df.columns = ["x", "y"]
     df["label"] = fin_labels
     # df.groupby("label").mean()

@@ -53,6 +53,13 @@ class StartingGui(QWidget):
                 self.ax_t.set_xticks([], [])
                 self.ax_t.set_yticks([], [])
 
+        # influence plot for DENCLUE
+        if self.name == "DENCLUE":
+            self.canvas_infl = FigureCanvas(Figure(figsize=(12, 5)))
+            self.ax_infl = self.canvas_infl.figure.subplots()
+            self.ax_infl.set_xticks([], [])
+            self.ax_infl.set_yticks([], [])
+
         # parameters initialization
         self.parameter_initialization()
 
@@ -605,6 +612,11 @@ class StartingGui(QWidget):
             self.checkbox_clusters = QCheckBox("clusters")
             self.checkbox_clusters.setToolTip("Check it show a final plot of the clusters found using DENCLUE.")
 
+            # button for influence function plot
+            self.button_infl_denclue = QPushButton("Influence", self)
+            self.button_infl_denclue.setToolTip("Show the influence function value for each point along with a "
+                                                "density-attractors significance threshold determined by xi.")
+
     def log_initialization(self):
         log_list = ["DBSCAN", "CLARA", "PAM", "CLARANS"]
         log_list2 = ["OPTICS", "AGGLOMERATIVE", "BIRCH", "CHAMELEON", "CHAMELEON2", "DENCLUE"]
@@ -883,6 +895,7 @@ class StartingGui(QWidget):
             self.gridlayout_plot_checkboxes.addWidget(self.checkbox_3dplot, 1, 0)
             self.gridlayout_plot_checkboxes.addWidget(self.checkbox_clusters, 1, 1)
             self.gridlayout_plot_checkboxes.addWidget(self.checkbox_saveimg, 2, 0)
+            self.gridlayout_plot_checkboxes.addWidget(self.button_infl_denclue, 2, 1)
 
     def checkBoxChangedAction(self, state):
         if Qt.Checked == state:
@@ -1200,9 +1213,6 @@ class StartingGui(QWidget):
 
     def SetWindowsDENCLUE(self, pic_list, first_run_boolean):
         """ Analogous of SetWindows but for DENCLUE algorithm."""
-
-        # for el in self.axes_list:
-        #     el.clear()
 
         self.canvas_list = []
         self.axes_list = []
