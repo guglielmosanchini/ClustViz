@@ -33,7 +33,7 @@ To run BIRCH algorithm, the open source visualization software Graphviz is requi
 pip install graphviz
 ```
 and then, after installing Graphviz from the official webpage (https://graphviz.gitlab.io/download/) or using HomeBrew,
-the PATH variable has to be modified as follows (replace the string accordingly to the path where you installed Graphviz):
+the PATH variable has to be modified as follows (replace the string according to the path where you installed Graphviz):
 ```python
 import os
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin'
