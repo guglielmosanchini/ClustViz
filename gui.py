@@ -15,8 +15,8 @@ from GUI_classes.clarans_gui import CLARANS_class
 from GUI_classes.birch_gui import BIRCH_class
 from GUI_classes.pam_gui import PAM_class
 from GUI_classes.denclue_gui import DENCLUE_class
-# from GUI_classes.chameleon_gui import CHAMELEON_class
-# from GUI_classes.chameleon2_gui import CHAMELEON2_class
+from GUI_classes.chameleon_gui import CHAMELEON_class
+from GUI_classes.chameleon2_gui import CHAMELEON2_class
 
 # TODO: button images
 # TODO: play/pause button

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
     QLineEdit, QPlainTextEdit, QWidget, QCheckBox, QMessageBox, QVBoxLayout, QMainWindow
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QLocale
 from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPixmap
 from imageio import mimsave, imread
 import os
@@ -28,6 +28,9 @@ class StartingGui(QWidget):
         self.setWindowTitle(self.name)
         self.setGeometry(100, 100, 1290, 850)
 
+        # otherwise Validators do not work properly
+        QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
+
         # upper plot
         if first_plot is True:
             self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
@@ -46,8 +49,9 @@ class StartingGui(QWidget):
             self.ax = self.canvas_down.figure.subplots()
             self.ax.set_xticks([], [])
             self.ax.set_yticks([], [])
-            self.ax.set_title(self.name + " Reachability Plot")
-            self.ax.set_ylabel("reachability distance")
+            if self.name == "OPTICS":
+                self.ax.set_title(self.name + " Reachability Plot")
+                self.ax.set_ylabel("reachability distance")
             if twinx is True:
                 self.ax_t = self.ax.twinx()
                 self.ax_t.set_xticks([], [])
@@ -74,7 +78,7 @@ class StartingGui(QWidget):
 
         # grid where the two pictures, the log and the button box are inserted (row,column)
         self.gridlayout = QGridLayout(self)
-        if first_plot is True:
+        if (first_plot is True) and self.name != "CHAMELEON":
             if stretch_plot is False:
                 self.gridlayout.addWidget(self.canvas_up, 0, 1)
             else:
@@ -214,7 +218,7 @@ class StartingGui(QWidget):
 
         elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
             self.n_clust = 3
-            self.knn_cham = 6,
+            self.knn_cham = 6
             self.init_clust_cham = 10
             self.alpha_cham = 2
 
@@ -332,6 +336,7 @@ class StartingGui(QWidget):
             self.line_edit_alpha_cure.setText(str(self.alpha_cure))
 
             self.alpha_cure_validator = QDoubleValidator(0, 1, 4, self)
+            #self.alpha_cure_validator.setNotation(QDoubleValidator.StandardNotation)
             self.line_edit_alpha_cure.setValidator(self.alpha_cure_validator)
 
             if self.name == "LARGE CURE":
@@ -461,7 +466,8 @@ class StartingGui(QWidget):
             self.line_edit_initial_diameter = QLineEdit(self)
             self.line_edit_initial_diameter.setText(str(self.initial_diameter))
 
-            self.initial_diameter_validator = QDoubleValidator(0, 1000, 4, self)
+            self.initial_diameter_validator = QDoubleValidator(0, 1000, 4)
+            #self.initial_diameter_validator.setNotation(QDoubleValidator.StandardNotation)
             self.line_edit_initial_diameter.setValidator(self.initial_diameter_validator)
 
         elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
@@ -518,7 +524,7 @@ class StartingGui(QWidget):
                 self.line_edit_beta_cham = QLineEdit(self)
                 self.line_edit_beta_cham.setText(str(self.beta_cham))
 
-                self.beta_cham_validator = QDoubleValidator(0, 1000, self)
+                self.beta_cham_validator = QDoubleValidator(0, 1000, 4, self)
                 self.line_edit_beta_cham.setValidator(self.beta_cham_validator)
 
                 # m_fact LABEL
@@ -667,6 +673,12 @@ class StartingGui(QWidget):
             self.groupbox_buttons.setFixedSize(220, 400)
         elif self.name == "DENCLUE":
             self.groupbox_buttons.setFixedWidth(220)
+
+        if self.name == "CHAMELEON":
+            self.groupbox_buttons.setFixedHeight(450)
+
+        if self.name == "CHAMELEON2":
+            self.groupbox_buttons.setFixedHeight(500)
 
         self.gridlayout.addWidget(self.groupbox_buttons, 0, 0)
 
@@ -1272,6 +1284,25 @@ class StartingGui(QWidget):
             self.gridlayout_plots.addWidget(canvas_list[pic_indexes[0]], 0, 0)
             self.gridlayout_plots.addWidget(canvas_list[pic_indexes[1]], 1, 0)
             # 2 and 3 outside
+
+    def SetWindowsCHAMELEON(self):
+
+        self.canvas_up = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax1 = self.canvas_up.figure.subplots()
+        self.ax1.set_xticks([], [])
+        self.ax1.set_yticks([], [])
+        self.ax1.set_title(self.name + " Graph Clustering")
+
+        self.canvas_down = FigureCanvas(Figure(figsize=(12, 5)))
+        self.ax = self.canvas_down.figure.subplots()
+        self.ax.set_xticks([], [])
+        self.ax.set_yticks([], [])
+        self.ax.set_title(self.name + " Merging")
+
+        self.gridlayout_plots = QGridLayout()
+        self.gridlayout.addLayout(self.gridlayout_plots, 0, 1, 3, 2)
+        self.gridlayout_plots.addWidget(self.canvas_up, 0, 0)
+        self.gridlayout_plots.addWidget(self.canvas_down, 1, 0)
 
 
 class GraphWindow(QMainWindow):

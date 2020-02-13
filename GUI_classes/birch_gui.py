@@ -528,7 +528,7 @@ class birch_gui:
                     index1 = index_candidate1
                     index2 = index_candidate2
 
-        self.log.appendPlainText("nearest features are: {}, {}".format(index1, index2))
+        self.log.appendPlainText("nearest features: {}, {}".format(index1, index2))
         return [index1, index2]
 
     def __get_nearest_feature(self, point, feature_collection):

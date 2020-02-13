@@ -38,6 +38,19 @@ the PATH variable has to be modified as follows (replace the string according to
 import os
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin'
 ```
+
+To run Chameleon and Chameleon2 algorithm the library METIS is required. To install it on Mac OS, execute the following steps:
+```python
+pip install metis
+```
+Then, open the terminal, go to the **metis-5.1.0** folder and run
+```python
+make config shared=1
+```
+and
+```python
+make install
+```
 ## Repository structure
 
 1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
@@ -80,5 +93,5 @@ https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/claran
 - CHAMELEON
 https://github.com/Moonpuck/chameleon_cluster
 
-The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius, the GUI Meister, 
-for the help with PyQt5.
+The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius (https://github.com/dariomonici), 
+the GUI Meister, for the help with PyQt5.

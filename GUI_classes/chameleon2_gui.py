@@ -1,32 +1,35 @@
 from PyQt5.QtCore import Qt, QCoreApplication
 
-import itertools
 import pandas as pd
 import numpy as np
-from tqdm.auto import tqdm
 import networkx as nx
 from collections import Counter
+import itertools
+import metis
 
-from algorithms.chameleon.chameleon2 import knn_graph_sym, merge_best2, prepro_edge, connected_components, \
-    tree_height, first_jump_cutoff, find_nearest_height
-from algorithms.chameleon.graphtools import pre_part_graph, get_cluster, connecting_edges
-from algorithms.chameleon.visualization import plot2d_data
+from algorithms.chameleon.chameleon2 import knn_graph_sym, prepro_edge, connected_components, \
+    tree_height, first_jump_cutoff, find_nearest_height, get_cluster, connecting_edges, merge_score2
+
 from algorithms.chameleon.chameleon import rebuild_labels
 
 from GUI_classes.utils_gui import choose_dataset, pause_execution
 
-from GUI_classes.generic_gui import StartingGui, GraphWindow
+from GUI_classes.generic_gui import StartingGui
+
 
 # TODO: take care of autoextract
 # TODO: fix everything on mac and try on windows
 
 class CHAMELEON2_class(StartingGui):
     def __init__(self):
-        super(CHAMELEON2_class, self).__init__(name="CHAMELEON2", twinx=False, first_plot=True, second_plot=False,
+        super(CHAMELEON2_class, self).__init__(name="CHAMELEON2", twinx=False, first_plot=False, second_plot=False,
                                                function=self.start_CHAMELEON2, extract=False, stretch_plot=False)
+        self.SetWindowsCHAMELEON()
 
     def start_CHAMELEON2(self):
-        self.ax1.cla()
+
+        self.ind_fig = 0
+        self.SetWindowsCHAMELEON()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
 
@@ -48,7 +51,6 @@ class CHAMELEON2_class(StartingGui):
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
-        self.button_examples_graph.setEnabled(False)
         self.slider.setEnabled(False)
 
         if self.first_run_occurred is True:
@@ -64,16 +66,16 @@ class CHAMELEON2_class(StartingGui):
         self.checkbox_gif.setEnabled(False)
 
         res, h = self.cluster2_gui(pd.DataFrame(self.X), k=self.n_clust, knn=self.knn_cham, m=self.init_clust_cham,
-                                   alpha=self.alpha_cham, beta=self.beta_cham, m_fact=self.m_fact, plot=True,
-                                   auto_extract=False)
+                                   alpha=self.alpha_cham, beta=self.beta_cham, m_fact=self.m_fact,
+                                   auto_extract=False, save_plots=self.save_plots)
 
-        # plot2d_data(res)
+        self.plot2d_data_gui(res, canvas=self.canvas_down, ax=self.ax, save_plots=self.save_plots,
+                             ind_fig=self.ind_fig)
 
         if (self.make_gif is True) and (self.save_plots is True):
             self.generate_GIF()
 
         self.button_run.setEnabled(True)
-        self.button_examples_graph.setEnabled(True)
         self.checkbox_saveimg.setEnabled(True)
         if self.checkbox_saveimg.isChecked() is True:
             self.checkbox_gif.setEnabled(True)
@@ -81,19 +83,22 @@ class CHAMELEON2_class(StartingGui):
         self.slider.setEnabled(True)
 
     def cluster2_gui(self, df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
-                     verbose=True, verbose2=True, plot=True, auto_extract=False):
+                     auto_extract=False, save_plots=None):
         if knn is None:
             knn = int(round(2 * np.log(len(df))))
 
         if k is None:
             k = 1
 
-        self.log.appendPlainText("Building kNN graph (k = {})...".format(knn))
-        graph_knn = knn_graph_sym(df, knn, verbose)
+        self.log.appendPlainText("Building kNN graph (k={})...".format(knn))
+        self.log.appendPlainText("")
+        graph_knn = knn_graph_sym(df, knn, True)
 
-        self.plot2d_graph_gui(graph_knn, print_clust=True)
+        self.plot2d_graph_gui(graph=graph_knn, canvas=self.canvas_up, ax=self.ax1, save_plots=save_plots,
+                              ind_fig=self.ind_fig, print_clust=False)
 
-        graph_pp = pre_part_graph(graph_knn, m, df, verbose, plotting=plot)
+        graph_pp = self.pre_part_graph_gui(graph=graph_knn, canvas=self.canvas_up, ax=self.ax1,
+                                           k=m, df=df, verbose=True, plotting=True)
 
         self.log.appendPlainText("flood fill...")
 
@@ -103,22 +108,34 @@ class CHAMELEON2_class(StartingGui):
 
         self.log.appendPlainText("new m: {}".format(m))
 
-        self.plot2d_graph_gui(graph_ff, print_clust=True)
+        self.plot2d_graph_gui(graph=graph_ff, canvas=self.canvas_up, ax=self.ax1, save_plots=save_plots,
+                              ind_fig=self.ind_fig, print_clust=False)
 
         dendr_height = {}
-        iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose else enumerate(range(m - k))
+        iterm = enumerate(range(m - k))
 
         for i, _ in iterm:
 
-            df, ms, ci = merge_best2(graph_ff, df, alpha, beta, m_fact, k, False, verbose2)
+            print(alpha)
+            print(beta)
+            print(k)
+            print(df.head())
+
+            df, ms, ci = self.merge_best2_gui(graph=graph_ff, df=df, a=alpha, b=beta, m_fact=m_fact, k=k,
+                                              verbose=False, verbose2=True)
+
+            print(ms)
+            print(ci)
 
             if ms == 0:
                 break
 
             dendr_height[m - (i + 1)] = ms
 
-            if plot:
-                plot2d_data(df, ci)
+            self.plot2d_data_gui(df=df, col_i=ci, canvas=self.canvas_down, ax=self.ax, save_plots=save_plots,
+                                 ind_fig=self.ind_fig)
+
+            self.ind_fig += 1
 
         self.log.appendPlainText("dendr_height: {}".format(dendr_height))
         res = rebuild_labels(df)
@@ -127,6 +144,52 @@ class CHAMELEON2_class(StartingGui):
             self.extract_optimal_n_clust_gui(dendr_height, m)
 
         return res, dendr_height
+
+    def merge_best2_gui(self, graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
+        clusters = np.unique(df['cluster'])
+        max_score = 0
+        ci, cj = -1, -1
+        if len(clusters) <= k:
+            return False
+
+        for combination in itertools.combinations(clusters, 2):
+            i, j = combination
+            if i != j:
+                if verbose:
+                    self.log.appendPlainText("Checking c{} and c{}".format(i, j))
+                gi = get_cluster(graph, [i])
+                gj = get_cluster(graph, [j])
+                edges = connecting_edges(
+                    (gi, gj), graph)
+                if not edges:
+                    continue
+                ms = merge_score2(graph, gi, gj, a, b, m_fact)
+                if verbose:
+                    self.log.appendPlainText("Merge score: {}".format(round(ms, 4)))
+                if ms > max_score:
+                    if verbose:
+                        self.log.appendPlainText("Better than: {}".format(round(max_score, 4)))
+                    max_score = ms
+                    ci, cj = i, j
+
+        if max_score > 0:
+            if verbose2:
+                self.log.appendPlainText("Merging c{} and c{}".format(ci, cj))
+                self.log.appendPlainText("score: {}".format(round(max_score, 4)))
+                self.log.appendPlainText("")
+
+            df.loc[df['cluster'] == cj, 'cluster'] = ci
+
+            for i, p in enumerate(graph.nodes()):
+                if graph.node[p]['cluster'] == cj:
+                    graph.node[p]['cluster'] = ci
+        else:
+            self.log.appendPlainText("No Merging")
+            self.log.appendPlainText("score: {}".format(round(max_score, 4)))
+            self.log.appendPlainText("early stopping")
+            self.log.appendPlainText("increase k of k-NN if you want to perform each merging step")
+
+        return df, max_score, ci
 
     def flood_fill_gui(self, graph, knn_gr, df):
 
@@ -163,13 +226,51 @@ class CHAMELEON2_class(StartingGui):
 
         return graph, increased_m
 
+    def pre_part_graph_gui(self, graph, k, canvas, ax, df=None, verbose=True, plotting=False):
+
+        self.ind_fig = 1
+
+        if verbose:
+            self.log.appendPlainText("Begin clustering...")
+        clusters = 0
+        for i, p in enumerate(graph.nodes()):
+            graph.node[p]['cluster'] = 0
+        cnts = {0: len(graph.nodes())}
+
+        while clusters < k - 1:
+            maxc = -1
+            maxcnt = 0
+            for key, val in cnts.items():
+                if val > maxcnt:
+                    maxcnt = val
+                    maxc = key
+            s_nodes = [n for n in graph.node if graph.node[n]['cluster'] == maxc]
+            s_graph = graph.subgraph(s_nodes)
+            edgecuts, parts = metis.part_graph(s_graph, 2, objtype='cut', ufactor=250)
+            new_part_cnt = 0
+            for i, p in enumerate(s_graph.nodes()):
+                if parts[i] == 1:
+                    graph.node[p]['cluster'] = clusters + 1
+                    new_part_cnt = new_part_cnt + 1
+            if plotting is True:
+                self.plot2d_graph_gui(graph, canvas=canvas, ax=ax, save_plots=self.save_plots,
+                                      ind_fig=self.ind_fig, print_clust=False)
+                self.ind_fig += 1
+            cnts[maxc] = cnts[maxc] - new_part_cnt
+            cnts[clusters + 1] = new_part_cnt
+            clusters = clusters + 1
+
+        edgecuts, parts = metis.part_graph(graph, k)
+        if df is not None:
+            df['cluster'] = nx.get_node_attributes(graph, 'cluster').values()
+        return graph
+
     def extract_optimal_n_clust_gui(self, h, m, f=1000, eta=2):
         th = tree_height(h, m)
 
         if len(th) <= 3:
             self.log.appendPlainText("insufficient merging steps to perform auto_extract; "
                                      "decrease k and/or increase m")
-
             return
 
         fjc = first_jump_cutoff(th, f, eta, m)
@@ -178,13 +279,20 @@ class CHAMELEON2_class(StartingGui):
 
         self.log.appendPlainText("Optimal number of clusters: {}".format(opt_n_clust))
 
-    def plot2d_graph_gui(self, graph, print_clust=True):
+    def plot2d_graph_gui(self, graph, canvas, ax, save_plots, ind_fig=None, print_clust=True):
+
+        if self.delay != 0:
+            pause_execution(self.delay)
+
+        ax.clear()
+        ax.set_title(self.name + " Graph Clustering")
+
         pos = nx.get_node_attributes(graph, 'pos')
-        colors = {0: "seagreen", 1: 'beige', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+        colors = {0: "seagreen", 1: 'dodgerblue', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
                   6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
                   11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
                   16: "gainsboro", 17: "peachpuff", 18: "lime", 19: "peru",
-                  20: "dodgerblue", 21: "teal", 22: "royalblue", 23: "tomato",
+                  20: "beige", 21: "teal", 22: "royalblue", 23: "tomato",
                   24: "bisque", 25: "palegreen"}
 
         el = nx.get_node_attributes(graph, 'cluster').values()
@@ -196,6 +304,46 @@ class CHAMELEON2_class(StartingGui):
 
         if len(el) != 0:  # is set
             # print(pos)
-            nx.draw(graph, pos, node_color=c, node_size=60, edgecolors="black", ax=self.ax1)
+            nx.draw(graph, pos, node_color=c, node_size=60, edgecolors="black", ax=ax)
         else:
-            nx.draw(graph, pos, node_size=60, edgecolors="black", ax=self.ax1)
+            nx.draw(graph, pos, node_size=60, edgecolors="black", ax=ax)
+
+        canvas.draw()
+
+        if save_plots is True:
+            canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+
+        QCoreApplication.processEvents()
+
+    def plot2d_data_gui(self, df, canvas, ax, save_plots, ind_fig=None, col_i=None):
+
+        if self.delay != 0:
+            pause_execution(self.delay)
+
+        ax.clear()
+        ax.set_title(self.name + " Merging")
+
+        colors = {0: "seagreen", 1: 'dodgerblue', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
+                  6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
+                  11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki",
+                  16: "gainsboro", 17: "peachpuff", 18: "lime", 19: "peru",
+                  20: "beige", 21: "teal", 22: "royalblue", 23: "tomato",
+                  24: "bisque", 25: "palegreen"}
+
+        color_list = [colors[i] for i in df['cluster']]
+
+        df.plot(kind='scatter', c=color_list, x=0, y=1, ax=ax, s=100)
+
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+
+        if col_i is not None:
+            ax.scatter(df[df.cluster == col_i].iloc[:, 0], df[df.cluster == col_i].iloc[:, 1],
+                       color="black", s=140, edgecolors="white", alpha=0.8)
+
+        canvas.draw()
+
+        if save_plots is True:
+            canvas.figure.savefig('./Images/{}_{:02}/fig_{:02}.png'.format(self.name, self.ind_run, ind_fig))
+
+        QCoreApplication.processEvents()
