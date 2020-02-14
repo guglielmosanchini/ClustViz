@@ -69,7 +69,7 @@ class StartingGui(QWidget):
 
         # this is used to account for previously created folders in Images to set the self.ind_run correctly
         fold_dir = "./Images/"
-        folders = [el for el in os.listdir(fold_dir) if el.startswith(self.name)]
+        folders = [el for el in os.listdir(fold_dir) if el.startswith(self.name + "_")]
         folders.sort()
         if len(folders) == 0:
             self.ind_run = 0

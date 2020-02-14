@@ -201,8 +201,8 @@ def conn_comp(knn_gr):
 
     return list(connected_components(g1))
 
-
 def flood_fill(graph, knn_gr, df):
+    len_0_clusters = 0
     cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
     new_cl_ind = max(cl_dict.values()) + 1
     dic_edge = prepro_edge(knn_gr)
@@ -219,6 +219,8 @@ def flood_fill(graph, knn_gr, df):
         print("num_cluster: {0}, len: {1}".format(num, len(cc_list)))
         if len(cc_list) == 1:
             continue
+        elif len(cc_list) == 0:
+            len_0_clusters += 1
         else:
             # skip the first
             for component in cc_list[1:]:
@@ -232,7 +234,7 @@ def flood_fill(graph, knn_gr, df):
     for i in range(len(graph)):
         graph.node[i]["cluster"] = cl_dict[i]
 
-    increased_m = max(cl_dict.values()) + 1
+    increased_m = max(cl_dict.values()) + 1 - len_0_clusters
 
     return graph, increased_m
 

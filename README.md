@@ -26,7 +26,7 @@ The following algorithms have been examined:
 Just open the notebook **Clustering_visualization_notebook** and run whatever section you like, using 2D datasets (for visualization purposes, the cardinality of the datasets should be <= 250 points), to see each algorithm in action.
 
 Alternatively, run the script **gui.py** to open a GUI built with PyQt5 and use it to explore the clustering algorithms; currently, Chameleon and Chameleon2 are
-not supported in the GUI version, and may be impossible to use in a Windows environment due to difficulties in installing METIS.
+only supported on Mac OS, and may be impossible to use in a Windows environment due to difficulties in installing the METIS library.
 
 To run BIRCH algorithm, the open source visualization software Graphviz is required. To install it, write in the command line
 ```python

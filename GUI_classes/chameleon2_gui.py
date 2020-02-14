@@ -17,9 +17,6 @@ from GUI_classes.utils_gui import choose_dataset, pause_execution
 from GUI_classes.generic_gui import StartingGui
 
 
-# TODO: take care of autoextract
-# TODO: fix everything on mac and try on windows
-
 class CHAMELEON2_class(StartingGui):
     def __init__(self):
         super(CHAMELEON2_class, self).__init__(name="CHAMELEON2", twinx=False, first_plot=False, second_plot=False,
@@ -67,7 +64,7 @@ class CHAMELEON2_class(StartingGui):
 
         res, h = self.cluster2_gui(pd.DataFrame(self.X), k=self.n_clust, knn=self.knn_cham, m=self.init_clust_cham,
                                    alpha=self.alpha_cham, beta=self.beta_cham, m_fact=self.m_fact,
-                                   auto_extract=False, save_plots=self.save_plots)
+                                   auto_extract=True, save_plots=self.save_plots)
 
         self.plot2d_data_gui(res, canvas=self.canvas_down, ax=self.ax, save_plots=self.save_plots,
                              ind_fig=self.ind_fig)
@@ -82,7 +79,7 @@ class CHAMELEON2_class(StartingGui):
         self.button_delete_pics.setEnabled(True)
         self.slider.setEnabled(True)
 
-    def cluster2_gui(self, df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
+    def cluster2_gui(self, df, k=None, knn=None, m=30, alpha=2.0, beta=1.0, m_fact=1e3,
                      auto_extract=False, save_plots=None):
         if knn is None:
             knn = int(round(2 * np.log(len(df))))
@@ -92,13 +89,13 @@ class CHAMELEON2_class(StartingGui):
 
         self.log.appendPlainText("Building kNN graph (k={})...".format(knn))
         self.log.appendPlainText("")
-        graph_knn = knn_graph_sym(df, knn, True)
+        graph_knn = knn_graph_sym(df, knn, False)
 
         self.plot2d_graph_gui(graph=graph_knn, canvas=self.canvas_up, ax=self.ax1, save_plots=save_plots,
                               ind_fig=self.ind_fig, print_clust=False)
 
         graph_pp = self.pre_part_graph_gui(graph=graph_knn, canvas=self.canvas_up, ax=self.ax1,
-                                           k=m, df=df, verbose=True, plotting=True)
+                                           k=m, df=df, plotting=True)
 
         self.log.appendPlainText("flood fill...")
 
@@ -107,6 +104,7 @@ class CHAMELEON2_class(StartingGui):
         m = increased_m
 
         self.log.appendPlainText("new m: {}".format(m))
+        self.log.appendPlainText("")
 
         self.plot2d_graph_gui(graph=graph_ff, canvas=self.canvas_up, ax=self.ax1, save_plots=save_plots,
                               ind_fig=self.ind_fig, print_clust=False)
@@ -116,16 +114,8 @@ class CHAMELEON2_class(StartingGui):
 
         for i, _ in iterm:
 
-            print(alpha)
-            print(beta)
-            print(k)
-            print(df.head())
-
             df, ms, ci = self.merge_best2_gui(graph=graph_ff, df=df, a=alpha, b=beta, m_fact=m_fact, k=k,
                                               verbose=False, verbose2=True)
-
-            print(ms)
-            print(ci)
 
             if ms == 0:
                 break
@@ -188,10 +178,13 @@ class CHAMELEON2_class(StartingGui):
             self.log.appendPlainText("score: {}".format(round(max_score, 4)))
             self.log.appendPlainText("early stopping")
             self.log.appendPlainText("increase k of k-NN if you want to perform each merging step")
+            self.log.appendPlainText("")
 
         return df, max_score, ci
 
     def flood_fill_gui(self, graph, knn_gr, df):
+
+        len_0_clusters = 0
 
         cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
         new_cl_ind = max(cl_dict.values()) + 1
@@ -209,6 +202,8 @@ class CHAMELEON2_class(StartingGui):
             self.log.appendPlainText("num_cluster: {0}, len: {1}".format(num, len(cc_list)))
             if len(cc_list) == 1:
                 continue
+            elif len(cc_list) == 0:
+                len_0_clusters += 1
             else:
                 # skip the first
                 for component in cc_list[1:]:
@@ -222,16 +217,16 @@ class CHAMELEON2_class(StartingGui):
         for i in range(len(graph)):
             graph.node[i]["cluster"] = cl_dict[i]
 
-        increased_m = max(cl_dict.values()) + 1
+        increased_m = max(cl_dict.values()) + 1 - len_0_clusters
 
         return graph, increased_m
 
-    def pre_part_graph_gui(self, graph, k, canvas, ax, df=None, verbose=True, plotting=False):
+    def pre_part_graph_gui(self, graph, k, canvas, ax, df=None, plotting=False):
 
         self.ind_fig = 1
 
-        if verbose:
-            self.log.appendPlainText("Begin clustering...")
+        self.log.appendPlainText("Begin clustering...")
+
         clusters = 0
         for i, p in enumerate(graph.nodes()):
             graph.node[p]['cluster'] = 0
@@ -269,6 +264,7 @@ class CHAMELEON2_class(StartingGui):
         th = tree_height(h, m)
 
         if len(th) <= 3:
+            self.log.appendPlainText("")
             self.log.appendPlainText("insufficient merging steps to perform auto_extract; "
                                      "decrease k and/or increase m")
             return
@@ -277,6 +273,7 @@ class CHAMELEON2_class(StartingGui):
 
         opt_n_clust = find_nearest_height(th, fjc)
 
+        self.log.appendPlainText("")
         self.log.appendPlainText("Optimal number of clusters: {}".format(opt_n_clust))
 
     def plot2d_graph_gui(self, graph, canvas, ax, save_plots, ind_fig=None, print_clust=True):

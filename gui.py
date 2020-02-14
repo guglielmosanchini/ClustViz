@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout,
     QVBoxLayout, QTabBar
 
 from PyQt5.QtGui import QFont
-import qdarkstyle
+# import qdarkstyle
 import sys
 
 from GUI_classes.optics_gui import OPTICS_class
@@ -287,7 +287,7 @@ if __name__ == '__main__':
     # QApplication.setStyle('Fusion')
     app = QApplication(sys.argv)
     # pg.setConfigOption('background', 'w')
-    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+    # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     win = main()
     win.update()
 
