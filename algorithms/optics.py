@@ -158,7 +158,7 @@ def reach_plot(data, ClustDist, eps):
     # if the value is infinity, the height will be eps*1.15 by default
     for key, value in ClustDist.items():
 
-        if np.isinf(value) is True:
+        if np.isinf(value) == True:
 
             plot_dic[key] = eps * 1.15
 
@@ -359,7 +359,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
     for key, value in ClustDist.items():
 
-        if np.isinf(value) is True:
+        if np.isinf(value) == True:
 
             plot_dic[key] = eps * 1.15
 
