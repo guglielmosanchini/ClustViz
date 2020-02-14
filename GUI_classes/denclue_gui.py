@@ -65,6 +65,7 @@ class DENCLUE_class(StartingGui):
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
         self.log.appendPlainText("")
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 
@@ -100,8 +101,11 @@ class DENCLUE_class(StartingGui):
                 self.first_run_occurred = True
                 self.checkBoxChangedAction(self.checkbox_saveimg.checkState())
 
-        self.DENCLUE_gui(data=self.X, s=self.sigma_denclue, xi=self.xi_denclue, xi_c=self.xi_c_denclue,
-                         tol=self.tol_denclue, prec=self.prec_denclue, save_plots=self.save_plots)
+        if np.array(self.plot_list).sum() != 0:
+            self.DENCLUE_gui(data=self.X, s=self.sigma_denclue, xi=self.xi_denclue, xi_c=self.xi_c_denclue,
+                            tol=self.tol_denclue, prec=self.prec_denclue, save_plots=self.save_plots)
+        else:
+            self.display_empty_message()
 
         if (self.make_gif is True) and (self.save_plots is True):
             self.generate_GIF()
@@ -113,7 +117,14 @@ class DENCLUE_class(StartingGui):
 
         self.first_run_occurred_mod = True
 
+    def display_empty_message(self):
+
+        self.log.appendPlainText("You did not select anything to plot")
+        QCoreApplication.processEvents()
+
+
     def DENCLUE_gui(self, data, s, xi, xi_c, tol, prec, save_plots, dist="euclidean"):
+
         clust_dict = {}
         processed = []
 
@@ -181,7 +192,13 @@ class DENCLUE_class(StartingGui):
             point_index = np.nonzero(data == point)[0][0]
             clust_dict[point_index] = [-1]
 
-        lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
+        try:
+            lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
+        except:
+            self.log.appendPlainText("There was an error when extracting clusters. Increase number "
+                                     "of points or try with a less "
+                                     "pathological case: see the other plots to have an idea of why it failed.")
+            return
 
         if self.plot_list[3] == True:
             self.plot_clust_dict_gui(data, coord_df, ax=self.axes_list[3], canvas=self.canvas_list[3],

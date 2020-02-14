@@ -29,6 +29,7 @@ class CHAMELEON2_class(StartingGui):
         self.SetWindowsCHAMELEON()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 
@@ -131,7 +132,10 @@ class CHAMELEON2_class(StartingGui):
         res = rebuild_labels(df)
 
         if auto_extract is True:
-            self.extract_optimal_n_clust_gui(dendr_height, m)
+            try:
+                self.extract_optimal_n_clust_gui(dendr_height, m)
+            except:
+                pass
 
         return res, dendr_height
 
@@ -266,7 +270,7 @@ class CHAMELEON2_class(StartingGui):
         if len(th) <= 3:
             self.log.appendPlainText("")
             self.log.appendPlainText("insufficient merging steps to perform auto_extract; "
-                                     "decrease k and/or increase m")
+                                     "decrease k of KNN and/or increase init_clust")
             return
 
         fjc = first_jump_cutoff(th, f, eta, m)

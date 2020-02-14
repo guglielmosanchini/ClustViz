@@ -111,6 +111,11 @@ def cluster(df, k, knn=10, m=30, alpha=2.0, verbose=True, verbose2=True, plot=Tr
 
     graph = pre_part_graph(graph, m, df, verbose, plotting=plot)
 
+    # to account for cases where initial_clust is too big or k is already reached before the merging phase
+    cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
+    m = len(Counter(cl_dict.values()))
+    print("actual init_clust: {}".format(m))
+
     dendr_height = {}
     iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose else enumerate(range(m - k))
 

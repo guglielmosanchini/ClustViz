@@ -30,6 +30,7 @@ class CHAMELEON_class(StartingGui):
         self.SetWindowsCHAMELEON()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 
@@ -89,7 +90,14 @@ class CHAMELEON_class(StartingGui):
                               ind_fig=self.ind_fig, print_clust=False)
 
         graph = self.pre_part_graph_gui(graph=graph, canvas=self.canvas_up, ax=self.ax1,
-                                        k=m, df=df, verbose=True, plotting=True)
+                                        k=m, df=df, plotting=True)
+
+        # to account for cases where initial_clust is too big or k is already reached before the merging phase
+        cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
+        m = len(Counter(cl_dict.values()))
+        self.log.appendPlainText("")
+        self.log.appendPlainText("actual init_clust: {}".format(m))
+        self.log.appendPlainText("")
 
         dendr_height = {}
         iterm = enumerate(range(m - k))
@@ -156,12 +164,11 @@ class CHAMELEON_class(StartingGui):
 
         return df, max_score, ci
 
-    def pre_part_graph_gui(self, graph, k, canvas, ax, df=None, verbose=True, plotting=False):
+    def pre_part_graph_gui(self, graph, k, canvas, ax, df=None, plotting=False):
 
         self.ind_fig = 1
 
-        if verbose:
-            self.log.appendPlainText("Begin clustering...")
+        self.log.appendPlainText("Begin clustering...")
         clusters = 0
         for i, p in enumerate(graph.nodes()):
             graph.node[p]['cluster'] = 0

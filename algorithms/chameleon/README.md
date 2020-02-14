@@ -6,7 +6,7 @@ This repository is a modification and improvement of https://github.com/Moonpuck
 
 Depends on METIS for Python.
 
-There are some slight differences with respect to the official papers; moreover, the algorithms are not optimized for performance, but for visualizing the algorithms' steps
+There are some slight differences with respect to the official papers; moreover, the algorithms are not optimized for performance, but for visualizing the algorithms' steps.
 
 ## References
 

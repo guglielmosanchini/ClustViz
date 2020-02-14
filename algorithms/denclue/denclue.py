@@ -610,7 +610,11 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", prec=20, plotting=Tr
         point_index = np.nonzero(data == point)[0][0]
         clust_dict[point_index] = [-1]
 
-    lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
+    try:
+        lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
+    except:
+        print("There was an error when extracting clusters. Increase number of points or try with a less"
+              "pathological case: see the other plots to have an idea of why it failed.")
 
     if plotting is True:
         plot_clust_dict(data, coord_df)

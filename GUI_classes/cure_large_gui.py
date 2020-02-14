@@ -264,12 +264,12 @@ class LARGE_CURE_class(StartingGui):
                 x = [list(last_reps.values())[i][j][0] for j in range(min(n_rep_fin, len_rep))]
                 y = [list(last_reps.values())[i][j][1] for j in range(min(n_rep_fin, len_rep))]
 
-                ax.scatter(x, y, s=400, color=colors_reps[i], edgecolor="black", zorder=10)
-                ax.scatter(coms[i][0], coms[i][1], s=400, color=colors_reps[i], marker="X", edgecolor="black")
+                ax.scatter(x, y, s=400, color=colors_reps[i%7], edgecolor="black", zorder=10)
+                ax.scatter(coms[i][0], coms[i][1], s=400, color=colors_reps[i%7], marker="X", edgecolor="black")
 
                 for num in range(min(n_rep_fin, len_rep)):
                     ax.add_artist(plt.Circle((x[num], y[num]), xwidth * 0.03,
-                                             color=colors_reps[i], fill=False, linewidth=3, alpha=0.7))
+                                             color=colors_reps[i%7], fill=False, linewidth=3, alpha=0.7))
 
                 ax.scatter(not_sampled[:, 0], not_sampled[:, 1], s=400, color="lime", edgecolor="black")
 

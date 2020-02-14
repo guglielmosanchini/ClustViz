@@ -21,6 +21,7 @@ class DBSCAN_class(StartingGui):
     def start_DBSCAN(self):
 
         self.ax1.cla()
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QPushButton, QLabel, QComboBox, QGridLayout, QGroupBox, \
     QLineEdit, QPlainTextEdit, QWidget, QCheckBox, QMessageBox, QVBoxLayout, QMainWindow
-from PyQt5.QtCore import Qt, QLocale
+from PyQt5.QtCore import Qt, QLocale, QCoreApplication
 from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPixmap
 from imageio import mimsave, imread
 import os
@@ -1006,6 +1006,65 @@ class StartingGui(QWidget):
             self.log.appendPlainText(msg)
             self.log.appendPlainText("")
 
+        QCoreApplication.processEvents()
+
+    def n_clust_error(self, medoids=False, init_clust=False):
+
+        if medoids is False:
+
+            cond = int(self.line_edit_n_clust.text()) >= int(self.line_edit_np.text())
+            text = "clusters"
+
+        else:
+
+            cond = int(self.line_edit_n_medoids.text()) >= int(self.line_edit_np.text())
+            text = "medoids"
+
+        if cond == True:
+
+            if self.param_check is True:
+                self.log.clear()
+
+            self.param_check = False
+            self.log.appendPlainText("ERROR")
+            self.log.appendPlainText("")
+            self.log.appendPlainText("The number of {} should be less than the number of points.".format(text))
+            self.log.appendPlainText("")
+
+        if init_clust == True:
+
+            cond_2 = int(self.line_edit_n_clust.text()) >= int(self.line_edit_init_clust_cham.text())
+            text = "initial clusters"
+
+            if cond_2 == True:
+
+                if self.param_check is True:
+                    self.log.clear()
+
+                self.param_check = False
+                self.log.appendPlainText("ERROR")
+                self.log.appendPlainText("")
+                self.log.appendPlainText("The number of {} should be greater than the "
+                                         "number of final clusters.".format(text))
+                self.log.appendPlainText("")
+
+
+        QCoreApplication.processEvents()
+
+    def comma_error(self, parameter):
+
+        if parameter.find(",") != -1:
+
+            if self.param_check is True:
+                self.log.clear()
+
+            self.param_check = False
+            self.log.appendPlainText("ERROR")
+            self.log.appendPlainText("")
+            self.log.appendPlainText("Using a comma (,) as decimal sepator is not accepted, use a dot (.) "
+                                     "instead")
+            self.log.appendPlainText("")
+
     def verify_input_parameters(self, extract=False):
 
         self.param_check = True
@@ -1026,12 +1085,17 @@ class StartingGui(QWidget):
                 self.show_error_message(check_mp,
                                         "The parameter minPTS must be an integer and lie "
                                         "between {0} and {1}.".format(1, 200))
+
+                self.comma_error(parameter=self.line_edit_eps.text())
+
             if self.name == "OPTICS":
                 check_eps_extr = self.eps_extr_validator.validate(self.line_edit_eps_extr.text(), 0)
 
                 self.show_error_message(check_eps_extr,
                                         "The parameter eps_extr must lie between {0} and {1}, and can "
                                         "have a maximum of {2} decimal places.".format(0, 1000, 4))
+
+                self.comma_error(parameter=self.line_edit_eps_extr.text())
 
         elif self.name == "AGGLOMERATIVE":
 
@@ -1040,6 +1104,12 @@ class StartingGui(QWidget):
             self.show_error_message(check_n_clust,
                                     "The parameter n_clust must be an integer and lie between "
                                     "{0} and {1}".format(1, 1000))
+
+            # self.comma_error(parameter=self.line_edit_n_clust.text())
+            try:
+                self.n_clust_error()
+            except:
+                pass
 
         elif (self.name == "CURE") or (self.name == "LARGE CURE"):
 
@@ -1058,6 +1128,12 @@ class StartingGui(QWidget):
                                     "The parameter alpha must lie between {0} and {1}, and can "
                                     "have a maximum of {2} decimal places.".format(0, 1, 4))
 
+            self.comma_error(parameter=self.line_edit_alpha_cure.text())
+            try:
+                self.n_clust_error()
+            except:
+                pass
+
             if self.name == "LARGE CURE":
                 check_p_cure = self.p_cure_validator.validate(self.line_edit_p_cure.text(), 0)
                 check_q_cure = self.q_cure_validator.validate(self.line_edit_q_cure.text(), 0)
@@ -1073,6 +1149,11 @@ class StartingGui(QWidget):
             self.show_error_message(check_n_medoids,
                                     "The parameter n_medoids must be an integer and lie between "
                                     "{0} and {1}".format(2, 1000))
+
+            try:
+                self.n_clust_error(medoids=True)
+            except:
+                pass
 
             if self.name == "CLARANS":
                 check_numlocal_clarans = self.numlocal_clarans_validator.validate(
@@ -1109,6 +1190,8 @@ class StartingGui(QWidget):
                                     "The parameter init_diam must lie between {0} and {1}, and can have a maximum of"
                                     " {2} decimal places.".format(0, 1000, 4))
 
+            self.comma_error(parameter=self.line_edit_initial_diameter.text())
+
         elif (self.name == "CHAMELEON") or (self.name == "CHAMELEON2"):
 
             check_n_clust = self.n_clust_validator.validate(self.line_edit_n_clust.text(), 0)
@@ -1129,6 +1212,12 @@ class StartingGui(QWidget):
                                     "The parameter alpha must lie between {0} and {1}, and can have a maximum of"
                                     " {2} decimal places.".format(0, 1000, 4))
 
+            self.comma_error(parameter=self.line_edit_alpha_cham.text())
+            try:
+                self.n_clust_error(init_clust=True)
+            except:
+                pass
+
             if self.name == "CHAMELEON2":
                 check_beta_cham = self.beta_cham_validator.validate(self.line_edit_beta_cham.text(), 0)
                 check_m_fact = self.m_fact_validator.validate(self.line_edit_m_fact.text(), 0)
@@ -1139,6 +1228,7 @@ class StartingGui(QWidget):
                 self.show_error_message(check_m_fact,
                                         "The parameter m_fact must be an integer and lie between "
                                         "{0} and {1}".format(1, 1000000))
+                self.comma_error(parameter=self.line_edit_beta_cham.text())
 
         elif self.name == "DENCLUE":
 
@@ -1163,6 +1253,12 @@ class StartingGui(QWidget):
             self.show_error_message(check_prec_denclue,
                                     "The parameter prec must lie between {0} and {1}, and can have a maximum of"
                                     " {2} decimal places.".format(0, 100, 4))
+
+            self.comma_error(parameter=self.line_edit_sigma_denclue.text())
+            self.comma_error(parameter=self.line_edit_xi_denclue.text())
+            self.comma_error(parameter=self.line_edit_xi_c_denclue.text())
+            self.comma_error(parameter=self.line_edit_tol_denclue.text())
+            self.comma_error(parameter=self.line_edit_prec_denclue.text())
 
     def SetWindows(self, number, first_run_boolean):
         """This is used for LARGE_CURE clustering algorithm: it serves the purpose of creating the right amount

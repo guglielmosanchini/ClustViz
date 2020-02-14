@@ -40,6 +40,7 @@ class BIRCH_class(StartingGui):
         self.ax1.cla()
         self.log.clear()
         self.log.appendPlainText("{} LOG".format(self.name))
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 

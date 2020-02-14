@@ -27,6 +27,7 @@ class OPTICS_class(StartingGui):
         self.ax_t.cla()
         self.ax1_t.cla()
         self.ax1_t.set_yticks([], [])
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters()
 
@@ -78,6 +79,7 @@ class OPTICS_class(StartingGui):
         self.ax_t.cla()
         self.ax1_t.cla()
         self.ax1_t.set_yticks([], [])
+        QCoreApplication.processEvents()
 
         self.verify_input_parameters(extract=True)
 
