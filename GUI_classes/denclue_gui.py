@@ -84,7 +84,6 @@ class DENCLUE_class(StartingGui):
         self.SetWindowsDENCLUE(pic_list=self.plot_list,
                                first_run_boolean=self.first_run_occurred_mod)
 
-        # self.button_extract.setEnabled(False)
         self.button_run.setEnabled(False)
         self.checkbox_saveimg.setEnabled(False)
         self.button_delete_pics.setEnabled(False)
@@ -103,14 +102,13 @@ class DENCLUE_class(StartingGui):
 
         if np.array(self.plot_list).sum() != 0:
             self.DENCLUE_gui(data=self.X, s=self.sigma_denclue, xi=self.xi_denclue, xi_c=self.xi_c_denclue,
-                            tol=self.tol_denclue, prec=self.prec_denclue, save_plots=self.save_plots)
+                             tol=self.tol_denclue, prec=self.prec_denclue, save_plots=self.save_plots)
         else:
             self.display_empty_message()
 
         if (self.make_gif is True) and (self.save_plots is True):
             self.generate_GIF()
 
-        # self.button_extract.setEnabled(True)
         self.button_run.setEnabled(True)
         self.checkbox_saveimg.setEnabled(True)
         self.button_delete_pics.setEnabled(True)
@@ -121,7 +119,6 @@ class DENCLUE_class(StartingGui):
 
         self.log.appendPlainText("You did not select anything to plot")
         QCoreApplication.processEvents()
-
 
     def DENCLUE_gui(self, data, s, xi, xi_c, tol, prec, save_plots, dist="euclidean"):
 
@@ -135,9 +132,6 @@ class DENCLUE_class(StartingGui):
         self.log.appendPlainText("Number of highly populated cubes: {}".format(len(hpc)))
         self.log.appendPlainText("")
         new_cubes = connect_cubes(hpc, z, s=s)
-
-        # self.plot_grid_rect_gui(data, s=s, cube_kind="populated", ax, canvas,
-        #         save_plots=save_plots, ind_fig=0)
 
         if self.plot_list[0] == True:
             self.plot_grid_rect_gui(data, s=s, cube_kind="highly_populated", ax=self.axes_list[0],
@@ -195,6 +189,7 @@ class DENCLUE_class(StartingGui):
         try:
             lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
         except:
+            self.log.appendPlainText("")
             self.log.appendPlainText("There was an error when extracting clusters. Increase number "
                                      "of points or try with a less "
                                      "pathological case: see the other plots to have an idea of why it failed.")
