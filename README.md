@@ -95,3 +95,10 @@ https://github.com/Moonpuck/chameleon_cluster
 
 The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius (https://github.com/dariomonici), 
 the GUI Meister, for the help with PyQt5.
+
+## Possible improvements
+- integration and unit tests
+- wrap it as a python package
+- add more clustering algorithms
+- add a pause/resume button for every algorithm
+- comment every code block and improve code quality

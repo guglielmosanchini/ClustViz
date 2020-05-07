@@ -39,7 +39,7 @@ plt.show()
 
 
 ##################################################################################################
-# OPTICS
+# # OPTICS
 
 from algorithms.optics import OPTICS, plot_clust
 
@@ -278,9 +278,6 @@ plot_clust(X, ClustDist, CoreDist, eps=2, eps_db=1)
 
 ##################################################################################################
 # # DENCLUE
-
-# In[23]:
-
 
 # from algorithms.denclue.denclue import DENCLUE, plot_3d_or_contour, plot_3d_both, plot_grid_rect, plot_infl
 
