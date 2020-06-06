@@ -17,9 +17,8 @@ from shutil import rmtree
 from GUI_classes.generic_gui import StartingGui
 
 import os
-
-os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
-
+#os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
+os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 
 class BIRCH_class(StartingGui):
     def __init__(self):
@@ -199,9 +198,9 @@ def plot_tree_fin_gui(tree, log, ind_run, ind_fig, label_graphviz, save_plots=Fa
 
     # graph = graphviz.Source(dot)
     # graph.view()
-    dot.render(filename='./Images/BIRCH_{:02}/graph_{:02}'.format(ind_run, ind_fig))
+    graph_path = dot.render(filename='./Images/BIRCH_{:02}/graph_{:02}'.format(ind_run, ind_fig))
 
-    pixmap = QPixmap('./Images/BIRCH_{:02}/graph_{:02}.png'.format(ind_run, ind_fig))
+    pixmap = QPixmap(graph_path)
     label_graphviz.setScaledContents(True)
     label_graphviz.setPixmap(pixmap)
 

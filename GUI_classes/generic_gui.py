@@ -10,7 +10,7 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
 
-from sklearn.datasets.samples_generator import make_blobs
+from sklearn.datasets import make_blobs
 
 from GUI_classes.utils_gui import LabeledSlider
 

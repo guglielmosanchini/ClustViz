@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QStyle, QStyleOptionSlider
 from PyQt5.QtCore import QRect, QPoint, Qt
-from sklearn.datasets.samples_generator import make_blobs, make_moons, make_circles
+from sklearn.datasets import make_blobs, make_moons, make_circles
 import time
 from matplotlib.pyplot import Polygon
 from scipy.spatial import ConvexHull

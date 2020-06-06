@@ -9,7 +9,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from sklearn.datasets.samples_generator import make_blobs, make_moons, make_circles
+from sklearn.datasets import make_blobs, make_moons, make_circles
 
 import hdbscan
 from sklearn.neighbors import NearestNeighbors
