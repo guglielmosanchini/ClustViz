@@ -82,7 +82,6 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
         X_clust = [X[point[j], 0] for j in range(len(point))]
         Y_clust = [X[point[j], 1] for j in range(len(point))]
 
-        # if ind != len(a) - 1:
         plt.scatter(X_clust, Y_clust, s=350, color=color_dict[ind % 17])
 
     point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
@@ -102,8 +101,6 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
                                ec="red"))
     else:
         encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 17], linewidth=3, ec="red")
-
-    # plt.scatter(X_clust, Y_clust, s=350, color=color_dict[(len(a)-1) % 17])
 
     for i, txt in enumerate([i for i in range(len(X))]):
         ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
@@ -303,7 +300,7 @@ def compute_ward_ij(data, df):
     distance, and finds the best cluster according to Ward criterion.
 
     :param data: input data array.
-    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the data and y
+    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
                 coordinates of each point.
     :return: (i,j) indices of best cluster (the one for which the increase in intra-cluster variance is minimum)
              new_summ: new total intra-cluster variance

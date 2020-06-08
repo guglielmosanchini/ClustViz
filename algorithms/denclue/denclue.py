@@ -266,7 +266,6 @@ def near_without_cube(x, coord_dict, tot_cubes, s):  # includes the point itself
 
     if k is None:
         return []
-
     try:
         cube_x = tot_cubes[k]
     except:
@@ -614,7 +613,7 @@ def DENCLUE(data, s, xi=3, xi_c=3, tol=2, dist="euclidean", prec=20, plotting=Tr
         lab, coord_df = extract_cluster_labels(data, clust_dict, tol)
     except:
         print("There was an error when extracting clusters. Increase number of points or try with a less"
-              "pathological case: see the other plots to have an idea of why it failed.")
+              " pathological case: look at the other plots to have an idea of why it failed.")
 
     if plotting is True:
         plot_clust_dict(data, coord_df)

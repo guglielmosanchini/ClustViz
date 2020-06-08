@@ -523,14 +523,14 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
         del rep[u]
         del rep[u_cl]
 
-        if plotting is True:
+        dim1 = int(a.loc[u].notna().sum())
+        # update the matrix a with the new cluster
+        a.loc["(" + u + ")" + "-" + "(" + u_cl + ")", :] = a.loc[u].fillna(0) + a.loc[u_cl].shift(dim1,
+                                                                                                  fill_value=0)
+        a = a.drop(u, 0)
+        a = a.drop(u_cl, 0)
 
-            dim1 = int(a.loc[u].notna().sum())
-            # update the matrix a with the new cluster
-            a.loc["(" + u + ")" + "-" + "(" + u_cl + ")", :] = a.loc[u].fillna(0) + a.loc[u_cl].shift(dim1,
-                                                                                                      fill_value=0)
-            a = a.drop(u, 0)
-            a = a.drop(u_cl, 0)
+        if plotting is True:
 
             # in the large dataset version of CURE
             if partial_index is not None:
@@ -635,7 +635,7 @@ def dist_mat_gen_cure(dictionary):
     return D
 
 
-def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=None, n_rep_finalclust=None):
+def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=None, n_rep_finalclust=None, plotting=True):
     """
     CURE algorithm variation for large datasets.
     Partition the sample space into p partitions, each of size len(X)/p, then partially cluster each
@@ -652,6 +652,7 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     :param p: the number of partitions.
     :param q: the number >1 such that each partition reduces to n/(pq) clusters.
     :param n_rep_finalclust: number of representatives to use in the final assignment phase.
+    :param plotting: if True, plots all intermediate steps.
     :return (clusters, rep, mat_a): returns the clusters dictionary, the dictionary of representatives,
                                 the matrix a
     """
@@ -725,7 +726,7 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     for i in range(p):
         print("\n")
         print(i)
-        clusters, rep, mat_a = cure(b_partitions[i].values, k=k_prov, c=c, alpha=alpha,
+        clusters, rep, mat_a = cure(b_partitions[i].values, k=k_prov, c=c, alpha=alpha, plotting=plotting,
                                     partial_index=b_partitions[i].index)
         partial_clust1.append(clusters)
         partial_rep1.append(rep)
@@ -761,7 +762,7 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     prep_data = [clust_tot, rep_tot, a_tot, X_dist_tot]
     clusters, rep, mat_a = cure(b_sampled.values, k=k, c=c, alpha=alpha, preprocessed_data=prep_data,
                                 partial_index=b_sampled.index, n_rep_finalclust=n_rep_finalclust,
-                                not_sampled=b_notsampled.values,
+                                not_sampled=b_notsampled.values, plotting=plotting,
                                 not_sampled_ind=b_notsampled.index)
 
     return clusters, rep, mat_a

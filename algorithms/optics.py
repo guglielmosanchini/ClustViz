@@ -334,7 +334,8 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
     df = pd.DataFrame(dict(x=[i[0][0] for i in list(new_dict.values())],
                            y=[i[0][1] for i in list(new_dict.values())],
-                           label=[i[1] for i in list(new_dict.values())]), index=new_dict.keys())
+                           label=[i[1] for i in list(new_dict.values())]),
+                           index=new_dict.keys())
 
     colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
               4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',

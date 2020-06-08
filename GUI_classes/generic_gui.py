@@ -630,6 +630,9 @@ class StartingGui(QWidget):
         if self.name in log_list2:
             if self.name == "OPTICS":
                 self.log = QPlainTextEdit("SEED QUEUE")
+            elif self.name == "BIRCH":
+                self.log = QPlainTextEdit("{} LOG".format(
+                    self.name) + "\n" + "You must have Graphviz installed on your Mac in order for BIRCH to work")
             else:
                 self.log = QPlainTextEdit("{} LOG".format(self.name))
             self.log.setStyleSheet(
