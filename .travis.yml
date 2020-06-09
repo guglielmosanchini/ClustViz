@@ -5,12 +5,11 @@ python:
 install:
   - pip install -r requirements.txt
   - cd metis-5.1.0
-  # - make config prefix=~/Clustering/METIS_temp shared=1
-  - make config shared=1
+  - make config prefix=~/Clustering/METIS_temp shared=1
+  # - make config shared=1
   - make install
   # libmetis.so because we use TravisCI in Ubuntu, otherwise it should be libmetis.dylib
-  #- export METIS_DLL=/home/travis/Clustering/METIS_temp/lib/libmetis.so
-  - export METIS_DLL=/usr/local/lib/libmetis.so
+  - export METIS_DLL=/home/travis/Clustering/METIS_temp/lib/libmetis.so
   - cd ..
 # command to run tests
 script:
