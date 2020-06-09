@@ -11,9 +11,21 @@ import math
 from GUI_classes.utils_gui import encircle, convert_colors
 
 
-def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
-                    par_index=None, u=None, u_cl=None, initial_ind=None, last_reps=None,
-                    not_sampled=None, not_sampled_ind=None, n_rep_fin=None):
+def point_plot_mod2(
+    X,
+    a,
+    reps,
+    level_txt,
+    level2_txt=None,
+    par_index=None,
+    u=None,
+    u_cl=None,
+    initial_ind=None,
+    last_reps=None,
+    not_sampled=None,
+    not_sampled_ind=None,
+    n_rep_fin=None,
+):
     """
     Scatter-plot of input data points, colored according to the cluster they belong to.
     A rectangle with red borders is displayed around the last merged cluster; representative points
@@ -58,9 +70,26 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
     # drops the totally null columns, so that the number of columns goes to 2*(cardinality of biggest cluster)
     a = a.dropna(1, how="all")
 
-    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'turquoise', 6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    colors = {
+        0: "seagreen",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "turquoise",
+        6: "orange",
+        7: "purple",
+        8: "yellowgreen",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "plum",
+        13: "rosybrown",
+        14: "lightblue",
+        15: "khaki",
+        16: "gainsboro",
+        17: "peachpuff",
+    }
     color_dict_rect = convert_colors(colors, alpha=0.3)
 
     # to speed things up, this splits all points inside the clusters' names, and start gives the starting index
@@ -95,7 +124,9 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
         com = X[point].mean(axis=0)
 
     # plotting the center of mass, marked with an X
-    plt.scatter(com[0], com[1], s=400, color="r", marker="X", edgecolor="black")
+    plt.scatter(
+        com[0], com[1], s=400, color="r", marker="X", edgecolor="black"
+    )
 
     # plotting representative points in red
     x_reps = [i[0] for i in reps]
@@ -114,29 +145,72 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
     # for the border and for the inside
     if len(point) <= 2:
 
-        ax.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
-                               rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
-                               color=color_dict_rect[ind % 18], linewidth=3,
-                               ec="red"))
+        ax.add_patch(
+            Rectangle(
+                (rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                rect_diff[0] + xwidth * 0.04,
+                rect_diff[1] + ywidth * 0.08,
+                fill=True,
+                color=color_dict_rect[ind % 18],
+                linewidth=3,
+                ec="red",
+            )
+        )
     else:
-        encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 18], linewidth=3, ec="red")
+        encircle(
+            X_clust,
+            Y_clust,
+            ax=ax,
+            color=color_dict_rect[ind % 18],
+            linewidth=3,
+            ec="red",
+        )
 
     # adding labels to points in the plot
 
     if initial_ind is not None:
         for i, txt in enumerate(initial_ind):
-            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+            ax.annotate(
+                txt,
+                (X[:, 0][i], X[:, 1][i]),
+                fontsize=10,
+                size=10,
+                ha="center",
+                va="center",
+            )
     else:
         for i, txt in enumerate([i for i in range(len(X))]):
-            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+            ax.annotate(
+                txt,
+                (X[:, 0][i], X[:, 1][i]),
+                fontsize=10,
+                size=10,
+                ha="center",
+                va="center",
+            )
 
     # adding the annotations
-    ax.annotate("min_dist: " + str(round(level_txt, 5)), (xmax * 0.75, ymax * 0.9), fontsize=12, size=12)
+    ax.annotate(
+        "min_dist: " + str(round(level_txt, 5)),
+        (xmax * 0.75, ymax * 0.9),
+        fontsize=12,
+        size=12,
+    )
 
     if level2_txt is not None:
-        ax.annotate("dist_incr: " + str(round(level2_txt, 5)), (xmax * 0.75, ymax * 0.8), fontsize=12, size=12)
+        ax.annotate(
+            "dist_incr: " + str(round(level2_txt, 5)),
+            (xmax * 0.75, ymax * 0.8),
+            fontsize=12,
+            size=12,
+        )
 
-    ax.annotate("n° clust: " + str(len(a)), (xmax * 0.75, ymax * 0.7), fontsize=12, size=12)
+    ax.annotate(
+        "n° clust: " + str(len(a)),
+        (xmax * 0.75, ymax * 0.7),
+        fontsize=12,
+        size=12,
+    )
 
     plt.show()
 
@@ -154,31 +228,75 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
         for ind, i in enumerate(range(0, len(a))):
             point = a.iloc[i].name.replace("(", "").replace(")", "").split("-")
             for j in range(len(point)):
-                plt.scatter(X[diz[point[j]], 0], X[diz[point[j]], 1], s=350, color=colors[ind % 18])
+                plt.scatter(
+                    X[diz[point[j]], 0],
+                    X[diz[point[j]], 1],
+                    s=350,
+                    color=colors[ind % 18],
+                )
             point = [diz[point[i]] for i in range(len(point))]
             coms.append(X[point].mean(axis=0))
 
         # variations of red to plot the representative points of the various clusters
-        colors_reps = ["red", "crimson", "indianred", "lightcoral", "salmon", "darksalmon", "firebrick"]
+        colors_reps = [
+            "red",
+            "crimson",
+            "indianred",
+            "lightcoral",
+            "salmon",
+            "darksalmon",
+            "firebrick",
+        ]
 
         # flattening the last_reps values
-        flat_reps = [item for sublist in list(last_reps.values()) for item in sublist]
+        flat_reps = [
+            item for sublist in list(last_reps.values()) for item in sublist
+        ]
 
         # plotting the representatives, surrounded by small circles, and the centers of mass, marked with X
         for i in range(len(last_reps)):
             len_rep = len(list(last_reps.values())[i])
 
-            x = [list(last_reps.values())[i][j][0] for j in range(min(n_rep_fin, len_rep))]
-            y = [list(last_reps.values())[i][j][1] for j in range(min(n_rep_fin, len_rep))]
+            x = [
+                list(last_reps.values())[i][j][0]
+                for j in range(min(n_rep_fin, len_rep))
+            ]
+            y = [
+                list(last_reps.values())[i][j][1]
+                for j in range(min(n_rep_fin, len_rep))
+            ]
 
-            plt.scatter(x, y, s=400, color=colors_reps[i%7], edgecolor="black")
-            plt.scatter(coms[i][0], coms[i][1], s=400, color=colors_reps[i%7], marker="X", edgecolor="black")
+            plt.scatter(
+                x, y, s=400, color=colors_reps[i % 7], edgecolor="black"
+            )
+            plt.scatter(
+                coms[i][0],
+                coms[i][1],
+                s=400,
+                color=colors_reps[i % 7],
+                marker="X",
+                edgecolor="black",
+            )
 
             for num in range(min(n_rep_fin, len_rep)):
-                plt.gcf().gca().add_artist(plt.Circle((x[num], y[num]), xwidth * 0.03,
-                                                      color=colors_reps[i%7], fill=False, linewidth=3, alpha=0.7))
+                plt.gcf().gca().add_artist(
+                    plt.Circle(
+                        (x[num], y[num]),
+                        xwidth * 0.03,
+                        color=colors_reps[i % 7],
+                        fill=False,
+                        linewidth=3,
+                        alpha=0.7,
+                    )
+                )
 
-            plt.scatter(not_sampled[:, 0], not_sampled[:, 1], s=400, color="lime", edgecolor="black")
+            plt.scatter(
+                not_sampled[:, 0],
+                not_sampled[:, 1],
+                s=400,
+                color="lime",
+                edgecolor="black",
+            )
 
         # find the closest representative for not sampled points, and draw an arrow connecting the points
         # to its closest representative
@@ -188,18 +306,37 @@ def point_plot_mod2(X, a, reps, level_txt, level2_txt=None,
                 dist_int.append(dist1(not_sampled[ind], el))
             ind_min = np.argmin(dist_int)
 
-            plt.arrow(not_sampled[ind][0], not_sampled[ind][1],
-                      flat_reps[ind_min][0] - not_sampled[ind][0], flat_reps[ind_min][1] - not_sampled[ind][1],
-                      length_includes_head=True, head_width=0.03, head_length=0.05)
+            plt.arrow(
+                not_sampled[ind][0],
+                not_sampled[ind][1],
+                flat_reps[ind_min][0] - not_sampled[ind][0],
+                flat_reps[ind_min][1] - not_sampled[ind][1],
+                length_includes_head=True,
+                head_width=0.03,
+                head_length=0.05,
+            )
 
         # plotting the indexes for each point
         for i, txt in enumerate(initial_ind):
-            ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+            ax.annotate(
+                txt,
+                (X[:, 0][i], X[:, 1][i]),
+                fontsize=10,
+                size=10,
+                ha="center",
+                va="center",
+            )
 
         if not_sampled_ind is not None:
             for i, txt in enumerate(not_sampled_ind):
-                ax.annotate(txt, (not_sampled[:, 0][i], not_sampled[:, 1][i]), fontsize=10, size=10,
-                            ha='center', va='center')
+                ax.annotate(
+                    txt,
+                    (not_sampled[:, 0][i], not_sampled[:, 1][i]),
+                    fontsize=10,
+                    size=10,
+                    ha="center",
+                    va="center",
+                )
 
         plt.show()
 
@@ -297,7 +434,9 @@ def sel_rep(clusters, name, c, alpha):
     else:
 
         others = []  # the representatives
-        indexes = []  # their indexes, to avoid picking one point multiple times
+        indexes = (
+            []
+        )  # their indexes, to avoid picking one point multiple times
 
         points = clusters[name]
         com = np.mean(points, axis=0)
@@ -307,7 +446,9 @@ def sel_rep(clusters, name, c, alpha):
         index = max(distances_com, key=distances_com.get)
 
         indexes.append(index)
-        others.append(np.array(points[index]))  # first point is the farthest from the centroid
+        others.append(
+            np.array(points[index])
+        )  # first point is the farthest from the centroid
 
         # selecting the other c-1 points
         for step in range(min(c - 1, len(points) - 1)):
@@ -316,12 +457,17 @@ def sel_rep(clusters, name, c, alpha):
             for i in range(len(points)):
                 if i not in indexes:
                     for k in range(len(others)):
-                        partial_distances[str(i)].append([dist1(points[i], np.array(others[k]))])
-            partial_distances = dict((k, [np.sum(v)]) for k, v in partial_distances.items())
+                        partial_distances[str(i)].append(
+                            [dist1(points[i], np.array(others[k]))]
+                        )
+            partial_distances = dict(
+                (k, [np.sum(v)]) for k, v in partial_distances.items()
+            )
             index2 = max(partial_distances, key=partial_distances.get)
             indexes.append(int(index2))
             others.append(
-                points[int(index2)])  # other points are the farthest from the already selected representatives
+                points[int(index2)]
+            )  # other points are the farthest from the already selected representatives
 
         # perform the shrinking according to the parameter alpha
         for i in range(len(others)):
@@ -362,7 +508,9 @@ def sel_rep_fast(prec_reps, clusters, name, c, alpha):
     else:
 
         others = []  # the representatives
-        indexes = []  # their indexes, to avoid picking one point multiple times
+        indexes = (
+            []
+        )  # their indexes, to avoid picking one point multiple times
 
         points = prec_reps  # use old representatives
 
@@ -379,12 +527,17 @@ def sel_rep_fast(prec_reps, clusters, name, c, alpha):
             for i in range(len(points)):
                 if i not in indexes:
                     for k in range(len(others)):
-                        partial_distances[str(i)].append([dist1(points[i], np.array(others[k]))])
-            partial_distances = dict((k, [np.sum(v)]) for k, v in partial_distances.items())
+                        partial_distances[str(i)].append(
+                            [dist1(points[i], np.array(others[k]))]
+                        )
+            partial_distances = dict(
+                (k, [np.sum(v)]) for k, v in partial_distances.items()
+            )
             index2 = max(partial_distances, key=partial_distances.get)
             indexes.append(int(index2))
             others.append(
-                points[int(index2)])  # other points are the farthest from the already selected representatives
+                points[int(index2)]
+            )  # other points are the farthest from the already selected representatives
 
         # perform the shrinking according to the parameter alpha
         for i in range(len(others)):
@@ -393,8 +546,18 @@ def sel_rep_fast(prec_reps, clusters, name, c, alpha):
         return others
 
 
-def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
-         partial_index=None, n_rep_finalclust=None, not_sampled=None, not_sampled_ind=None):
+def cure(
+    X,
+    k,
+    c=3,
+    alpha=0.1,
+    plotting=True,
+    preprocessed_data=None,
+    partial_index=None,
+    n_rep_finalclust=None,
+    not_sampled=None,
+    not_sampled_ind=None,
+):
     """
     CURE algorithm: hierarchical agglomerative clustering using representatives.
 
@@ -424,13 +587,18 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
         # building a dataframe storing the x and y coordinates of input data points
         l = [[i, i] for i in range(len(X))]
         flat_list = [item for sublist in l for item in sublist]
-        col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
+        col = [
+            str(el) + "x" if i % 2 == 0 else str(el) + "y"
+            for i, el in enumerate(flat_list)
+        ]
 
         # using the original indexes if necessary
         if partial_index is not None:
             a = pd.DataFrame(index=partial_index, columns=col)
         else:
-            a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
+            a = pd.DataFrame(
+                index=[str(i) for i in range(len(X))], columns=col
+            )
 
         # adding the real coordinates
         a["0x"] = X.T[0]
@@ -489,17 +657,23 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
         u = min(heap, key=heap.get)
         levels.append(heap[u])
         del heap[u]
-        #u_cl = str(closest[u])
+        # u_cl = str(closest[u])
         u_cl = X_dist1.columns[closest[u]]
         del closest[u]
 
         # form the new cluster
-        if (np.array(clusters[u]).shape == (2,)) and (np.array(clusters[u_cl]).shape == (2,)):
+        if (np.array(clusters[u]).shape == (2,)) and (
+            np.array(clusters[u_cl]).shape == (2,)
+        ):
             w = [clusters[u], clusters[u_cl]]
-        elif (np.array(clusters[u]).shape != (2,)) and (np.array(clusters[u_cl]).shape == (2,)):
+        elif (np.array(clusters[u]).shape != (2,)) and (
+            np.array(clusters[u_cl]).shape == (2,)
+        ):
             clusters[u].append(clusters[u_cl])
             w = clusters[u]
-        elif (np.array(clusters[u]).shape == (2,)) and (np.array(clusters[u_cl]).shape != (2,)):
+        elif (np.array(clusters[u]).shape == (2,)) and (
+            np.array(clusters[u_cl]).shape != (2,)
+        ):
             clusters[u_cl].append(clusters[u])
             w = clusters[u_cl]
         else:
@@ -525,8 +699,9 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
 
         dim1 = int(a.loc[u].notna().sum())
         # update the matrix a with the new cluster
-        a.loc["(" + u + ")" + "-" + "(" + u_cl + ")", :] = a.loc[u].fillna(0) + a.loc[u_cl].shift(dim1,
-                                                                                                  fill_value=0)
+        a.loc["(" + u + ")" + "-" + "(" + u_cl + ")", :] = a.loc[u].fillna(
+            0
+        ) + a.loc[u_cl].shift(dim1, fill_value=0)
         a = a.drop(u, 0)
         a = a.drop(u_cl, 0)
 
@@ -536,24 +711,48 @@ def cure(X, k, c=3, alpha=0.1, plotting=True, preprocessed_data=None,
             if partial_index is not None:
 
                 # only in last step of large dataset version of CURE
-                if (len(heap) == k) and (not_sampled is not None) and (not_sampled_ind is not None):
+                if (
+                    (len(heap) == k)
+                    and (not_sampled is not None)
+                    and (not_sampled_ind is not None)
+                ):
 
                     # take random representative points from the final representatives
-                    final_reps = {list(rep.keys())[i]: random.sample(list(rep.values())[i],
-                                                                     min(n_rep_finalclust, len(list(rep.values())[i])))
-                                  for i in range(len(rep))}
+                    final_reps = {
+                        list(rep.keys())[i]: random.sample(
+                            list(rep.values())[i],
+                            min(n_rep_finalclust, len(list(rep.values())[i])),
+                        )
+                        for i in range(len(rep))
+                    }
 
-                    partial_index = point_plot_mod2(X=X, a=a, reps=rep[name],
-                                                    level_txt=levels[-1], par_index=partial_index,
-                                                    u=u, u_cl=u_cl, initial_ind=initial_index,
-                                                    last_reps=final_reps, not_sampled=not_sampled,
-                                                    not_sampled_ind=not_sampled_ind, n_rep_fin=n_rep_finalclust)
+                    partial_index = point_plot_mod2(
+                        X=X,
+                        a=a,
+                        reps=rep[name],
+                        level_txt=levels[-1],
+                        par_index=partial_index,
+                        u=u,
+                        u_cl=u_cl,
+                        initial_ind=initial_index,
+                        last_reps=final_reps,
+                        not_sampled=not_sampled,
+                        not_sampled_ind=not_sampled_ind,
+                        n_rep_fin=n_rep_finalclust,
+                    )
 
                 # in the intermediate steps of the large dataset version
                 else:
-                    partial_index = point_plot_mod2(X=X, a=a, reps=rep[name],
-                                                    level_txt=levels[-1], par_index=partial_index,
-                                                    u=u, u_cl=u_cl, initial_ind=initial_index)
+                    partial_index = point_plot_mod2(
+                        X=X,
+                        a=a,
+                        reps=rep[name],
+                        level_txt=levels[-1],
+                        par_index=partial_index,
+                        u=u,
+                        u_cl=u_cl,
+                        initial_ind=initial_index,
+                    )
             else:
                 point_plot_mod2(X, a, rep[name], levels[-1])
 
@@ -595,10 +794,14 @@ def Chernoff_Bounds(u_min, f, N, d, k):
     """
 
     l = np.log(1 / d)
-    res = f * N + N / u_min * l + N / u_min * np.sqrt(l ** 2 + 2 * f * u_min * l)
-    print("If the sample size is {0}, the probability of selecting fewer "
-          "than {1} points from".format(math.ceil(res), round(f * u_min))
-          + " any one of the clusters is less than {0}".format(k * d))
+    res = (
+        f * N + N / u_min * l + N / u_min * np.sqrt(l ** 2 + 2 * f * u_min * l)
+    )
+    print(
+        "If the sample size is {0}, the probability of selecting fewer "
+        "than {1} points from".format(math.ceil(res), round(f * u_min))
+        + " any one of the clusters is less than {0}".format(k * d)
+    )
 
     return res
 
@@ -635,7 +838,19 @@ def dist_mat_gen_cure(dictionary):
     return D
 
 
-def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=None, n_rep_finalclust=None, plotting=True):
+def cure_sample_part(
+    X,
+    k,
+    c=3,
+    alpha=0.3,
+    u_min=None,
+    f=0.3,
+    d=0.02,
+    p=None,
+    q=None,
+    n_rep_finalclust=None,
+    plotting=True,
+):
     """
     CURE algorithm variation for large datasets.
     Partition the sample space into p partitions, each of size len(X)/p, then partially cluster each
@@ -666,7 +881,10 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
 
     l = [[i, i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
-    col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
+    col = [
+        str(el) + "x" if i % 2 == 0 else str(el) + "y"
+        for i, el in enumerate(flat_list)
+    ]
     a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
     a["0x"] = X.T[0]
     a["0y"] = X.T[1]
@@ -677,7 +895,9 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
         try:
             print("new f: ", f)
             print("new d: ", d)
-            n = math.ceil(Chernoff_Bounds(u_min=u_min, f=f, N=len(X), k=k, d=d))
+            n = math.ceil(
+                Chernoff_Bounds(u_min=u_min, f=f, N=len(X), k=k, d=d)
+            )
             b_sampled = b.sample(n, random_state=42)
             break
         except:
@@ -686,7 +906,9 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
             else:
                 d = d * 2
 
-    b_notsampled = b.loc[[str(i) for i in range(len(b)) if str(i) not in b_sampled.index], :]
+    b_notsampled = b.loc[
+        [str(i) for i in range(len(b)) if str(i) not in b_sampled.index], :
+    ]
 
     # find the best p and q according to the paper
     if (p is None) and (q is None):
@@ -712,9 +934,11 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     b_partitions = []
     for num_p in range(p):
         try:
-            b_partitions.append(b_sampled.iloc[lin_sp[num_p]:lin_sp[num_p + 1]])
+            b_partitions.append(
+                b_sampled.iloc[lin_sp[num_p] : lin_sp[num_p + 1]]
+            )
         except:
-            b_partitions.append(b_sampled.iloc[lin_sp[num_p]:])
+            b_partitions.append(b_sampled.iloc[lin_sp[num_p] :])
 
     k_prov = round(n / (p * q))
 
@@ -726,8 +950,14 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     for i in range(p):
         print("\n")
         print(i)
-        clusters, rep, mat_a = cure(b_partitions[i].values, k=k_prov, c=c, alpha=alpha, plotting=plotting,
-                                    partial_index=b_partitions[i].index)
+        clusters, rep, mat_a = cure(
+            b_partitions[i].values,
+            k=k_prov,
+            c=c,
+            alpha=alpha,
+            plotting=plotting,
+            partial_index=b_partitions[i].index,
+        )
         partial_clust1.append(clusters)
         partial_rep1.append(rep)
         partial_a1.append(mat_a)
@@ -744,7 +974,9 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
     # mat a
     diz = {i: len(b_partitions[i]) for i in range(p)}
     num_freq = Counter(diz.values()).most_common(1)[0][0]
-    bad_ind = [list(diz.keys())[i] for i in range(len(diz)) if diz[i] != num_freq]
+    bad_ind = [
+        list(diz.keys())[i] for i in range(len(diz)) if diz[i] != num_freq
+    ]
 
     for ind in bad_ind:
         partial_a1[ind]["{0}x".format(diz[ind])] = [np.nan] * k_prov
@@ -760,10 +992,18 @@ def cure_sample_part(X, k, c=3, alpha=0.3, u_min=None, f=0.3, d=0.02, p=None, q=
 
     # final_clustering
     prep_data = [clust_tot, rep_tot, a_tot, X_dist_tot]
-    clusters, rep, mat_a = cure(b_sampled.values, k=k, c=c, alpha=alpha, preprocessed_data=prep_data,
-                                partial_index=b_sampled.index, n_rep_finalclust=n_rep_finalclust,
-                                not_sampled=b_notsampled.values, plotting=plotting,
-                                not_sampled_ind=b_notsampled.index)
+    clusters, rep, mat_a = cure(
+        b_sampled.values,
+        k=k,
+        c=c,
+        alpha=alpha,
+        preprocessed_data=prep_data,
+        partial_index=b_sampled.index,
+        n_rep_finalclust=n_rep_finalclust,
+        not_sampled=b_notsampled.values,
+        plotting=plotting,
+        not_sampled_ind=b_notsampled.index,
+    )
 
     return clusters, rep, mat_a
 
@@ -782,8 +1022,13 @@ def demo_parameters():
     k = 4
     d = np.linspace(0.0000001, 1, 100)
     ax0.set_title("u_min: {0}, f:{1}, k:{2}".format(u_size, f, k))
-    res = k * (f * N + N / u_size * np.log(1 / d) + N / u_size * np.sqrt(
-        np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d)))
+    res = k * (
+        f * N
+        + N / u_size * np.log(1 / d)
+        + N
+        / u_size
+        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
+    )
     plt.axhline(N, color="r")
     plt.plot(d, res)
     plt.xlabel("d")
@@ -797,8 +1042,17 @@ def demo_parameters():
     d = 0.1
     k = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     ax1.set_title("u_min: {0}, f:{1}, d:{2}".format(u_size, f, d))
-    res = [k[i] * (f * N + N / u_size * np.log(1 / d) + N / u_size * np.sqrt(
-        np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))) for i in range(len(k))]
+    res = [
+        k[i]
+        * (
+            f * N
+            + N / u_size * np.log(1 / d)
+            + N
+            / u_size
+            * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
+        )
+        for i in range(len(k))
+    ]
     plt.axhline(N, color="r")
     plt.plot(k, res)
     plt.xlabel("k")
@@ -811,8 +1065,13 @@ def demo_parameters():
     d = 0.1
     k = 4
     ax2.set_title("u_min: {0}, d:{1}, k:{2}".format(u_size, d, k))
-    res = k * (f * N + N / u_size * np.log(1 / d) + N / u_size * np.sqrt(
-        np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d)))
+    res = k * (
+        f * N
+        + N / u_size * np.log(1 / d)
+        + N
+        / u_size
+        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
+    )
     plt.axhline(N, color="r")
     plt.plot(f, res)
     plt.xlabel("f")
@@ -826,8 +1085,13 @@ def demo_parameters():
     d = 0.1
     k = 4
     ax3.set_title("f: {0}, d:{1}, k:{2}".format(f, d, k))
-    res = k * (f * N + N / u_size * np.log(1 / d) + N / u_size * np.sqrt(
-        np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d)))
+    res = k * (
+        f * N
+        + N / u_size * np.log(1 / d)
+        + N
+        / u_size
+        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
+    )
     plt.axhline(N, color="r")
     plt.plot(u_size, res)
     plt.xlabel("u_min")

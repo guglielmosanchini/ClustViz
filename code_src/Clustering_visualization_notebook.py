@@ -16,13 +16,15 @@ from sklearn.datasets import make_blobs, make_moons
 
 
 # generate 2d classification dataset
-X, y = make_blobs(n_samples=120, centers=4, n_features=2, cluster_std=1.8, random_state=42)
+X, y = make_blobs(
+    n_samples=120, centers=4, n_features=2, cluster_std=1.8, random_state=42
+)
 
 X1, y1 = make_moons(n_samples=80, noise=0.05, random_state=42)
 
-varied = make_blobs(n_samples=120,
-                    cluster_std=[3.5, 3.5, 3.5],
-                    random_state=42)[0]
+varied = make_blobs(
+    n_samples=120, cluster_std=[3.5, 3.5, 3.5], random_state=42
+)[0]
 plt.scatter(varied[:, 0], varied[:, 1])
 # plt.gcf().gca().add_artist(plt.Circle((-5, 0), 5, color="red", fill=False, linewidth=3, alpha=0.7))
 plt.show()
@@ -178,7 +180,7 @@ plot_clust(X, ClustDist, CoreDist, eps=2, eps_db=1)
 
 # cure_sample_part(X,c=5, alpha=0.1, k=3)
 
-# Chernoff_Bounds(u_min=500, f=0.5, N=20000, k=2, d=0.05) 
+# Chernoff_Bounds(u_min=500, f=0.5, N=20000, k=2, d=0.05)
 
 # demo_parameters()
 
@@ -236,7 +238,7 @@ plot_clust(X, ClustDist, CoreDist, eps=2, eps_db=1)
 ##################################################################################################
 # # CHAMELEON & CHAMELEON2
 
-# ## CHAMELEON 
+# ## CHAMELEON
 
 # from algorithms.chameleon.visualization import plot2d_data
 # from algorithms.chameleon.chameleon import cluster

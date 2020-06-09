@@ -5,7 +5,7 @@ from collections import OrderedDict
 import pandas as pd
 
 
-def point_plot(X, X_dict, o, eps, processed=None, col='yellow'):
+def point_plot(X, X_dict, o, eps, processed=None, col="yellow"):
     """
     Plots a scatter plot of points, where the point (x,y) is light black and
     surrounded by a red circle of radius eps, where processed point are plotted
@@ -31,14 +31,30 @@ def point_plot(X, X_dict, o, eps, processed=None, col='yellow'):
             plt.scatter(X_dict[i][0], X_dict[i][1], color=col, s=300)
 
     # plot last added point in black and surround it with a red circle
-    plt.scatter(x=X_dict[o][0], y=X_dict[o][1], s=400, color="black", alpha=0.4)
+    plt.scatter(
+        x=X_dict[o][0], y=X_dict[o][1], s=400, color="black", alpha=0.4
+    )
 
-    circle1 = plt.Circle((X_dict[o][0], X_dict[o][1]), eps, color='r', fill=False, linewidth=3, alpha=0.7)
+    circle1 = plt.Circle(
+        (X_dict[o][0], X_dict[o][1]),
+        eps,
+        color="r",
+        fill=False,
+        linewidth=3,
+        alpha=0.7,
+    )
     ax.add_artist(circle1)
 
     # add indexes to points in plot
     for i, txt in enumerate([i for i in range(len(X))]):
-        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+        ax.annotate(
+            txt,
+            (X[:, 0][i], X[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     plt.show()
 
@@ -168,7 +184,7 @@ def reach_plot(data, ClustDist, eps):
 
     missing_keys = list(set(data.keys()) - set(ClustDist.keys()))
 
-    tick_list = list(ClustDist.keys()) + [' '] * (len(missing_keys))
+    tick_list = list(ClustDist.keys()) + [" "] * (len(missing_keys))
 
     # add the necessary zeroes for points that are still to be processed
     for m_k in missing_keys:
@@ -328,32 +344,67 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     # extract the cluster dictionary using DBSCAN
     cl = ExtractDBSCANclust(ClustDist, CoreDist, eps_db)
 
-    new_dict = {key: (val1, cl[key]) for key, val1 in zip(list(X_dict.keys()), list(X_dict.values()))}
+    new_dict = {
+        key: (val1, cl[key])
+        for key, val1 in zip(list(X_dict.keys()), list(X_dict.values()))
+    }
 
     new_dict = OrderedDict((k, new_dict[k]) for k in list(ClustDist.keys()))
 
-    df = pd.DataFrame(dict(x=[i[0][0] for i in list(new_dict.values())],
-                           y=[i[0][1] for i in list(new_dict.values())],
-                           label=[i[1] for i in list(new_dict.values())]),
-                           index=new_dict.keys())
+    df = pd.DataFrame(
+        dict(
+            x=[i[0][0] for i in list(new_dict.values())],
+            y=[i[0][1] for i in list(new_dict.values())],
+            label=[i[1] for i in list(new_dict.values())],
+        ),
+        index=new_dict.keys(),
+    )
 
-    colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'lime'}
+    colors = {
+        -1: "red",
+        0: "lightblue",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "navy",
+        6: "orange",
+        7: "purple",
+        8: "salmon",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "lime",
+    }
 
     # first plot: scatter plot of points colored according to the cluster they belong to
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
 
-    grouped = df.groupby('label')
+    grouped = df.groupby("label")
     for key, group in grouped:
-        group.plot(ax=ax1, kind='scatter', x='x', y='y', label=key, color=colors[key % 13 if key != -1 else -1], s=300,
-                   edgecolor="black")
+        group.plot(
+            ax=ax1,
+            kind="scatter",
+            x="x",
+            y="y",
+            label=key,
+            color=colors[key % 13 if key != -1 else -1],
+            s=300,
+            edgecolor="black",
+        )
 
     ax1.set_xlabel("")
     ax1.set_ylabel("")
 
     for i, txt in enumerate([i for i in range(len(X))]):
-        ax1.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+        ax1.annotate(
+            txt,
+            (X[:, 0][i], X[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     # second plot: reachability plot, with colors corresponding to clusters
     plot_dic = {}
@@ -368,8 +419,11 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
 
             plot_dic[key] = ClustDist[key]
 
-    ax2.bar(plot_dic.keys(), plot_dic.values(),
-            color=[colors[i % 13] if i != -1 else "red" for i in df.label])
+    ax2.bar(
+        plot_dic.keys(),
+        plot_dic.values(),
+        color=[colors[i % 13] if i != -1 else "red" for i in df.label],
+    )
 
     ax2.axhline(eps, color="black", linewidth=3)
 
@@ -378,6 +432,6 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax3 = ax2.twinx()
     ax3.set_ylim(ax2.get_ylim())
     ax3.set_yticks([eps, eps_db])
-    ax3.set_yticklabels(["\u03B5", "\u03B5" + "\'"])
+    ax3.set_yticklabels(["\u03B5", "\u03B5" + "'"])
 
     plt.show()

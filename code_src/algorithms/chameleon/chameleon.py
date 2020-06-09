@@ -26,7 +26,10 @@ def relative_interconnectivity(graph, cluster_i, cluster_j):
         return 0.0
     # EC: sum of the weights of connecting edges of clusters i and j
     EC = np.sum(get_weights(graph, edges))
-    ECci, ECcj = internal_interconnectivity(graph, cluster_i), internal_interconnectivity(graph, cluster_j)
+    ECci, ECcj = (
+        internal_interconnectivity(graph, cluster_i),
+        internal_interconnectivity(graph, cluster_j),
+    )
 
     if ECci + ECcj != 0:
         rel_int = EC / ((ECci + ECcj) / 2.0)
@@ -77,7 +80,7 @@ def merge_score(g, ci, cj, a):
 
 
 def merge_best(graph, df, a, k, verbose=False, verbose2=True):
-    clusters = np.unique(df['cluster'])
+    clusters = np.unique(df["cluster"])
     max_score = 0
     ci, cj = -1, -1
     if len(clusters) <= k:
@@ -107,10 +110,10 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
             print("Merging c%d and c%d" % (ci, cj))
             print("score: ", max_score)
 
-        df.loc[df['cluster'] == cj, 'cluster'] = ci
+        df.loc[df["cluster"] == cj, "cluster"] = ci
         for i, p in enumerate(graph.nodes()):
-            if graph.node[p]['cluster'] == cj:
-                graph.node[p]['cluster'] = ci
+            if graph.node[p]["cluster"] == cj:
+                graph.node[p]["cluster"] = ci
     else:
         if verbose:
             print("No Merging")
@@ -120,7 +123,17 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
     return df, max_score, ci
 
 
-def cluster(df, k, knn=10, m=30, alpha=2.0, verbose0=False, verbose1=True, verbose2=True, plot=True):
+def cluster(
+    df,
+    k,
+    knn=10,
+    m=30,
+    alpha=2.0,
+    verbose0=False,
+    verbose1=True,
+    verbose2=True,
+    plot=True,
+):
     if k is None:
         k = 1
 
@@ -135,14 +148,21 @@ def cluster(df, k, knn=10, m=30, alpha=2.0, verbose0=False, verbose1=True, verbo
     graph = pre_part_graph(graph, m, df, verbose1, plotting=plot)
 
     # to account for cases where initial_clust is too big or k is already reached before the merging phase
-    cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
+    cl_dict = {
+        list(graph.node)[i]: graph.node[i]["cluster"]
+        for i in range(len(graph))
+    }
     m = len(Counter(cl_dict.values()))
 
     if verbose0:
         print("actual init_clust: {}".format(m))
 
     dendr_height = {}
-    iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose1 else enumerate(range(m - k))
+    iterm = (
+        tqdm(enumerate(range(m - k)), total=m - k)
+        if verbose1
+        else enumerate(range(m - k))
+    )
 
     for i, _ in iterm:
 
@@ -163,9 +183,9 @@ def cluster(df, k, knn=10, m=30, alpha=2.0, verbose0=False, verbose1=True, verbo
 
 def rebuild_labels(df):
     ans = df.copy()
-    clusters = list(pd.DataFrame(df['cluster'].value_counts()).index)
+    clusters = list(pd.DataFrame(df["cluster"].value_counts()).index)
     c = 1
     for i in clusters:
-        ans.loc[df['cluster'] == i, 'cluster'] = c
+        ans.loc[df["cluster"] == i, "cluster"] = c
         c = c + 1
     return ans

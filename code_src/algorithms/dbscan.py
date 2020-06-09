@@ -43,9 +43,22 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
     """
 
-    colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'lime'}
+    colors = {
+        -1: "red",
+        0: "lightblue",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "navy",
+        6: "orange",
+        7: "purple",
+        8: "salmon",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "lime",
+    }
 
     fig, ax = plt.subplots(figsize=(14, 6))
 
@@ -54,17 +67,35 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
 
     # plot colors according to clusters
     for i in ClustDict:
-        plt.scatter(X_dict[i][0], X_dict[i][1], color=colors[ClustDict[i] % 12], s=300)
+        plt.scatter(
+            X_dict[i][0], X_dict[i][1], color=colors[ClustDict[i] % 12], s=300
+        )
 
     # plot the last added point bigger and black, with a red circle surrounding it
-    plt.scatter(x=X_dict[point][0], y=X_dict[point][1], s=400, color="black", alpha=0.4)
+    plt.scatter(
+        x=X_dict[point][0], y=X_dict[point][1], s=400, color="black", alpha=0.4
+    )
 
-    circle1 = plt.Circle((X_dict[point][0], X_dict[point][1]), eps, color='r', fill=False, linewidth=3, alpha=0.7)
+    circle1 = plt.Circle(
+        (X_dict[point][0], X_dict[point][1]),
+        eps,
+        color="r",
+        fill=False,
+        linewidth=3,
+        alpha=0.7,
+    )
     ax.add_artist(circle1)
 
     # add indexes to points in the scatterplot
     for i, txt in enumerate([i for i in range(len(X))]):
-        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+        ax.annotate(
+            txt,
+            (X[:, 0][i], X[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     plt.show()
 
@@ -88,17 +119,38 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     X_dict = dict(zip([str(i) for i in range(len(X))], X))
 
     # create new dictionary of X, adding the cluster label
-    new_dict = {key: (val1, ClustDict[key]) for key, val1 in zip(list(X_dict.keys()), list(X_dict.values()))}
+    new_dict = {
+        key: (val1, ClustDict[key])
+        for key, val1 in zip(list(X_dict.keys()), list(X_dict.values()))
+    }
 
     new_dict = OrderedDict((k, new_dict[k]) for k in list(ClustDict.keys()))
 
-    df = pd.DataFrame(dict(x=[i[0][0] for i in list(new_dict.values())],
-                           y=[i[0][1] for i in list(new_dict.values())],
-                           label=[i[1] for i in list(new_dict.values())]), index=new_dict.keys())
+    df = pd.DataFrame(
+        dict(
+            x=[i[0][0] for i in list(new_dict.values())],
+            y=[i[0][1] for i in list(new_dict.values())],
+            label=[i[1] for i in list(new_dict.values())],
+        ),
+        index=new_dict.keys(),
+    )
 
-    colors = {-1: 'red', 0: 'lightblue', 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'lime'}
+    colors = {
+        -1: "red",
+        0: "lightblue",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "navy",
+        6: "orange",
+        7: "purple",
+        8: "salmon",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "lime",
+    }
 
     fig, ax1 = plt.subplots(1, 1, figsize=(18, 6))
 
@@ -107,7 +159,13 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     # plot points colored according to the cluster they belong to
     for lab in lista_lab:
         df_sub = df[df.label == lab]
-        plt.scatter(df_sub.x, df_sub.y, color=colors[lab % 12], s=300, edgecolor="black")
+        plt.scatter(
+            df_sub.x,
+            df_sub.y,
+            color=colors[lab % 12],
+            s=300,
+            edgecolor="black",
+        )
 
     # plot circles around noise, colored according to the cluster they belong to
     if noise_circle is True:
@@ -115,8 +173,16 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
         df_noise = df[df.label == -1]
 
         for i in range(len(df_noise)):
-            ax1.add_artist(plt.Circle((df_noise["x"].iloc[i],
-                                       df_noise["y"].iloc[i]), eps, color='r', fill=False, linewidth=3, alpha=0.7))
+            ax1.add_artist(
+                plt.Circle(
+                    (df_noise["x"].iloc[i], df_noise["y"].iloc[i]),
+                    eps,
+                    color="r",
+                    fill=False,
+                    linewidth=3,
+                    alpha=0.7,
+                )
+            )
 
     # plot circles around points, colored according to the cluster they belong to
     if circle_class is not None:
@@ -131,15 +197,30 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
                 df_temp = df[df.label == lab]
 
                 for i in range(len(df_temp)):
-                    ax1.add_artist(plt.Circle((df_temp["x"].iloc[i], df_temp["y"].iloc[i]),
-                                              eps, color=colors[lab], fill=False, linewidth=3, alpha=0.7))
+                    ax1.add_artist(
+                        plt.Circle(
+                            (df_temp["x"].iloc[i], df_temp["y"].iloc[i]),
+                            eps,
+                            color=colors[lab],
+                            fill=False,
+                            linewidth=3,
+                            alpha=0.7,
+                        )
+                    )
 
     ax1.set_xlabel("")
     ax1.set_ylabel("")
 
     # plot labels of points
     for i, txt in enumerate([i for i in range(len(X))]):
-        ax1.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+        ax1.annotate(
+            txt,
+            (X[:, 0][i], X[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     plt.show()
 

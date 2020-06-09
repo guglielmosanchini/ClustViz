@@ -8,10 +8,24 @@ import pprint
 
 
 class KMedoids:
-    def __init__(self, n_cluster=2, max_iter=10, tol=0.1, start_prob=0.8, end_prob=0.99, random_state=42):
+    def __init__(
+        self,
+        n_cluster=2,
+        max_iter=10,
+        tol=0.1,
+        start_prob=0.8,
+        end_prob=0.99,
+        random_state=42,
+    ):
         """ Kmedoids constructor called """
-        if start_prob < 0 or start_prob >= 1 or end_prob < 0 or end_prob >= 1 or start_prob > end_prob:
-            raise ValueError('Invalid input')
+        if (
+            start_prob < 0
+            or start_prob >= 1
+            or end_prob < 0
+            or end_prob >= 1
+            or start_prob > end_prob
+        ):
+            raise ValueError("Invalid input")
         self.n_cluster = n_cluster
         self.max_iter = max_iter
         self.tol = tol
@@ -20,7 +34,7 @@ class KMedoids:
 
         self.medoids = []  # empty medois
         self.clusters = {}  # empty clusters
-        self.tol_reached = float('inf')
+        self.tol_reached = float("inf")
         self.current_distance = 0
 
         self.__data = None
@@ -42,7 +56,9 @@ class KMedoids:
         print("starting algo")
         self.__initialize_medoids()  # choosing initial medoids
         # computing clusters and cluster_distances
-        self.clusters, self.cluster_distances = self.__calculate_clusters(self.medoids)
+        self.clusters, self.cluster_distances = self.__calculate_clusters(
+            self.medoids
+        )
         # print cluster and cluster_distances
         print("clusters: ")
         pprint.PrettyPrinter(indent=2, compact=True).pprint(self.clusters)
@@ -52,18 +68,30 @@ class KMedoids:
         self.__update_clusters()
 
     def __update_clusters(self):
-        for i in range(self.max_iter):  # to stop if convergence isn't reached whithin max_iter iterations
+        for i in range(
+            self.max_iter
+        ):  # to stop if convergence isn't reached whithin max_iter iterations
             print("\n")
             print("iteration n°: ", i)
             # compute distance obtained by swapping medoids in the clusters
-            cluster_dist_with_new_medoids = self.__swap_and_recalculate_clusters()
+            cluster_dist_with_new_medoids = (
+                self.__swap_and_recalculate_clusters()
+            )
             # if the new sum of cluster_distances is smaller than the old one
-            if self.__is_new_cluster_dist_small(cluster_dist_with_new_medoids) is True:
+            if (
+                self.__is_new_cluster_dist_small(cluster_dist_with_new_medoids)
+                is True
+            ):
                 print("new is smaller")
                 # compute clusters and cluster_distance with new medoids
-                self.clusters, self.cluster_distances = self.__calculate_clusters(self.medoids)
+                (
+                    self.clusters,
+                    self.cluster_distances,
+                ) = self.__calculate_clusters(self.medoids)
                 print("clusters: ")
-                pprint.PrettyPrinter(indent=2, compact=True).pprint(self.clusters)
+                pprint.PrettyPrinter(indent=2, compact=True).pprint(
+                    self.clusters
+                )
                 plot_pam(self.__data, self.clusters)
                 # print("clusters_distances: ", self.cluster_distances)
             else:
@@ -78,11 +106,16 @@ class KMedoids:
         existance_dist = self.calculate_distance_of_clusters()
         print("present dist: ", existance_dist)
         # computes the new sum of cluster_distances
-        new_dist = self.calculate_distance_of_clusters(cluster_dist_with_new_medoids)
+        new_dist = self.calculate_distance_of_clusters(
+            cluster_dist_with_new_medoids
+        )
         print("new dist: ", new_dist)
 
         # if it is better, substitute the old medoids with the new ones and return True, else return False
-        if existance_dist > new_dist and (existance_dist - new_dist) > self.tol:
+        if (
+            existance_dist > new_dist
+            and (existance_dist - new_dist) > self.tol
+        ):
             self.medoids = cluster_dist_with_new_medoids.keys()
             return True
 
@@ -105,14 +138,20 @@ class KMedoids:
         cluster_dist = {}
         for medoid in self.medoids:  # for each medoid
             is_shortest_medoid_found = False
-            for data_index in self.clusters[medoid]:  # for each point in the current medoid's cluster
+            for data_index in self.clusters[
+                medoid
+            ]:  # for each point in the current medoid's cluster
                 if data_index != medoid:  # exclude the medoid itself
                     # create a list of the elements of the cluster
                     cluster_list = list(self.clusters[medoid])
                     # make the current point the temporary medoid
-                    cluster_list[self.clusters[medoid].index(data_index)] = medoid
+                    cluster_list[
+                        self.clusters[medoid].index(data_index)
+                    ] = medoid
                     # compute new cluster distance obtained by swapping the medoid
-                    new_distance = self.calculate_inter_cluster_distance(data_index, cluster_list)
+                    new_distance = self.calculate_inter_cluster_distance(
+                        data_index, cluster_list
+                    )
                     # if this new distance is smaller than the previous one
                     if new_distance < self.cluster_distances[medoid]:
                         print("new better medoid: ", data_index)
@@ -136,7 +175,9 @@ class KMedoids:
     def __calculate_clusters(self, medoids):
         """returns the clusters and the relative distances (average distance of each element of the cluster from the
         medoid) """
-        clusters = {}  # it will be of the form {medoid0: [elements of cluster0], medoid1: [elements of cluster1], ...}
+        clusters = (
+            {}
+        )  # it will be of the form {medoid0: [elements of cluster0], medoid1: [elements of cluster1], ...}
         cluster_distances = {}
         # initialize empty clusters and cluster_distances
         for medoid in medoids:
@@ -145,7 +186,10 @@ class KMedoids:
 
         for row in range(self.__rows):  # for every row of input data
             # compute nearest medoid and relative distance from row
-            nearest_medoid, nearest_distance = self.__get_shortest_distance_to_medoid(row, medoids)
+            (
+                nearest_medoid,
+                nearest_distance,
+            ) = self.__get_shortest_distance_to_medoid(row, medoids)
             # add this distance to the distances relative to the nearest_medoid cluster
             cluster_distances[nearest_medoid] += nearest_distance
             # add the row to the nearest_medoid cluster
@@ -159,14 +203,20 @@ class KMedoids:
 
     def __get_shortest_distance_to_medoid(self, row_index, medoids):
         """returns closest medoid and relative distance from the input row (point)"""
-        min_distance = float('inf')
+        min_distance = float("inf")
         current_medoid = None
 
         for medoid in medoids:
-            current_distance = self.__get_distance(medoid, row_index)  # compute distance from input row to medoid
-            if current_distance < min_distance:  # if it happens to be shorter than all previously computed distances
+            current_distance = self.__get_distance(
+                medoid, row_index
+            )  # compute distance from input row to medoid
+            if (
+                current_distance < min_distance
+            ):  # if it happens to be shorter than all previously computed distances
                 min_distance = current_distance  # save it as min_distance
-                current_medoid = medoid  # choose this medoid as the closest one
+                current_medoid = (
+                    medoid  # choose this medoid as the closest one
+                )
         return current_medoid, min_distance
 
     def __initialize_medoids(self):
@@ -174,11 +224,16 @@ class KMedoids:
         print("initializing medoids with kmeans++")
         random.seed(self.__random_state)
 
-        self.medoids.append(random.randint(0, self.__rows - 1))  # choosing a random row from data
+        self.medoids.append(
+            random.randint(0, self.__rows - 1)
+        )  # choosing a random row from data
 
-        while len(self.medoids) != self.n_cluster:  # until the number of medoids reaches the number of clusters
+        while (
+            len(self.medoids) != self.n_cluster
+        ):  # until the number of medoids reaches the number of clusters
             self.medoids.append(
-                self.__find_distant_medoid())  # choose as next medoid the most distant from the previously chosen ones
+                self.__find_distant_medoid()
+            )  # choose as next medoid the most distant from the previously chosen ones
 
     def __find_distant_medoid(self):
         """returns a row corresponding to a point which is considerably distant from its closest medoid"""
@@ -186,24 +241,43 @@ class KMedoids:
         indices = []
         for row in range(self.__rows):  # for every row in data
             indices.append(row)
-            distances.append(self.__get_shortest_distance_to_medoid(row, self.medoids)[
-                                 1])  # shortest distance from row to its closest medoid
-        distances_index = np.argsort(distances)  # the sorted indices of the distances
-        choosen_dist = self.__select_distant_medoid(distances_index)  # the index corresponding to the distance chosen
-        return indices[choosen_dist]  # row corresponding to the chosen distance
+            distances.append(
+                self.__get_shortest_distance_to_medoid(row, self.medoids)[1]
+            )  # shortest distance from row to its closest medoid
+        distances_index = np.argsort(
+            distances
+        )  # the sorted indices of the distances
+        choosen_dist = self.__select_distant_medoid(
+            distances_index
+        )  # the index corresponding to the distance chosen
+        return indices[
+            choosen_dist
+        ]  # row corresponding to the chosen distance
 
     def __select_distant_medoid(self, distances_index):
         """returns a random index of the distances_index between start and end"""
-        start_index = round(self.start_prob * len(distances_index))  # normally 0.8*len(dist)
-        end_index = round(self.end_prob * (len(distances_index) - 1))  # normally 0.99*len(dist)
+        start_index = round(
+            self.start_prob * len(distances_index)
+        )  # normally 0.8*len(dist)
+        end_index = round(
+            self.end_prob * (len(distances_index) - 1)
+        )  # normally 0.99*len(dist)
         # returns a random index corresponding to a row which is distant from its closest medoid, but not necessarily
         # the row with the maximum distance from its medoid
         return distances_index[random.randint(start_index, end_index)]
 
     def __get_distance(self, x1, x2):
         """computes euclidean distance, with an initial transformation based on input data"""
-        a = self.__data[x1].toarray() if self.__is_csr is True else np.array(self.__data[x1])
-        b = self.__data[x2].toarray() if self.__is_csr is True else np.array(self.__data[x2])
+        a = (
+            self.__data[x1].toarray()
+            if self.__is_csr is True
+            else np.array(self.__data[x1])
+        )
+        b = (
+            self.__data[x2].toarray()
+            if self.__is_csr is True
+            else np.array(self.__data[x2])
+        )
         return np.linalg.norm(a - b)
 
     def __set_data_type(self):
@@ -218,7 +292,7 @@ class KMedoids:
             self.__rows = len(self.__data)
             self.__columns = len(self.__data[0])
         else:
-            raise ValueError('Invalid input')
+            raise ValueError("Invalid input")
 
 
 def plot_pam(data, cl, equal_axis_scale=False):
@@ -235,26 +309,68 @@ def plot_pam(data, cl, equal_axis_scale=False):
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # all points are plotted in white
-    plt.scatter(np.array(data)[:, 0], np.array(data)[:, 1], s=300, color="white", edgecolor="black")
+    plt.scatter(
+        np.array(data)[:, 0],
+        np.array(data)[:, 1],
+        s=300,
+        color="white",
+        edgecolor="black",
+    )
 
-    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-              4: 'pink', 5: 'turquoise', 6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown',
-              11: 'tan', 12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    colors = {
+        0: "seagreen",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "turquoise",
+        6: "orange",
+        7: "purple",
+        8: "yellowgreen",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "plum",
+        13: "rosybrown",
+        14: "lightblue",
+        15: "khaki",
+        16: "gainsboro",
+        17: "peachpuff",
+    }
 
     # plot the points with colors according to the cluster they belong to
     for i, el in enumerate(list(cl.values())):
-        plt.scatter(np.array(data)[el, 0], np.array(data)[el, 1], s=300, color=colors[i % 18], edgecolor="black")
+        plt.scatter(
+            np.array(data)[el, 0],
+            np.array(data)[el, 1],
+            s=300,
+            color=colors[i % 18],
+            edgecolor="black",
+        )
 
     # plot centers of mass, marked with an X
     for i, el in enumerate(list(cl.keys())):
-        plt.scatter(np.array(data)[el, 0], np.array(data)[el, 1], s=500, color="red", marker="X", edgecolor="black")
+        plt.scatter(
+            np.array(data)[el, 0],
+            np.array(data)[el, 1],
+            s=500,
+            color="red",
+            marker="X",
+            edgecolor="black",
+        )
 
     # add indexes to points in plot
     for i, txt in enumerate([i for i in range(len(data))]):
-        ax.annotate(txt, (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
-                    fontsize=10, size=10, ha='center', va='center')
+        ax.annotate(
+            txt,
+            (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     if equal_axis_scale is True:
-        ax.set_aspect('equal', adjustable='box')
+        ax.set_aspect("equal", adjustable="box")
 
     plt.show()

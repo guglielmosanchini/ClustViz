@@ -56,7 +56,9 @@ class ClaraClustering(object):
             sampled_df = pd.DataFrame(sampling_data, index=sampling_idx)
 
             # return total cost, medoids and clusters of sampled_df
-            pre_cost, pre_choice, pre_medoids = self.k_medoids(sampled_df, _k, _fn, niter)
+            pre_cost, pre_choice, pre_medoids = self.k_medoids(
+                sampled_df, _k, _fn, niter
+            )
             plot_pam_mod(sampled_df, pre_medoids, _df)
             print("RESULTS OF K-MEDOIDS")
             print("pre_cost: ", pre_cost)
@@ -71,7 +73,11 @@ class ClaraClustering(object):
             print("tmp_medoids: ", tmp_medoids)
             # if the new cost is lower
             if tmp_avg_cost < min_avg_cost:
-                print("new_cost is lower, from {0} to {1}".format(round(min_avg_cost, 4), round(tmp_avg_cost, 4)))
+                print(
+                    "new_cost is lower, from {0} to {1}".format(
+                        round(min_avg_cost, 4), round(tmp_avg_cost, 4)
+                    )
+                )
                 min_avg_cost = tmp_avg_cost
                 best_choices = list(pre_choice)
                 best_results = dict(tmp_medoids)
@@ -124,7 +130,9 @@ class ClaraClustering(object):
                         idx = medoids_sample.index(m)
                         swap_temp = medoids_sample[idx]
                         medoids_sample[idx] = item
-                        tmp_cost, tmp_medoids = self.compute_cost(_df, _fn, medoids_sample, True)
+                        tmp_cost, tmp_medoids = self.compute_cost(
+                            _df, _fn, medoids_sample, True
+                        )
 
                         if (tmp_cost < current_cost) & (clust_iter < 1):
                             best_choices = list(medoids_sample)
@@ -141,13 +149,16 @@ class ClaraClustering(object):
 
             iter_count += 1
             if best_choices == medoids_sample:
-                print('Best configuration found! best_choices: ', best_choices)
+                print("Best configuration found! best_choices: ", best_choices)
                 break
 
             if current_cost <= prior_cost:
                 if current_cost < prior_cost:
-                    print("Better configuration found! curr_cost:{0}, prior_cost:{1}".format(round(current_cost, 2),
-                                                                                             round(prior_cost, 2)))
+                    print(
+                        "Better configuration found! curr_cost:{0}, prior_cost:{1}".format(
+                            round(current_cost, 2), round(prior_cost, 2)
+                        )
+                    )
                 else:
                     print("Equal cost")
                 prior_cost = current_cost
@@ -179,18 +190,19 @@ class ClaraClustering(object):
                     tmp = self.dist_cache.get((m, i), None)
 
                 if not cache_on or tmp is None:
-                    if _fn == 'manhattan':
+                    if _fn == "manhattan":
                         tmp = self.manhattan_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'cosine':
+                    elif _fn == "cosine":
                         tmp = self.cosine_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'euclidean':
+                    elif _fn == "euclidean":
                         tmp = self.euclidean_distance(_df.loc[m], _df.loc[i])
-                    elif _fn == 'fast_euclidean':
+                    elif _fn == "fast_euclidean":
                         tmp = self.fast_euclidean(_df.loc[m], _df.loc[i])
                     else:
                         print(
-                            'You need to input a valid distance function (manhattan, cosine, euclidean or '
-                            'fast_euclidean).')
+                            "You need to input a valid distance function (manhattan, cosine, euclidean or "
+                            "fast_euclidean)."
+                        )
 
                 if cache_on:
                     self.dist_cache[(m, i)] = tmp
@@ -232,7 +244,9 @@ class ClaraClustering(object):
             # take _k random points as medoids_sample
             medoids_sample = random.sample(list(_df.index), _k)
             # compute cost and medoids with this medoids_sample
-            prior_cost, medoids = self.compute_cost(_df, _fn, medoids_sample, True)
+            prior_cost, medoids = self.compute_cost(
+                _df, _fn, medoids_sample, True
+            )
             # store the cost and medoids
             score_holder.append(prior_cost)
             medoid_holder.append(medoids)
@@ -302,25 +316,68 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # just as a habit, it actually doesnt plot anything because points are white with white edgecolor
-    plt.scatter(full.iloc[:, 0], full.iloc[:, 1], s=300, color="white", edgecolor="white")
+    plt.scatter(
+        full.iloc[:, 0],
+        full.iloc[:, 1],
+        s=300,
+        color="white",
+        edgecolor="white",
+    )
 
-    colors = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey', 4: 'pink', 5: 'turquoise',
-              6: 'orange', 7: 'purple', 8: 'yellowgreen', 9: 'olive', 10: 'brown', 11: 'tan',
-              12: 'plum', 13: 'rosybrown', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    colors = {
+        0: "seagreen",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "turquoise",
+        6: "orange",
+        7: "purple",
+        8: "yellowgreen",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "plum",
+        13: "rosybrown",
+        14: "lightblue",
+        15: "khaki",
+        16: "gainsboro",
+        17: "peachpuff",
+    }
 
     # plot the sampled point, with colors according to the cluster they belong to
     for i, el in enumerate(list(cl.values())):
-        plt.scatter(data.loc[el, 0], data.loc[el, 1], s=300, color=colors[i % 18], edgecolor="black")
+        plt.scatter(
+            data.loc[el, 0],
+            data.loc[el, 1],
+            s=300,
+            color=colors[i % 18],
+            edgecolor="black",
+        )
 
     # plot centers of mass, marked with an X
     for i, el in enumerate(list(cl.keys())):
-        plt.scatter(data.loc[el, 0], data.loc[el, 1], s=500, color="red", marker="X", edgecolor="black")
+        plt.scatter(
+            data.loc[el, 0],
+            data.loc[el, 1],
+            s=500,
+            color="red",
+            marker="X",
+            edgecolor="black",
+        )
 
     # plot indexes of points in plot
     for i, txt in enumerate([i for i in range(len(full))]):
-        ax.annotate(txt, (full.iloc[i, 0], full.iloc[i, 1]), fontsize=10, size=10, ha='center', va='center')
+        ax.annotate(
+            txt,
+            (full.iloc[i, 0], full.iloc[i, 1]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
     if equal_axis_scale is True:
-        ax.set_aspect('equal', adjustable='box')
+        ax.set_aspect("equal", adjustable="box")
 
     plt.show()

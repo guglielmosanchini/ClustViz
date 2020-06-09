@@ -10,16 +10,23 @@ from matplotlib import colors
 import numpy as np
 
 
-
 def choose_dataset(chosen_dataset, n_points):
     X = None
 
     if chosen_dataset == "blobs":
-        X = make_blobs(n_samples=n_points, centers=4, n_features=2, cluster_std=1.5, random_state=42)[0]
+        X = make_blobs(
+            n_samples=n_points,
+            centers=4,
+            n_features=2,
+            cluster_std=1.5,
+            random_state=42,
+        )[0]
     elif chosen_dataset == "moons":
         X = make_moons(n_samples=n_points, noise=0.05, random_state=42)[0]
     elif chosen_dataset == "scatter":
-        X = make_blobs(n_samples=n_points, cluster_std=[2.5, 2.5, 2.5], random_state=42)[0]
+        X = make_blobs(
+            n_samples=n_points, cluster_std=[2.5, 2.5, 2.5], random_state=42
+        )[0]
     elif chosen_dataset == "circle":
         X = make_circles(n_samples=n_points, noise=0, random_state=42)[0]
 
@@ -47,8 +54,16 @@ def convert_colors(dict_colors, alpha=0.5):
 
 
 class LabeledSlider(QtWidgets.QWidget):
-    def __init__(self, minimum, maximum, interval=1, single_step=1, orientation=Qt.Horizontal,
-                 labels=None, parent=None):
+    def __init__(
+        self,
+        minimum,
+        maximum,
+        interval=1,
+        single_step=1,
+        orientation=Qt.Horizontal,
+        labels=None,
+        parent=None,
+    ):
         super(LabeledSlider, self).__init__(parent=parent)
 
         levels = range(minimum, maximum + 1, interval)
@@ -74,8 +89,12 @@ class LabeledSlider(QtWidgets.QWidget):
         self.right_margin = 0
         self.bottom_margin = 0
 
-        self.layout.setContentsMargins(self.left_margin, self.top_margin,
-                                       self.right_margin, self.bottom_margin)
+        self.layout.setContentsMargins(
+            self.left_margin,
+            self.top_margin,
+            self.right_margin,
+            self.bottom_margin,
+        )
 
         self.sl = QtWidgets.QSlider(orientation, self)
         self.sl.setMinimum(minimum)
@@ -103,7 +122,9 @@ class LabeledSlider(QtWidgets.QWidget):
         st_slider.orientation = self.sl.orientation()
 
         length = style.pixelMetric(QStyle.PM_SliderLength, st_slider, self.sl)
-        available = style.pixelMetric(QStyle.PM_SliderSpaceAvailable, st_slider, self.sl)
+        available = style.pixelMetric(
+            QStyle.PM_SliderSpaceAvailable, st_slider, self.sl
+        )
 
         for v, v_str in self.levels:
 
@@ -113,8 +134,12 @@ class LabeledSlider(QtWidgets.QWidget):
             if self.sl.orientation() == Qt.Horizontal:
                 # I assume the offset is half the length of slider, therefore
                 # + length//2
-                x_loc = QStyle.sliderPositionFromValue(self.sl.minimum(),
-                                                       self.sl.maximum(), v, available) + length // 2
+                x_loc = (
+                    QStyle.sliderPositionFromValue(
+                        self.sl.minimum(), self.sl.maximum(), v, available
+                    )
+                    + length // 2
+                )
 
                 # left bound of the text = center - half of text width + L_margin
                 left = x_loc - rect.width() // 2 + self.left_margin
@@ -138,18 +163,32 @@ class LabeledSlider(QtWidgets.QWidget):
                 #                                    self.bottom_margin)
 
             else:
-                y_loc = QStyle.sliderPositionFromValue(self.sl.minimum(),
-                                                       self.sl.maximum(), v, available, upsideDown=True)
+                y_loc = QStyle.sliderPositionFromValue(
+                    self.sl.minimum(),
+                    self.sl.maximum(),
+                    v,
+                    available,
+                    upsideDown=True,
+                )
 
-                bottom = y_loc + length // 2 + rect.height() // 2 + self.top_margin - 3
+                bottom = (
+                    y_loc
+                    + length // 2
+                    + rect.height() // 2
+                    + self.top_margin
+                    - 3
+                )
                 # there is a 3 px offset that I can't attribute to any metric
 
                 left = self.left_margin - rect.width()
                 if left <= 0:
                     self.left_margin = rect.width() + 2
-                    self.layout.setContentsMargins(self.left_margin,
-                                                   self.top_margin, self.right_margin,
-                                                   self.bottom_margin)
+                    self.layout.setContentsMargins(
+                        self.left_margin,
+                        self.top_margin,
+                        self.right_margin,
+                        self.bottom_margin,
+                    )
 
             pos = QPoint(left, bottom)
             painter.drawText(pos, v_str)

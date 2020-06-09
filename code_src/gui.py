@@ -1,7 +1,17 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QGridLayout, QGroupBox, QTabWidget, QWidget, \
-    QVBoxLayout, QTabBar
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QPushButton,
+    QApplication,
+    QGridLayout,
+    QGroupBox,
+    QTabWidget,
+    QWidget,
+    QVBoxLayout,
+    QTabBar,
+)
 
 from PyQt5.QtGui import QFont
+
 # import qdarkstyle
 import sys
 
@@ -22,8 +32,8 @@ from GUI_classes.chameleon2_gui import CHAMELEON2_class
 # TODO: play/pause button
 # TODO: comment everything
 
-#import os
-#os.chdir("./code_src/")
+# import os
+# os.chdir("./code_src/")
 
 # Back up the reference to the exceptionhook
 sys._excepthook = sys.excepthook
@@ -83,7 +93,9 @@ class Main_Window(QWidget):
         # layout of central box
         gridlayout = QGridLayout(self.initial_tab)
 
-        self.initial_tab.groupbox_alg = QGroupBox("CHOOSE A CLUSTERING ALGORITHM: ")
+        self.initial_tab.groupbox_alg = QGroupBox(
+            "CHOOSE A CLUSTERING ALGORITHM: "
+        )
         # self.initial_tab.groupbox_alg.setFont(font_title)
         self.initial_tab.groupbox_alg.setFixedSize(600, 400)
         gridlayout.addWidget(self.initial_tab.groupbox_alg)
@@ -91,21 +103,47 @@ class Main_Window(QWidget):
         gridlayout_alg = QGridLayout(self.initial_tab.groupbox_alg)
 
         # buttons and functions dictionaries
-        self.button_dictionary = {1: "OPTICS", 2: "DBSCAN", 3: "AGGLOMERATIVE", 4: "DENCLUE",
-                                  5: "CURE", 6: "LARGE CURE", 7: "PAM", 8: "CLARA", 9: "CLARANS", 10: "BIRCH",
-                                  11: "CHAMELEON", 12: "CHAMELEON2"}
-        self.swapped_button_dictionary = dict([(value, key) for key, value in self.button_dictionary.items()])
+        self.button_dictionary = {
+            1: "OPTICS",
+            2: "DBSCAN",
+            3: "AGGLOMERATIVE",
+            4: "DENCLUE",
+            5: "CURE",
+            6: "LARGE CURE",
+            7: "PAM",
+            8: "CLARA",
+            9: "CLARANS",
+            10: "BIRCH",
+            11: "CHAMELEON",
+            12: "CHAMELEON2",
+        }
+        self.swapped_button_dictionary = dict(
+            [(value, key) for key, value in self.button_dictionary.items()]
+        )
 
-        self.functions = {1: self.open_OPTICS, 2: self.open_DBSCAN, 3: self.open_AGGLOMERATIVE, 4: self.open_DENCLUE,
-                          5: self.open_CURE, 6: self.open_LARGE_CURE, 7: self.open_PAM, 8: self.open_CLARA,
-                          9: self.open_CLARANS, 10: self.open_BIRCH, 11: self.open_CHAMELEON, 12: self.open_CHAMELEON2}
+        self.functions = {
+            1: self.open_OPTICS,
+            2: self.open_DBSCAN,
+            3: self.open_AGGLOMERATIVE,
+            4: self.open_DENCLUE,
+            5: self.open_CURE,
+            6: self.open_LARGE_CURE,
+            7: self.open_PAM,
+            8: self.open_CLARA,
+            9: self.open_CLARANS,
+            10: self.open_BIRCH,
+            11: self.open_CHAMELEON,
+            12: self.open_CHAMELEON2,
+        }
 
         # buttons
         self.initial_tab.buttons = []
         k = 0
         h = 0
         for i, (key, value) in enumerate(self.button_dictionary.items()):
-            self.initial_tab.buttons.append(QPushButton(self.button_dictionary[key], self))
+            self.initial_tab.buttons.append(
+                QPushButton(self.button_dictionary[key], self)
+            )
             self.initial_tab.buttons[-1].clicked.connect(self.functions[key])
             gridlayout_alg.addWidget(self.initial_tab.buttons[-1], h, k)
             if k != 3:
@@ -134,7 +172,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.OPTICS_tab, "OPTICS")
         self.current_index += 1
         index = self.swapped_button_dictionary["OPTICS"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -144,7 +184,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.DBSCAN_tab, "DBSCAN")
         self.current_index += 1
         index = self.swapped_button_dictionary["DBSCAN"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -154,7 +196,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.CURE_tab, "CURE")
         self.current_index += 1
         index = self.swapped_button_dictionary["CURE"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -164,7 +208,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.LARGE_CURE_tab, "LARGE CURE")
         self.current_index += 1
         index = self.swapped_button_dictionary["LARGE CURE"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -174,7 +220,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.AGGLOMERATIVE_tab, "AGGLOMERATIVE")
         self.current_index += 1
         index = self.swapped_button_dictionary["AGGLOMERATIVE"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -184,7 +232,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.CLARA_tab, "CLARA")
         self.current_index += 1
         index = self.swapped_button_dictionary["CLARA"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -194,7 +244,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.CLARANS_tab, "CLARANS")
         self.current_index += 1
         index = self.swapped_button_dictionary["CLARANS"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -204,7 +256,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.PAM_tab, "PAM")
         self.current_index += 1
         index = self.swapped_button_dictionary["PAM"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -214,7 +268,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.CHAMELEON_tab, "CHAMELEON")
         self.current_index += 1
         index = self.swapped_button_dictionary["CHAMELEON"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -224,7 +280,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.CHAMELEON2_tab, "CHAMELEON2")
         self.current_index += 1
         index = self.swapped_button_dictionary["CHAMELEON2"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -234,7 +292,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.BIRCH_tab, "BIRCH")
         self.current_index += 1
         index = self.swapped_button_dictionary["BIRCH"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -244,7 +304,9 @@ class Main_Window(QWidget):
         self.tabs.addTab(self.DENCLUE_tab, "DENCLUE")
         self.current_index += 1
         index = self.swapped_button_dictionary["DENCLUE"]
-        self.open_tab_dict.update({self.current_index: self.button_dictionary[index]})
+        self.open_tab_dict.update(
+            {self.current_index: self.button_dictionary[index]}
+        )
         self.tabs.setCurrentIndex(self.current_index)
         self.change_button_status(index - 1)
 
@@ -255,7 +317,9 @@ class Main_Window(QWidget):
         self.tabs.removeTab(currentIndex)
         self.current_index -= 1
         temp_index = self.open_tab_dict[currentIndex]
-        self.initial_tab.buttons[self.swapped_button_dictionary[temp_index] - 1].setEnabled(True)
+        self.initial_tab.buttons[
+            self.swapped_button_dictionary[temp_index] - 1
+        ].setEnabled(True)
 
         # the following serves the purpose of readjusting self.open_tab_dict
         del self.open_tab_dict[currentIndex]
@@ -271,7 +335,6 @@ class Main_Window(QWidget):
 
 
 class main(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Clustering Algorithms Visualization")
@@ -280,12 +343,14 @@ class main(QMainWindow):
         self.table_widget = Main_Window(self)
         self.setCentralWidget(self.table_widget)
 
-        self.statusBar().showMessage('https://github.com/guglielmosanchini/Clustering')
+        self.statusBar().showMessage(
+            "https://github.com/guglielmosanchini/Clustering"
+        )
 
         self.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # QApplication.setStyle('Fusion')
     app = QApplication(sys.argv)
@@ -294,7 +359,4 @@ if __name__ == '__main__':
     win = main()
     win.update()
 
-    try:
-        sys.exit(app.exec_())
-    except:
-        print("Exiting")
+    sys.exit(app.exec_())

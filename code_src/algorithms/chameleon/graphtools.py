@@ -16,14 +16,25 @@ def knn_graph(df, k, verbose=False):
     g = nx.Graph()
     for i in range(0, len(points)):
         g.add_node(i)
-    iterpoints = tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
+    iterpoints = (
+        tqdm(enumerate(points), total=len(points))
+        if verbose
+        else enumerate(points)
+    )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1:k + 1]  # second through kth closest
+        closests = np.argsort(distances)[
+            1 : k + 1
+        ]  # second through kth closest
         for c in closests:
-            g.add_edge(i, c, weight=1.0 / distances[c], similarity=int(1.0 / distances[c] * 1e4))
-        g.node[i]['pos'] = p
-    g.graph['edge_weight_attr'] = 'similarity'
+            g.add_edge(
+                i,
+                c,
+                weight=1.0 / distances[c],
+                similarity=int(1.0 / distances[c] * 1e4),
+            )
+        g.node[i]["pos"] = p
+    g.graph["edge_weight_attr"] = "similarity"
     return g
 
 
@@ -33,28 +44,41 @@ def knn_graph_sym(df, k, verbose=False):
     g = nx.Graph()
     for i in range(0, len(points)):
         g.add_node(i)
-    iterpoints = tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
+    iterpoints = (
+        tqdm(enumerate(points), total=len(points))
+        if verbose
+        else enumerate(points)
+    )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1:k + 1]  # second through kth closest
+        closests = np.argsort(distances)[
+            1 : k + 1
+        ]  # second through kth closest
         for c in closests:
-            distances2 = list(map(lambda x: euclidean_distance(points[c], x), points))
-            closests2 = np.argsort(distances2)[1:k + 1]
+            distances2 = list(
+                map(lambda x: euclidean_distance(points[c], x), points)
+            )
+            closests2 = np.argsort(distances2)[1 : k + 1]
             if i in closests2:
-                g.add_edge(i, c, weight=1.0 / distances[c], similarity=int(1.0 / distances[c] * 1e4))
-        g.node[i]['pos'] = p
-    g.graph['edge_weight_attr'] = 'similarity'
+                g.add_edge(
+                    i,
+                    c,
+                    weight=1.0 / distances[c],
+                    similarity=int(1.0 / distances[c] * 1e4),
+                )
+        g.node[i]["pos"] = p
+    g.graph["edge_weight_attr"] = "similarity"
     return g
 
 
 def part_graph(graph, k, df=None):
     """return the input graph with the clustering obtained through mincut-bisection"""
-    edgecuts, parts = metis.part_graph(graph, 2, objtype='cut', ufactor=250)
+    edgecuts, parts = metis.part_graph(graph, 2, objtype="cut", ufactor=250)
     # print(edgecuts)
     for i, p in enumerate(graph.nodes()):
-        graph.node[p]['cluster'] = parts[i]
+        graph.node[p]["cluster"] = parts[i]
     if df is not None:
-        df['cluster'] = nx.get_node_attributes(graph, 'cluster').values()
+        df["cluster"] = nx.get_node_attributes(graph, "cluster").values()
     return graph
 
 
@@ -64,7 +88,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
         print("Begin clustering...")
     clusters = 0
     for i, p in enumerate(graph.nodes()):
-        graph.node[p]['cluster'] = 0
+        graph.node[p]["cluster"] = 0
     cnts = {0: len(graph.nodes())}
     while clusters < k - 1:
         maxc = -1
@@ -75,15 +99,17 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
                 maxc = key
                 maxcnt = val
         # take the nodes of the biggest cluster
-        s_nodes = [n for n in graph.node if graph.node[n]['cluster'] == maxc]
+        s_nodes = [n for n in graph.node if graph.node[n]["cluster"] == maxc]
         s_graph = graph.subgraph(s_nodes)
         # bisect the biggest cluster such that the edge-cut is minimized
-        edgecuts, parts = metis.part_graph(s_graph, 2, objtype='cut', ufactor=250)
+        edgecuts, parts = metis.part_graph(
+            s_graph, 2, objtype="cut", ufactor=250
+        )
         new_part_cnt = 0
         # adjust cluster labels according to the new bisection
         for i, p in enumerate(s_graph.nodes()):
             if parts[i] == 1:
-                graph.node[p]['cluster'] = clusters + 1
+                graph.node[p]["cluster"] = clusters + 1
                 new_part_cnt += 1
         if plotting is True:
             plot2d_graph(graph)
@@ -94,13 +120,13 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
     # edgecuts, parts = metis.part_graph(graph, k)
     # add clustering details to df
     if df is not None:
-        df['cluster'] = nx.get_node_attributes(graph, 'cluster').values()
+        df["cluster"] = nx.get_node_attributes(graph, "cluster").values()
     return graph
 
 
 def get_cluster(graph, clusters):
     """return the list of nodes belonging to specific cluster(s)"""
-    nodes = [n for n in graph.node if graph.node[n]['cluster'] in clusters]
+    nodes = [n for n in graph.node if graph.node[n]["cluster"] in clusters]
     return nodes
 
 
@@ -131,7 +157,7 @@ def min_cut_bisector(graph):
 
 
 def get_weights(graph, edges):
-    return [graph[edge[0]][edge[1]]['weight'] for edge in edges]
+    return [graph[edge[0]][edge[1]]["weight"] for edge in edges]
 
 
 def bisection_weights(graph, cluster):

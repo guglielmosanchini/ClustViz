@@ -14,18 +14,18 @@ def _hill_climb(x_t, X, W=None, h=0.1, eps=1e-7):
     This function climbs the 'hill' of the kernel density function
     and finds the 'peak', which represents the density attractor
     """
-    error = 99.
-    prob = 0.
+    error = 99.0
+    prob = 0.0
     x_l1 = np.copy(x_t)
 
     # Sum of the last three steps is used to establish radius
     # of neighborhood around attractor. Authors suggested two
     # steps works well, but I found three is more robust to
     # noisey datasets.
-    radius_new = 0.
-    radius_old = 0.
-    radius_twiceold = 0.
-    iters = 0.
+    radius_new = 0.0
+    radius_old = 0.0
+    radius_twiceold = 0.0
+    iters = 0.0
     while True:
         radius_thriceold = radius_twiceold
         radius_twiceold = radius_old
@@ -45,7 +45,7 @@ def _hill_climb(x_t, X, W=None, h=0.1, eps=1e-7):
 def _step(x_l0, X, W=None, h=0.1):
     n = X.shape[0]
     d = X.shape[1]
-    superweight = 0.  # superweight is the kernel X weight for each item
+    superweight = 0.0  # superweight is the kernel X weight for each item
     x_l1 = np.zeros((1, d))
     if W is None:
         W = np.ones((n, 1))
@@ -62,7 +62,9 @@ def _step(x_l0, X, W=None, h=0.1):
 
 
 def kernelize(x, y, h, degree):
-    kernel = np.exp(-(np.linalg.norm(x - y) / h) ** 2. / 2.) / ((2. * np.pi) ** (degree / 2))
+    kernel = np.exp(-((np.linalg.norm(x - y) / h) ** 2.0) / 2.0) / (
+        (2.0 * np.pi) ** (degree / 2)
+    )
     return kernel
 
 
@@ -115,7 +117,7 @@ class DENCLUE(BaseEstimator, ClusterMixin):
     Advances in Intelligent Data Analysis VII. IDA 2007
     """
 
-    def __init__(self, h=None, eps=1e-8, min_density=0., metric='euclidean'):
+    def __init__(self, h=None, eps=1e-8, min_density=0.0, metric="euclidean"):
         self.h = h
         self.eps = eps
         self.min_density = min_density
@@ -145,8 +147,9 @@ class DENCLUE(BaseEstimator, ClusterMixin):
 
         # climb each hill
         for i in range(self.n_samples):
-            density_attractors[i], density[i], radii[i] = _hill_climb(X[i], X, W=sample_weight,
-                                                                      h=self.h, eps=self.eps)
+            density_attractors[i], density[i], radii[i] = _hill_climb(
+                X[i], X, W=sample_weight, h=self.h, eps=self.eps
+            )
 
         # initialize cluster graph to finalize clusters. Networkx graph is
         # used to verify clusters, which are connected components of the
@@ -154,20 +157,34 @@ class DENCLUE(BaseEstimator, ClusterMixin):
         # neighborhood as defined by our radii for each attractor.
         cluster_info = {}
         num_clusters = 0
-        cluster_info[num_clusters] = {'instances': [0],
-                                      'centroid': np.atleast_2d(density_attractors[0])}
+        cluster_info[num_clusters] = {
+            "instances": [0],
+            "centroid": np.atleast_2d(density_attractors[0]),
+        }
         g_clusters = nx.Graph()
         for j1 in range(self.n_samples):
-            g_clusters.add_node(j1, attr_dict={'attractor': density_attractors[j1], 'radius': radii[j1],
-                                               'density': density[j1]})
+            g_clusters.add_node(
+                j1,
+                attr_dict={
+                    "attractor": density_attractors[j1],
+                    "radius": radii[j1],
+                    "density": density[j1],
+                },
+            )
 
         # populate cluster graph
         for j1 in range(self.n_samples):
             for j2 in (x for x in range(self.n_samples) if x != j1):
                 if g_clusters.has_edge(j1, j2):
                     continue
-                diff = np.linalg.norm(g_clusters.node[j1]['attractor'] - g_clusters.node[j2]['attractor'])
-                if diff <= (g_clusters.node[j1]['radius'] + g_clusters.node[j1]['radius']):
+                diff = np.linalg.norm(
+                    g_clusters.node[j1]["attractor"]
+                    - g_clusters.node[j2]["attractor"]
+                )
+                if diff <= (
+                    g_clusters.node[j1]["radius"]
+                    + g_clusters.node[j1]["radius"]
+                ):
                     g_clusters.add_edge(j1, j2)
 
         # connected components represent a cluster
@@ -178,9 +195,9 @@ class DENCLUE(BaseEstimator, ClusterMixin):
         for clust in clusters:
 
             # get maximum density of attractors and location
-            max_instance = max(clust, key=lambda x: clust.node[x]['density'])
-            max_density = clust.node[max_instance]['density']
-            max_centroid = clust.node[max_instance]['attractor']
+            max_instance = max(clust, key=lambda x: clust.node[x]["density"])
+            max_density = clust.node[max_instance]["density"]
+            max_centroid = clust.node[max_instance]["attractor"]
 
             # In Hinneberg, Gabriel (2007), for attractors in a component that
             # are not fully connected (i.e. not all attractors are within each
@@ -190,15 +207,17 @@ class DENCLUE(BaseEstimator, ClusterMixin):
             # cluster info dict, but not used to re-run hill climb.
             complete = False
             c_size = len(clust.nodes())
-            if clust.number_of_edges() == (c_size * (c_size - 1)) / 2.:
+            if clust.number_of_edges() == (c_size * (c_size - 1)) / 2.0:
                 complete = True
 
             # populate cluster_info dict
-            cluster_info[num_clusters] = {'instances': clust.nodes(),
-                                          'size': c_size,
-                                          'centroid': max_centroid,
-                                          'density': max_density,
-                                          'complete': complete}
+            cluster_info[num_clusters] = {
+                "instances": clust.nodes(),
+                "size": c_size,
+                "centroid": max_centroid,
+                "density": max_density,
+                "complete": complete,
+            }
 
             # if the cluster density is not higher than the minimum,
             # instances are kept classified as noise
@@ -211,7 +230,7 @@ class DENCLUE(BaseEstimator, ClusterMixin):
         return self
 
     def get_density(self, x, X, y=None, sample_weight=None):
-        superweight = 0.
+        superweight = 0.0
         n_samples = X.shape[0]
         n_features = X.shape[1]
         if sample_weight is None:
@@ -229,9 +248,9 @@ class DENCLUE(BaseEstimator, ClusterMixin):
         self.min_density = min_density
         labels_copy = np.copy(self.labels_)
         for k in self.clust_info_.keys():
-            if self.clust_info_[k]['density'] < min_density:
-                labels_copy[self.clust_info_[k]['instances']] = -1
+            if self.clust_info_[k]["density"] < min_density:
+                labels_copy[self.clust_info_[k]["instances"]] = -1
             else:
-                labels_copy[self.clust_info_[k]['instances']] = k
+                labels_copy[self.clust_info_[k]["instances"]] = k
         self.labels_ = labels_copy
         return self

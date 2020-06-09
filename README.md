@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/guglielmosanchini/Clustering.svg?branch=master)](https://travis-ci.com/guglielmosanchini/Clustering)
+
 # CLUSTERING VISUALIZATION
 Visualizing clustering algorithms step by step
 

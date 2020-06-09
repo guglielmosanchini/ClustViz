@@ -36,7 +36,10 @@ def update_mat(mat, i, j, linkage):
 
         l_a1 = len(a1.name.replace("(", "").replace(")", "").split("-"))
         l_b1 = len(b1.name.replace("(", "").replace(")", "").split("-"))
-        vec = [(l_a1 * a1[k] + l_b1 * b1[k]) / (l_a1 + l_b1) for k in range(len(a1))]
+        vec = [
+            (l_a1 * a1[k] + l_b1 * b1[k]) / (l_a1 + l_b1)
+            for k in range(len(a1))
+        ]
 
     mat.loc["(" + a1.name + ")" + "-" + "(" + b1.name + ")", :] = vec
     mat["(" + a1.name + ")" + "-" + "(" + b1.name + ")"] = vec + [np.inf]
@@ -66,9 +69,26 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
     a = a.dropna(1, how="all")
 
-    color_dict = {0: "seagreen", 1: 'lightcoral', 2: 'yellow', 3: 'grey',
-                  4: 'pink', 5: 'navy', 6: 'orange', 7: 'purple', 8: 'salmon', 9: 'olive', 10: 'brown',
-                  11: 'tan', 12: 'plum', 13: 'red', 14: 'lightblue', 15: "khaki", 16: "gainsboro", 17: "peachpuff"}
+    color_dict = {
+        0: "seagreen",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "navy",
+        6: "orange",
+        7: "purple",
+        8: "salmon",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "plum",
+        13: "red",
+        14: "lightblue",
+        15: "khaki",
+        16: "gainsboro",
+        17: "peachpuff",
+    }
 
     color_dict_rect = convert_colors(color_dict, alpha=0.3)
 
@@ -95,22 +115,58 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
     if len(X_clust) <= 2:
 
-        ax.add_patch(Rectangle((rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
-                               rect_diff[0] + xwidth * 0.04, rect_diff[1] + ywidth * 0.08, fill=True,
-                               color=color_dict_rect[ind % 17], linewidth=3,
-                               ec="red"))
+        ax.add_patch(
+            Rectangle(
+                (rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                rect_diff[0] + xwidth * 0.04,
+                rect_diff[1] + ywidth * 0.08,
+                fill=True,
+                color=color_dict_rect[ind % 17],
+                linewidth=3,
+                ec="red",
+            )
+        )
     else:
-        encircle(X_clust, Y_clust, ax=ax, color=color_dict_rect[ind % 17], linewidth=3, ec="red")
+        encircle(
+            X_clust,
+            Y_clust,
+            ax=ax,
+            color=color_dict_rect[ind % 17],
+            linewidth=3,
+            ec="red",
+        )
 
     for i, txt in enumerate([i for i in range(len(X))]):
-        ax.annotate(txt, (X[:, 0][i], X[:, 1][i]), fontsize=10, size=10, ha='center', va='center')
+        ax.annotate(
+            txt,
+            (X[:, 0][i], X[:, 1][i]),
+            fontsize=10,
+            size=10,
+            ha="center",
+            va="center",
+        )
 
-    ax.annotate("dist_tot: " + str(round(level_txt, 5)), (xmax * 0.75, ymax * 0.9), fontsize=12, size=12)
+    ax.annotate(
+        "dist_tot: " + str(round(level_txt, 5)),
+        (xmax * 0.75, ymax * 0.9),
+        fontsize=12,
+        size=12,
+    )
 
     if level2_txt is not None:
-        ax.annotate("dist_incr: " + str(round(level2_txt, 5)), (xmax * 0.75, ymax * 0.8), fontsize=12, size=12)
+        ax.annotate(
+            "dist_incr: " + str(round(level2_txt, 5)),
+            (xmax * 0.75, ymax * 0.8),
+            fontsize=12,
+            size=12,
+        )
 
-    ax.annotate("n° clust: " + str(len(a)), (xmax * 0.75, ymax * 0.7), fontsize=12, size=12)
+    ax.annotate(
+        "n° clust: " + str(len(a)),
+        (xmax * 0.75, ymax * 0.7),
+        fontsize=12,
+        size=12,
+    )
 
     plt.show()
 
@@ -140,8 +196,12 @@ def dist_mat(df, linkage):
                 b = df.loc[j].values
                 z1 = [i for i in even_num if i <= len(a)]
                 z2 = [i for i in even_num if i <= len(b)]
-                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
-                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
+                a = [a[: z1[0]]] + [
+                    a[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
+                ]
+                b = [b[: z2[0]]] + [
+                    b[z2[i]: z2[i + 1]] for i in range(len(z2) - 1)
+                ]
 
                 if linkage == "single":
                     D.loc[i, j] = sl_dist(a, b)
@@ -176,8 +236,12 @@ def dist_mat_full(df, linkage):
                 b = df.loc[j].values
                 z1 = [i for i in even_num if i <= len(a)]
                 z2 = [i for i in even_num if i <= len(b)]
-                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
-                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
+                a = [a[: z1[0]]] + [
+                    a[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
+                ]
+                b = [b[: z2[0]]] + [
+                    b[z2[i]: z2[i + 1]] for i in range(len(z2) - 1)
+                ]
 
                 if linkage == "single":
                     D.loc[i, j] = sl_dist(a, b)
@@ -214,8 +278,12 @@ def dist_mat_gen(df):
                 b = df.loc[j].values
                 z1 = [i for i in even_num if i <= len(a)]
                 z2 = [i for i in even_num if i <= len(b)]
-                a = [a[:z1[0]]] + [a[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
-                b = [b[:z2[0]]] + [b[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
+                a = [a[: z1[0]]] + [
+                    a[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
+                ]
+                b = [b[: z2[0]]] + [
+                    b[z2[i]: z2[i + 1]] for i in range(len(z2) - 1)
+                ]
 
                 D.loc[i, j] = sl_dist(a, b)
                 D.loc[j, i] = sl_dist(a, b)
@@ -241,7 +309,9 @@ def compute_var(X, df):
              clusters, and the total intra-cluster variance.
     """
 
-    cleaned_index = [i.replace("(", "").replace(")", "").split("-") for i in df.index]
+    cleaned_index = [
+        i.replace("(", "").replace(")", "").split("-") for i in df.index
+    ]
     cent_x_tot = []
     for li in cleaned_index:
         cent_x = []
@@ -282,7 +352,9 @@ def compute_var_sing(df, centroids):
     for i in list(df.index):
         az = df.loc[i].values
         z1 = [i for i in even_num if i <= len(az)]
-        az = [az[:z1[0]]] + [az[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
+        az = [az[: z1[0]]] + [
+            az[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
+        ]
         az = [az[i] for i in range(len(az)) if np.isinf(az[i]).sum() != 2]
 
         internal_dist = []
@@ -323,17 +395,27 @@ def compute_ward_ij(data, df):
                 bz = df.loc[j].values
                 z1 = [i for i in even_num if i <= len(az)]
                 z2 = [i for i in even_num if i <= len(bz)]
-                az = [az[:z1[0]]] + [az[z1[i]:z1[i + 1]] for i in range(len(z1) - 1)]
-                bz = [bz[:z2[0]]] + [bz[z2[i]:z2[i + 1]] for i in range(len(z2) - 1)]
+                az = [az[: z1[0]]] + [
+                    az[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
+                ]
+                bz = [bz[: z2[0]]] + [
+                    bz[z2[i]: z2[i + 1]] for i in range(len(z2) - 1)
+                ]
                 d = az + bz
-                valid = [d[i] for i in range(len(d)) if np.isinf(d[i]).sum() != 2]
+                valid = [
+                    d[i] for i in range(len(d)) if np.isinf(d[i]).sum() != 2
+                ]
                 # print(valid)
                 centroid = np.mean(valid, axis=0)
                 var_int_par = []
                 for el in valid:
                     var_int_par.append(dist1(el, centroid) ** 2)
                 var_intz = np.sum(var_int_par)
-                partial_var[(i, j)] = var_intz - centroids.loc[i]["var"] - centroids.loc[j]["var"]
+                partial_var[(i, j)] = (
+                        var_intz
+                        - centroids.loc[i]["var"]
+                        - centroids.loc[j]["var"]
+                )
 
                 var_new = summ + partial_var[(i, j)]
                 variances[(i, j)] = var_new
@@ -364,7 +446,11 @@ def cl_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
+    distances = [
+        i
+        for i in distances
+        if (np.isnan(i) == False) and (np.isinf(i) == False)
+    ]
     return np.max(distances)
 
 
@@ -374,7 +460,11 @@ def avg_dist(a, b):
     for i in a:
         for j in b:
             distances.append(dist1(i, j))
-    distances = [i for i in distances if (np.isnan(i) == False) and (np.isinf(i) == False)]
+    distances = [
+        i
+        for i in distances
+        if (np.isnan(i) == False) and (np.isinf(i) == False)
+    ]
     return np.mean(distances)
 
 
@@ -393,7 +483,10 @@ def agg_clust(X, linkage):
 
     l = [[i, i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
-    col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
+    col = [
+        str(el) + "x" if i % 2 == 0 else str(el) + "y"
+        for i, el in enumerate(flat_list)
+    ]
 
     a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
 
@@ -428,7 +521,9 @@ def agg_clust(X, linkage):
         if linkage != "ward":
             X_dist1 = dist_mat(b, linkage)
             # find indexes of minimum
-            (i, j) = np.unravel_index(np.array(X_dist1).argmin(), np.array(X_dist1).shape)
+            (i, j) = np.unravel_index(
+                np.array(X_dist1).argmin(), np.array(X_dist1).shape
+            )
             levels.append(np.min(np.array(X_dist1)))
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
@@ -446,8 +541,18 @@ def agg_clust(X, linkage):
 
         dim1 = int(new_clust.iloc[0].notna().sum())
 
-        a.loc["(" + new_clust.iloc[0].name + ")" + "-" + "(" + new_clust.iloc[1].name + ")", :] = \
-            new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        a.loc[
+        "("
+        + new_clust.iloc[0].name
+        + ")"
+        + "-"
+        + "("
+        + new_clust.iloc[1].name
+        + ")",
+        :,
+        ] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(
+            dim1, fill_value=0
+        )
 
         if linkage != "ward":
             point_plot_mod(X, a, levels[-1])
@@ -471,7 +576,10 @@ def agg_clust_mod(X, linkage):
     # build matrix a, used to store points of clusters with their coordinates
     l = [[i, i] for i in range(len(X))]
     flat_list = [item for sublist in l for item in sublist]
-    col = [str(el) + "x" if i % 2 == 0 else str(el) + "y" for i, el in enumerate(flat_list)]
+    col = [
+        str(el) + "x" if i % 2 == 0 else str(el) + "y"
+        for i, el in enumerate(flat_list)
+    ]
 
     a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
 
@@ -502,7 +610,9 @@ def agg_clust_mod(X, linkage):
 
         else:
             # find indexes corresponding to the minimum distance
-            (i, j) = np.unravel_index(np.array(X_dist1).argmin(), np.array(X_dist1).shape)
+            (i, j) = np.unravel_index(
+                np.array(X_dist1).argmin(), np.array(X_dist1).shape
+            )
             levels.append(np.min(np.array(X_dist1)))
             ind_list.append((i, j))
             new_clust = a.iloc[[i, j], :]
@@ -515,9 +625,19 @@ def agg_clust_mod(X, linkage):
 
         dim1 = int(new_clust.iloc[0].notna().sum())
 
-        new_cluster_name = "(" + new_clust.iloc[0].name + ")" + "-" + "(" + new_clust.iloc[1].name + ")"
+        new_cluster_name = (
+                "("
+                + new_clust.iloc[0].name
+                + ")"
+                + "-"
+                + "("
+                + new_clust.iloc[1].name
+                + ")"
+        )
 
-        a.loc[new_cluster_name, :] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        a.loc[new_cluster_name, :] = new_clust.iloc[0].fillna(
+            0
+        ) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
         if linkage != "ward":
             point_plot_mod(X, a, levels[-1])

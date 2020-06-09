@@ -5,7 +5,7 @@ python:
 # command to install dependencies
 install:
   - pip install -U pip
-  - pip install -r requirements.txt
+  - pip install -r tests/test_requirements.txt
   - wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
   - gunzip metis-5.1.0.tar.gz
   - tar -xvf metis-5.1.0.tar
@@ -17,6 +17,8 @@ install:
   # libmetis.so because we use TravisCI in Ubuntu, otherwise it should be libmetis.dylib
   - export METIS_DLL=/home/travis/Clustering/METIS_temp/lib/libmetis.so
   - cd ..
-# command to run tests
+# command to run tests, code coverage also reporting missing code lines, flake8 style check
 script:
-  - pytest --cov=code_src/algorithms
+  - pytest --cov=code_src/algorithms --cov-report term-missing --flake8
+after_success:
+  - coveralls
