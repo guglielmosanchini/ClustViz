@@ -105,3 +105,17 @@ the GUI Meister, for the help with PyQt5.
 - add more clustering algorithms
 - add a pause/resume button for every algorithm
 - comment every code block and improve code quality
+
+## TravisCI path
+- added empty ```conftest.py``` in ```code_src``` to make **pytest** work, otherwise it wasn't able to import
+any of the modules inside ```code_src```.
+- try to use MacOS in Travis
+- try to avoid keeping Metis in project folder, download it
+- upgrade pip if possible
+- try to understand why chameleon test fails
+- try to make build faster
+- add code coverage
+- add flake8 correction
+- add package update
+- see if pip installing everything is necessary
+- understand why the prefix in ```make config prefix=~/Clustering/METIS_temp shared=1``` was necessary

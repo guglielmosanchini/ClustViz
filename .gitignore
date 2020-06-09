@@ -1,3 +1,4 @@
 /build/
 /dist/
 /example_pkg_gsanchini.egg-info/
+/.coverage
