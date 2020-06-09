@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.com/guglielmosanchini/Clustering.svg?branch=master)](https://travis-ci.com/guglielmosanchini/Clustering)
+[![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/Clustering/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/Clustering?branch=master)
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 # CLUSTERING VISUALIZATION
 Visualizing clustering algorithms step by step
@@ -44,18 +46,6 @@ os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin'
 os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 ```
 
-To run Chameleon and Chameleon2 algorithm the library METIS is required. To install it on Mac OS, execute the following steps:
-```python
-pip install metis
-```
-Then, open the terminal, go to the **metis-5.1.0** folder and run
-```python
-make config shared=1
-```
-and
-```python
-make install
-```
 ## Repository structure
 
 1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
@@ -66,13 +56,11 @@ make install
 
 4) The folder **Images** serves the purpose of storing the images plotted when using the GUI, if desired by the user.
 
-5) The folder **metis-5.1.0** contains the Metis library (https://metis.readthedocs.io/en/latest/).
+5) The notebook **Clustering_visualization_notebook** lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
 
-6) The notebook **Clustering_visualization_notebook** lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
+6) The script **Clustering_visualization_notebook** is just a .py version of the notebook.
 
-7) The script **Clustering_visualization_notebook** is just a .py version of the notebook.
-
-8) The script **gui** starts the GUI for the visualization of clustering algorithms.
+7) The script **gui** starts the GUI for the visualization of clustering algorithms.
 
 <img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/code_src/Images/README_pics/pic1_gui.JPG" width="450" height="350">
 
@@ -102,7 +90,6 @@ The other algorithms have been implemented from scratch following the relative p
 the GUI Meister, for the help with PyQt5.
 
 ## Possible improvements
-- integration and unit tests
 - wrap it as a python package
 - add more clustering algorithms
 - add a pause/resume button for every algorithm
