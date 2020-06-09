@@ -4,8 +4,9 @@ language: python
 install:
   - pip install -r requirements.txt
   - cd metis-5.1.0
-  - make config prefix=~/Clustering shared=1
+  - make config prefix=~/Clustering/METIS_temp shared=1
   - make install
+  - export METIS_DLL=/home/travis/Clustering/METIS_temp/lib/libmetis.so
   - cd ..
 # command to run tests
 script:
