@@ -1,4 +1,4 @@
-from algorithms.optics import scan_neigh1, scan_neigh2, minPTSdist, OPTICS, ExtractDBSCANclust
+from code.algorithms.optics import scan_neigh1, scan_neigh2, minPTSdist, OPTICS, ExtractDBSCANclust
 
 import numpy as np
 

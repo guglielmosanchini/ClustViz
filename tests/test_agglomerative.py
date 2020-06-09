@@ -1,4 +1,4 @@
-from algorithms.agglomerative import update_mat, dist_mat_gen, dist_mat, compute_ward_ij, sl_dist, avg_dist
+from code.algorithms.agglomerative import update_mat, dist_mat_gen, dist_mat, compute_ward_ij, sl_dist, avg_dist
 
 import pandas as pd
 import numpy as np

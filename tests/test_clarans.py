@@ -1,4 +1,4 @@
-from algorithms.clarans import compute_cost_clarans
+from code.algorithms.clarans import compute_cost_clarans
 
 import pandas as pd
 

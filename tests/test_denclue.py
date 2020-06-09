@@ -1,4 +1,4 @@
-from algorithms.denclue.denclue import gauss_dens, grad_gauss_dens, square_wave_dens, FindRect, pop_cubes, \
+from code.algorithms.denclue.denclue import gauss_dens, grad_gauss_dens, square_wave_dens, FindRect, pop_cubes, \
     highly_pop_cubes, check_connection, connect_cubes, near_with_cube, near_without_cube, density_attractor, \
     assign_cluster, DENCLUE
 

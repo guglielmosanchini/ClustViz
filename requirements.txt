@@ -1,7 +1,7 @@
 cycler==0.10.0
 decorator==4.4.1
 graphviz==0.13.2
-hdbscan==0.8.24
+# hdbscan==0.8.24
 imageio==2.6.1
 joblib==0.14.1
 kiwisolver==1.1.0

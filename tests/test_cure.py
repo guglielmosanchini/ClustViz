@@ -1,6 +1,6 @@
-from algorithms.cure import dist_clust_cure, update_mat_cure, sel_rep_fast, sel_rep, Chernoff_Bounds, dist_mat_gen_cure, \
+from code.algorithms.cure import dist_clust_cure, update_mat_cure, sel_rep_fast, sel_rep, Chernoff_Bounds, dist_mat_gen_cure, \
     cure_sample_part, cure
-from algorithms.agglomerative import dist_mat_gen
+from code.algorithms.agglomerative import dist_mat_gen
 
 import numpy as np
 import pandas as pd
