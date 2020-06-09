@@ -27,7 +27,13 @@ def relative_interconnectivity(graph, cluster_i, cluster_j):
     # EC: sum of the weights of connecting edges of clusters i and j
     EC = np.sum(get_weights(graph, edges))
     ECci, ECcj = internal_interconnectivity(graph, cluster_i), internal_interconnectivity(graph, cluster_j)
-    return EC / ((ECci + ECcj) / 2.0)
+
+    if ECci + ECcj != 0:
+        rel_int = EC / ((ECci + ECcj) / 2.0)
+    else:
+        rel_int = np.inf
+
+    return rel_int
 
 
 def internal_closeness(graph, cluster):
@@ -49,8 +55,14 @@ def relative_closeness(graph, cluster_i, cluster_j):
     Ci, Cj = len(cluster_i), len(cluster_j)
     # paper of chameleon2
     # Ci,Cj = len_edges(graph, cluster_i), len_edges(graph, cluster_j)
-    SECci, SECcj = np.mean(bisection_weights(graph, cluster_i)), np.mean(bisection_weights(graph, cluster_j))
-    return SEC / ((Ci / (Ci + Cj) * SECci) + (Cj / (Ci + Cj) * SECcj))
+    bis_weight_i = bisection_weights(graph, cluster_i)
+    bis_weight_j = bisection_weights(graph, cluster_j)
+    if len(bis_weight_i) == 0 or len(bis_weight_j) == 0:
+        return np.nan
+    else:
+        SECci = np.mean(bis_weight_i)
+        SECcj = np.mean(bis_weight_j)
+        return SEC / ((Ci / (Ci + Cj) * SECci) + (Cj / (Ci + Cj) * SECcj))
 
 
 def merge_score(g, ci, cj, a):

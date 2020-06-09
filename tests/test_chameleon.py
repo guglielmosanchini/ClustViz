@@ -1,5 +1,5 @@
-from code.algorithms.chameleon.graphtools import knn_graph, knn_graph_sym, pre_part_graph, get_cluster, connecting_edges
-from code.algorithms.chameleon.chameleon import merge_best, cluster, rebuild_labels, len_edges
+from algorithms.chameleon.graphtools import knn_graph, knn_graph_sym, pre_part_graph, get_cluster, connecting_edges
+from algorithms.chameleon.chameleon import merge_best, cluster, rebuild_labels, len_edges
 
 from sklearn.datasets import make_blobs
 

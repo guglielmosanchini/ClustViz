@@ -1,4 +1,4 @@
-from code.algorithms.dbscan import scan_neigh1_mod, DBSCAN
+from algorithms.dbscan import scan_neigh1_mod, DBSCAN
 import numpy as np
 
 def test_scan_neigh1_mod():

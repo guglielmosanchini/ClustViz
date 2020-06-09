@@ -23,7 +23,7 @@ from GUI_classes.chameleon2_gui import CHAMELEON2_class
 # TODO: comment everything
 
 import os
-os.chdir("./code/")
+os.chdir("./code_src/")
 
 # Back up the reference to the exceptionhook
 sys._excepthook = sys.excepthook

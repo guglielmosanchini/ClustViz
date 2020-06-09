@@ -1,6 +1,6 @@
 
-from code.algorithms.chameleon.graphtools import knn_graph, pre_part_graph
-from code.algorithms.chameleon.chameleon2 import cluster2, conn_comp
+from algorithms.chameleon.graphtools import knn_graph, pre_part_graph
+from algorithms.chameleon.chameleon2 import cluster2, conn_comp
 import pandas as pd
 
 def test_cluster2():
