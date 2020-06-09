@@ -1,10 +1,10 @@
-os: osx
+# os: osx
 language: python
 # command to install dependencies
 install:
   - pip install -r requirements.txt
   - cd metis-5.1.0
-  - make config shared=1
+  - make config prefix=~/Clustering shared=1
   - make install
   - cd ..
 # command to run tests
