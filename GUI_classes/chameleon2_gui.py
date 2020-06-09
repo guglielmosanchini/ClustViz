@@ -259,7 +259,7 @@ class CHAMELEON2_class(StartingGui):
             cnts[clusters + 1] = new_part_cnt
             clusters = clusters + 1
 
-        edgecuts, parts = metis.part_graph(graph, k)
+        # edgecuts, parts = metis.part_graph(graph, k)
         if df is not None:
             df['cluster'] = nx.get_node_attributes(graph, 'cluster').values()
         return graph
@@ -331,7 +331,7 @@ class CHAMELEON2_class(StartingGui):
                   20: "beige", 21: "teal", 22: "royalblue", 23: "tomato",
                   24: "bisque", 25: "palegreen"}
 
-        color_list = [colors[i] for i in df['cluster']]
+        color_list = [colors[i] for i in df['cluster']]*4
 
         df.plot(kind='scatter', c=color_list, x=0, y=1, ax=ax, s=100)
 

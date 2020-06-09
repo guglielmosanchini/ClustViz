@@ -5,19 +5,26 @@ from algorithms.chameleon.graphtools import *
 
 
 def len_edges(graph, cluster):
+    """ return the number of edges that interconnect the nodes of the input cluster
+    :param graph: NetworkX graph.
+    :param cluster: cluster represented by a list of nodes belonging to that cluster
+    """
     cluster = graph.subgraph(cluster)
     edges = cluster.edges()
     return len(edges)
 
 
 def internal_interconnectivity(graph, cluster):
+    """the weighted sum of edges that partition the graph into two roughly equal parts"""
     return np.sum(bisection_weights(graph, cluster))
 
 
 def relative_interconnectivity(graph, cluster_i, cluster_j):
+    """return the relative interconnectivity of two clusters of a graph, measured on the connecting edges"""
     edges = connecting_edges((cluster_i, cluster_j), graph)
     if not edges:
         return 0.0
+    # EC: sum of the weights of connecting edges of clusters i and j
     EC = np.sum(get_weights(graph, edges))
     ECci, ECcj = internal_interconnectivity(graph, cluster_i), internal_interconnectivity(graph, cluster_j)
     return EC / ((ECci + ECcj) / 2.0)
@@ -93,31 +100,37 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
             if graph.node[p]['cluster'] == cj:
                 graph.node[p]['cluster'] = ci
     else:
-        print("No Merging")
-        print("score: ", max_score)
-        print("early stopping")
+        if verbose:
+            print("No Merging")
+            print("score: ", max_score)
+            print("early stopping")
 
     return df, max_score, ci
 
 
-def cluster(df, k, knn=10, m=30, alpha=2.0, verbose=True, verbose2=True, plot=True):
+def cluster(df, k, knn=10, m=30, alpha=2.0, verbose0=False, verbose1=True, verbose2=True, plot=True):
     if k is None:
         k = 1
 
-    print("Building kNN graph (k = %d)..." % knn)
-    graph = knn_graph(df, knn, verbose)
+    if verbose0:
+        print("Building kNN graph (k = %d)..." % knn)
 
-    plot2d_graph(graph, print_clust=False)
+    graph = knn_graph(df, knn, verbose1)
 
-    graph = pre_part_graph(graph, m, df, verbose, plotting=plot)
+    if plot:
+        plot2d_graph(graph, print_clust=False)
+
+    graph = pre_part_graph(graph, m, df, verbose1, plotting=plot)
 
     # to account for cases where initial_clust is too big or k is already reached before the merging phase
     cl_dict = {list(graph.node)[i]: graph.node[i]["cluster"] for i in range(len(graph))}
     m = len(Counter(cl_dict.values()))
-    print("actual init_clust: {}".format(m))
+
+    if verbose0:
+        print("actual init_clust: {}".format(m))
 
     dendr_height = {}
-    iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose else enumerate(range(m - k))
+    iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose1 else enumerate(range(m - k))
 
     for i, _ in iterm:
 

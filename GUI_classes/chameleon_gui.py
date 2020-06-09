@@ -198,7 +198,7 @@ class CHAMELEON_class(StartingGui):
             cnts[clusters + 1] = new_part_cnt
             clusters = clusters + 1
 
-        edgecuts, parts = metis.part_graph(graph, k)
+        # edgecuts, parts = metis.part_graph(graph, k)
         if df is not None:
             df['cluster'] = nx.get_node_attributes(graph, 'cluster').values()
         return graph

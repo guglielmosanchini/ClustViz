@@ -106,33 +106,35 @@ def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
     return df, max_score, ci
 
 
-def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
-             verbose=True, verbose2=True, plot=True, auto_extract=False):
+def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3, verbose=False,
+             verbose1=True, verbose2=True, plot=True, auto_extract=False):
     if knn is None:
         knn = int(round(2 * np.log(len(df))))
 
     if k is None:
         k = 1
+    if verbose:
+        print("Building kNN graph (k = %d)..." % knn)
+    graph_knn = knn_graph_sym(df, knn, verbose1)
 
-    print("Building kNN graph (k = %d)..." % knn)
-    graph_knn = knn_graph_sym(df, knn, verbose)
+    if plot:
+        plot2d_graph(graph_knn, print_clust=False)
 
-    plot2d_graph(graph_knn, print_clust=False)
-
-    graph_pp = pre_part_graph(graph_knn, m, df, verbose, plotting=plot)
-
-    print("flood fill...")
+    graph_pp = pre_part_graph(graph_knn, m, df, verbose1, plotting=plot)
+    if verbose:
+        print("flood fill...")
 
     graph_ff, increased_m = flood_fill(graph_pp, graph_knn, df)
 
     m = increased_m
+    if verbose:
+        print("new m: ", m)
 
-    print("new m: ", m)
-
-    plot2d_graph(graph_ff, print_clust=False)
+    if plot:
+        plot2d_graph(graph_ff, print_clust=False)
 
     dendr_height = {}
-    iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose else enumerate(range(m - k))
+    iterm = tqdm(enumerate(range(m - k)), total=m - k) if verbose1 else enumerate(range(m - k))
 
     for i, _ in iterm:
 
@@ -145,8 +147,8 @@ def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
 
         if plot:
             plot2d_data(df, ci)
-
-    print("dendr_height", dendr_height)
+    if verbose:
+        print("dendr_height", dendr_height)
     res = rebuild_labels(df)
 
     if auto_extract is True:
@@ -156,6 +158,7 @@ def cluster2(df, k=None, knn=None, m=30, alpha=2.0, beta=1, m_fact=1e3,
 
 
 def connected_components(graph):
+    """return generator of connected component of a graph"""
     from collections import deque
     seen = set()
 
@@ -195,11 +198,12 @@ def prepro_edge(knn_gr):
 
 
 def conn_comp(knn_gr):
+    """return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes"""
     from algorithms.chameleon.graphtools import knn_graph, pre_part_graph
-
     g1 = prepro_edge(knn_gr)
 
     return list(connected_components(g1))
+
 
 def flood_fill(graph, knn_gr, df):
     len_0_clusters = 0
