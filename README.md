@@ -98,6 +98,8 @@ the GUI Meister, for the help with PyQt5.
 ## TravisCI path
 - added empty ```conftest.py``` in ```code_src``` to make **pytest** work, otherwise it wasn't able to import
 any of the modules inside ```code_src```.
+- if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use
+```yamllint``` to correct it
 - try to use MacOS in Travis
 - try to avoid keeping Metis in project folder, download it
 - upgrade pip if possible

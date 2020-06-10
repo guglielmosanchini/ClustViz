@@ -67,7 +67,7 @@ def test_merge_best():
     pregraph = knn_graph(df, knn, verbose=False)
     graph = pre_part_graph(pregraph, 10, df, verbose=False)
     df, max_score, ci = merge_best(
-        graph=graph, df=df, a=2, k=3, verbose=True, verbose2=True
+        graph=graph, df=df, a=2, k=3, verbose=False, verbose2=False
     )
 
     condition0 = round(max_score) == 1
@@ -145,6 +145,7 @@ def test_cluster():
         9,
     ]
     condition1 = round(dendr_height[9], 1) == 0.8
+    print(dendr_height)
 
     assert condition0 & condition1
 
