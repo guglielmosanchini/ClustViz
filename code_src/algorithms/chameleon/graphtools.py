@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import networkx as nx
 from tqdm.auto import tqdm
 from algorithms.chameleon.visualization import *
@@ -73,7 +74,7 @@ def knn_graph_sym(df, k, verbose=False):
 
 def part_graph(graph, k, df=None):
     """return the input graph with the clustering obtained through mincut-bisection"""
-    edgecuts, parts = metis.part_graph(graph, 2, objtype="cut", ufactor=250)
+    edgecuts, parts = metis.part_graph(graph, 2, objtype="cut", ufactor=250, seed=42)
     # print(edgecuts)
     for i, p in enumerate(graph.nodes()):
         graph.node[p]["cluster"] = parts[i]
@@ -103,12 +104,13 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
         s_graph = graph.subgraph(s_nodes)
         # bisect the biggest cluster such that the edge-cut is minimized
         edgecuts, parts = metis.part_graph(
-            s_graph, 2, objtype="cut", ufactor=250
+            s_graph, 2, objtype="cut", ufactor=250, seed=42
         )
         new_part_cnt = 0
         # adjust cluster labels according to the new bisection
+        new_biggest_clust_label = pd.Series(parts).value_counts().idxmax()
         for i, p in enumerate(s_graph.nodes()):
-            if parts[i] == 1:
+            if parts[i] == new_biggest_clust_label:
                 graph.node[p]["cluster"] = clusters + 1
                 new_part_cnt += 1
         if plotting is True:

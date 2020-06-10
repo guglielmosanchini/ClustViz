@@ -2,3 +2,4 @@
 /dist/
 /example_pkg_gsanchini.egg-info/
 /.coverage
+/venv37/

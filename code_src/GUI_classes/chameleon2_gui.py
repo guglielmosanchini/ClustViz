@@ -345,8 +345,8 @@ class CHAMELEON2_class(StartingGui):
             ]
             s_graph = graph.subgraph(s_nodes)
             edgecuts, parts = metis.part_graph(
-                s_graph, 2, objtype="cut", ufactor=250
-            )
+            s_graph, 2, objtype="cut", ufactor=250, seed=42
+        )
             new_part_cnt = 0
             for i, p in enumerate(s_graph.nodes()):
                 if parts[i] == 1:
