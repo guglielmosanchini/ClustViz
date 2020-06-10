@@ -45,6 +45,3 @@ script:
 
 after_success:
   - python3 -m coveralls  # command to visualize coverage report on coveralls.io
-
-notifications:
-  email: false
