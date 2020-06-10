@@ -144,8 +144,11 @@ def test_cluster():
         9,
         9,
     ]
-    condition1 = round(dendr_height[9], 1) == 0.8
     print(dendr_height)
+    print(condition0)
+    print(sorted(list(res["cluster"].values)))
+    condition1 = round(dendr_height[9], 1) == 0.8
+
 
     assert condition0 & condition1
 
