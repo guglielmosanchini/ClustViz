@@ -16,7 +16,7 @@ from sklearn.datasets import make_blobs
 
 import pandas as pd
 import numpy as np
-import pytest
+# import pytest
 
 
 def test_knn_graph():
@@ -55,8 +55,8 @@ def test_pre_part_graph():
     k = 3
 
     pregraph = knn_graph(df, k, verbose=False)
-    _ = pre_part_graph(pregraph, 10, df, verbose=False)
-
+    _ = pre_part_graph(pregraph, 2, df, verbose=False)
+    print(df["cluster"].values)
     assert (df["cluster"].values == np.array([0, 1, 1, 0, 0, 1, 1])).all()
 
 
@@ -76,7 +76,7 @@ def test_merge_best():
     assert condition0 & condition1
 
 
-@pytest.mark.skip(reason="passes locally but fails on TravisCI")
+# @pytest.mark.skip(reason="passes locally but fails on TravisCI")
 def test_cluster():
     df = pd.DataFrame(make_blobs(50, random_state=42)[0])
 
@@ -162,12 +162,13 @@ def test_rebuild_labels():
 
 def test_get_cluster():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
+    k = 3
 
     pregraph = knn_graph(df, 3, verbose=False)
-    graph = pre_part_graph(pregraph, 10, df, verbose=False)
+    graph = pre_part_graph(pregraph, k, df, verbose=False)
 
     condition0 = get_cluster(graph, [0]) == [0, 3, 4]
-    condition1 = get_cluster(graph, [1]) == [1, 2, 5, 6]
+    condition1 = get_cluster(graph, [k - 1]) == [1, 2, 5, 6]
 
     assert condition0 & condition1
 
