@@ -62,11 +62,11 @@ os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 
 7) The script **gui** starts the GUI for the visualization of clustering algorithms.
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/code_src/Images/README_pics/pic1_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic1_gui.JPG" width="450" height="350">
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/code_src/Images/README_pics/pic2_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic2_gui.JPG" width="450" height="350">
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/code_src/Images/README_pics/pic3_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic3_gui.JPG" width="450" height="350">
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
@@ -96,17 +96,8 @@ the GUI Meister, for the help with PyQt5.
 - comment every code block and improve code quality
 
 ## TravisCI path
-- added empty ```conftest.py``` in ```code_src``` to make **pytest** work, otherwise it wasn't able to import
-any of the modules inside ```code_src```.
+- added empty ```conftest.py``` in ```clustviz``` to make **pytest** work, otherwise it wasn't able to import
+any of the modules inside ```clustviz```.
 - if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use
 ```yamllint``` to correct it
-- try to use MacOS in Travis
-- try to avoid keeping Metis in project folder, download it
-- upgrade pip if possible
-- try to understand why chameleon test fails
-- try to make build faster
-- add code coverage
-- add flake8 correction
 - add package update
-- see if pip installing everything is necessary
-- understand why the prefix in ```make config prefix=~/Clustering/METIS_temp shared=1``` was necessary
