@@ -12,8 +12,8 @@ matrix:
       osx_image: xcode9.4  # Python 3.6.5 running on macOS 10.13
       language: shell       # 'language: python' is an error on Travis CI macOS
       install:
-        - pip3 install -U pip  # need to use pip3 instead of pip
-        - pip3 install -r tests/test_requirements.txt
+        - pip3 install -U pip --user  # need to use pip3 instead of pip
+        - pip3 install -r tests/test_requirements.txt --user
         - wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
         - gunzip metis-5.1.0.tar.gz
         - tar -xvf metis-5.1.0.tar
@@ -44,3 +44,6 @@ script:
 
 after_success:
   - python3 -m coveralls  # command to visualize coverage report on coveralls.io
+
+notifications:
+  email: false
