@@ -9,8 +9,8 @@ matrix:
   include:
     - name: "Python 3.6.5 on macOS 10.13"
       os: osx
-      osx_image: xcode9.3  # Python 3.6.5 running on macOS 10.13
       language: shell  # 'language: python' is an error on Travis CI macOS
+      python: 3.6
       install:
         - python3 --version
         - pip3 install -U pip --user  # need to use pip3 instead of pip
