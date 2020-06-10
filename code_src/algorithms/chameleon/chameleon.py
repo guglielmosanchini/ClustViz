@@ -148,16 +148,16 @@ def cluster(
     graph = pre_part_graph(graph, m, df, verbose1, plotting=plot)
 
     # to account for cases where initial_clust is too big or k is already reached before the merging phase
-    cl_dict = {
+    cl_dict = OrderedDict({
         list(graph.node)[i]: graph.node[i]["cluster"]
         for i in range(len(graph))
-    }
+    })
     m = len(Counter(cl_dict.values()))
 
     if verbose0:
         print("actual init_clust: {}".format(m))
 
-    dendr_height = {}
+    dendr_height = OrderedDict({})
     iterm = (
         tqdm(enumerate(range(m - k)), total=m - k)
         if verbose1

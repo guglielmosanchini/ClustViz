@@ -3,6 +3,7 @@ import pandas as pd
 import networkx as nx
 from tqdm.auto import tqdm
 from algorithms.chameleon.visualization import *
+from collections import OrderedDict
 
 import metis
 
@@ -90,7 +91,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
     clusters = 0
     for i, p in enumerate(graph.nodes()):
         graph.node[p]["cluster"] = 0
-    cnts = {0: len(graph.nodes())}
+    cnts = OrderedDict({0: len(graph.nodes())})
     while clusters < k - 1:
         maxc = -1
         maxcnt = 0
