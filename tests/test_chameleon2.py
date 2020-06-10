@@ -16,9 +16,7 @@ def test_cluster2():
 
 
 def test_conn_comp():
-    df = pd.DataFrame(
-        [[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [2, 1], [5, 5], [7, 6]]
-    )
+    df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [2, 1], [5, 5], [7, 6]])
 
     pregraph = knn_graph(df, 3)
     graph = pre_part_graph(pregraph, 10, df)

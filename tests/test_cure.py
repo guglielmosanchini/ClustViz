@@ -155,11 +155,7 @@ def test_cure_1():
 
     exp = {
         "(0)-(1)": [np.array([0, 0]), np.array([0, 1])],
-        "(4)-((2)-(3))": [
-            np.array([0, 2]),
-            np.array([1, 2]),
-            np.array([1, 3]),
-        ],
+        "(4)-((2)-(3))": [np.array([0, 2]), np.array([1, 2]), np.array([1, 3])],
     }
     l1 = list(res[0].values())
     l1 = [item for sublist in l1 for item in sublist]

@@ -64,17 +64,7 @@ def test_ExtractDBSCANclust():
 
 def test_OPTICS():
     D = np.array(
-        [
-            [0, 0],
-            [0, 1],
-            [3, 3],
-            [0, 2],
-            [1, 1],
-            [3, 5],
-            [3, 4],
-            [1, 2],
-            [1, 3],
-        ]
+        [[0, 0], [0, 1], [3, 3], [0, 2], [1, 1], [3, 5], [3, 4], [1, 2], [1, 3]]
     )
 
     expected0 = {
@@ -102,11 +92,7 @@ def test_OPTICS():
 
     res = OPTICS(D, 4, 2, plot=False, plot_reach=False)
 
-    condition0 = sorted(list(expected0.values())) == sorted(
-        list(res[0].values())
-    )
-    condition1 = sorted(list(expected1.values())) == sorted(
-        list(res[1].values())
-    )
+    condition0 = sorted(list(expected0.values())) == sorted(list(res[0].values()))
+    condition1 = sorted(list(expected1.values())) == sorted(list(res[1].values()))
 
     assert condition1 & condition0
