@@ -3,7 +3,24 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from algorithms.optics import dist1
 from matplotlib.patches import Rectangle
-from GUI_classes.utils_gui import encircle, convert_colors
+from scipy.spatial import ConvexHull
+from matplotlib import colors
+
+
+def encircle(x, y, ax, **kw):
+    p = np.c_[x, y]
+    hull = ConvexHull(p)
+    poly = plt.Polygon(p[hull.vertices, :], **kw)
+    ax.add_patch(poly)
+
+
+def convert_colors(dict_colors, alpha=0.5):
+    new_dict_colors = {}
+
+    for i, col in enumerate(dict_colors.values()):
+        new_dict_colors[i] = tuple(list(colors.to_rgb(col)) + [alpha])
+
+    return new_dict_colors
 
 
 def update_mat(mat, i, j, linkage):

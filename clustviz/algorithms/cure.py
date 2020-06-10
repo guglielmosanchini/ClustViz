@@ -2,13 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from algorithms.optics import dist1
-from algorithms.agglomerative import dist_mat_gen
+from algorithms.agglomerative import dist_mat_gen, encircle, convert_colors
 from matplotlib.patches import Rectangle
 from collections import Counter, OrderedDict
 from copy import deepcopy
 import random
 import math
-from GUI_classes.utils_gui import encircle, convert_colors
 
 
 def point_plot_mod2(

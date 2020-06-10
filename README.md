@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/guglielmosanchini/Clustering.svg?branch=master)](https://travis-ci.com/guglielmosanchini/Clustering)
-[![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/Clustering/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/Clustering?branch=master)
+[![Build Status](https://travis-ci.com/guglielmosanchini/ClustViz.svg?branch=master)](https://travis-ci.com/guglielmosanchini/ClustViz)
+[![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/ClustViz/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/ClustViz?branch=master)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 # CLUSTERING VISUALIZATION
@@ -62,11 +62,11 @@ os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 
 7) The script **gui** starts the GUI for the visualization of clustering algorithms.
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic1_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic1_gui.JPG" width="450" height="350">
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic2_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic2_gui.JPG" width="450" height="350">
 
-<img src="https://raw.githubusercontent.com/guglielmosanchini/Clustering/master/clustviz/Images/README_pics/pic3_gui.JPG" width="450" height="350">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic3_gui.JPG" width="450" height="350">
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
