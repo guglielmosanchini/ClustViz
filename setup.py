@@ -9,14 +9,14 @@ with open('requirements.txt') as f:
         requirements.append(library)
 
 setuptools.setup(
-    name="example-pkg-peppinoprova",  # Replace with your own username
-    version="0.0.2",
-    author="Example Author",
-    author_email="author@example.com",
-    description="A small example package",
+    name="clustviz",  # Replace with your own username
+    version="0.0.1",
+    author="Guglielmo Sanchini",
+    author_email="guglielmosanchini@gmail.com",
+    description="A 2D clustering algorithms visualization package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/guglielmosanchini/ClustViz",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
