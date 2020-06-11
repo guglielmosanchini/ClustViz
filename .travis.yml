@@ -49,11 +49,12 @@ after_success:
 
 deploy:
   provider: pypi
-  server: https://test.pypi.org/simple/ # remove when using the real pypi
+  server: https://test.pypi.org/legacy/ # remove when using the real pypi
   username: __token__
   password:
     secure: FXYcYrFMKeTbvfXLIQo4YMwQHm8yeDqHPImVbZlKSdel5dFGpxH5ug01ty9zPyU3ldA1DZZp049uIAremr5tr2PR0LJYRsxcP3qEAyvEqsmTp9dQRdFVe1ZBP2ra1ljVujp9ZuJ+IQCzufm9SPtC29cV3XG0IGAy6CScSRZiQxw/kyXUXMXJVGECTuvIkiI9gjjJmzvlanDJcXy0gQFMXK0VMXQ9MCXGDYTs+RGq0VQtrpyeO5WWPkmqqwhga6mXdgbz1I1HGTMDoxHMwvvyNnYi5cZBJyxDcuCZHMart6P4VPM1coMxd+spusfaN5tyGZhmJsmKA9+6/urYrSEfi+DYkcOC8tDGMHxxxJ2lfPd0XS0GnCo9RJrCkGuZcVCBhlggkv2qPVEymSVBkAUZ4IdTkNPfQl25b5L4vKrWAEtIEbKEH17+iPjJbHmuErU860KAe9DRQRIF6k2M7XKF0cqqunWg7MKJXOM6BQBsnH2VOLyKzRC1f9wRFicUdJNYv5SPDWhJj8g+3AlwXEpuaeSWCsZN4H2blB1Z5IoU0TV/hfy5ZdS4CMy6EakpudBUvZZ2ewpOB0ra3UfCHBE/ob126zliC2Mj6nu2fvSn3Imt+Kljh5MeYaagAkuehPoBjE+SlPryWze+VPfJt7J6o0AoYxs7vRxz5lhs52EvO1o=
   skip_existing: true
+  skip_cleanup: true
   on:
     tags: true
 
