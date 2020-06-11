@@ -1,4 +1,4 @@
-from algorithms.dbscan import scan_neigh1_mod, DBSCAN
+from clustviz.dbscan import scan_neigh1_mod, DBSCAN
 import numpy as np
 
 

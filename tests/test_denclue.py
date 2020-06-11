@@ -1,4 +1,4 @@
-from algorithms.denclue.denclue import (
+from clustviz.denclue import (
     gauss_dens,
     grad_gauss_dens,
     square_wave_dens,

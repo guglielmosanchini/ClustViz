@@ -2,9 +2,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from tqdm.auto import tqdm
-from algorithms.chameleon.visualization import *
 from collections import OrderedDict
-
+import matplotlib.pyplot as plt
 import metis
 
 
@@ -19,15 +18,11 @@ def knn_graph(df, k, verbose=False):
     for i in range(0, len(points)):
         g.add_node(i)
     iterpoints = (
-        tqdm(enumerate(points), total=len(points))
-        if verbose
-        else enumerate(points)
+        tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
     )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[
-            1 : k + 1
-        ]  # second through kth closest
+        closests = np.argsort(distances)[1 : k + 1]  # second through kth closest
         for c in closests:
             g.add_edge(
                 i,
@@ -47,19 +42,13 @@ def knn_graph_sym(df, k, verbose=False):
     for i in range(0, len(points)):
         g.add_node(i)
     iterpoints = (
-        tqdm(enumerate(points), total=len(points))
-        if verbose
-        else enumerate(points)
+        tqdm(enumerate(points), total=len(points)) if verbose else enumerate(points)
     )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[
-            1 : k + 1
-        ]  # second through kth closest
+        closests = np.argsort(distances)[1 : k + 1]  # second through kth closest
         for c in closests:
-            distances2 = list(
-                map(lambda x: euclidean_distance(points[c], x), points)
-            )
+            distances2 = list(map(lambda x: euclidean_distance(points[c], x), points))
             closests2 = np.argsort(distances2)[1 : k + 1]
             if i in closests2:
                 g.add_edge(
@@ -91,7 +80,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
     clusters = 0
     for i, p in enumerate(graph.nodes()):
         graph.node[p]["cluster"] = 0
-    cnts = OrderedDict({0: len(graph.nodes())})
+    cnts = OrderedDict({0: len(graph.node())})
     while clusters < k - 1:
         maxc = -1
         maxcnt = 0
@@ -169,3 +158,70 @@ def bisection_weights(graph, cluster):
     edges = min_cut_bisector(cluster)
     weights = get_weights(cluster, edges)
     return weights
+
+
+def plot2d_graph(graph, print_clust=True):
+    pos = nx.get_node_attributes(graph, "pos")
+    colors = {
+        0: "seagreen",
+        1: "lightcoral",
+        2: "yellow",
+        3: "grey",
+        4: "pink",
+        5: "turquoise",
+        6: "orange",
+        7: "purple",
+        8: "yellowgreen",
+        9: "olive",
+        10: "brown",
+        11: "tan",
+        12: "plum",
+        13: "rosybrown",
+        14: "lightblue",
+        15: "khaki",
+        16: "gainsboro",
+        17: "peachpuff",
+        18: "lime",
+        19: "peru",
+        20: "dodgerblue",
+        21: "teal",
+        22: "royalblue",
+        23: "tomato",
+        24: "bisque",
+        25: "palegreen",
+    }
+
+    el = nx.get_node_attributes(graph, "cluster").values()
+    cmc = Counter(el).most_common()
+    c = [colors[i % len(colors)] for i in el]
+
+    if print_clust is True:
+        print("clusters: ", cmc)
+
+    if len(el) != 0:  # is set
+        # print(pos)
+        nx.draw(graph, pos, node_color=c, node_size=60, edgecolors="black")
+    else:
+        nx.draw(graph, pos, node_size=60, edgecolors="black")
+    plt.show(block=False)
+
+
+def plot2d_data(df, col_i=None):
+    if len(df.columns) > 3:
+        print("Plot Warning: more than 2 dimensions!")
+
+    df.plot(kind="scatter", c=df["cluster"], cmap="gist_rainbow", x=0, y=1)
+    plt.xlabel("x")
+    plt.ylabel("y")
+
+    if col_i is not None:
+        plt.scatter(
+            df[df.cluster == col_i].iloc[:, 0],
+            df[df.cluster == col_i].iloc[:, 1],
+            color="black",
+            s=120,
+            edgecolors="white",
+            alpha=0.8,
+        )
+
+    plt.show(block=False)

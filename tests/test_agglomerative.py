@@ -1,4 +1,4 @@
-from algorithms.agglomerative import (
+from clustviz.agglomerative import (
     update_mat,
     dist_mat_gen,
     dist_mat,

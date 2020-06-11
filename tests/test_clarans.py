@@ -1,4 +1,4 @@
-from algorithms.clarans import compute_cost_clarans
+from clustviz.clarans import compute_cost_clarans
 
 import pandas as pd
 

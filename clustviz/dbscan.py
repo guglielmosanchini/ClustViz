@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import OrderedDict
-from algorithms.optics import dist1
+from clustviz.optics import dist1
 import random
 
 

@@ -1,4 +1,4 @@
-from algorithms.optics import (
+from clustviz.optics import (
     scan_neigh1,
     scan_neigh2,
     minPTSdist,

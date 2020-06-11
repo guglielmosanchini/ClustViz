@@ -2,10 +2,10 @@
 [![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/ClustViz/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/ClustViz?branch=master)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
-# CLUSTERING VISUALIZATION
-Visualizing clustering algorithms step by step
+# ClustViz2D Clustering Visualization
+Visualizing clustering algorithms step by step.
 
-The aim of this project is to visualize every step of each clustering algorithm, in the case of 2D input data.
+The aim of ```ClustViz``` is to visualize every step of each clustering algorithm, in the case of 2D input data.
 
 The following algorithms have been examined:
 - OPTICS
@@ -29,9 +29,6 @@ The following algorithms have been examined:
 ## Instructions
 Just open the notebook **Clustering_visualization_notebook** and run whatever section you like, using 2D datasets (for visualization purposes, the cardinality of the datasets should be <= 250 points), to see each algorithm in action.
 
-Alternatively, run the script **gui.py** to open a GUI built with PyQt5 and use it to explore the clustering algorithms; currently, Chameleon and Chameleon2 are
-only supported on MacOS, and may be impossible to use in a Windows environment due to difficulties in installing the METIS library (the way to use **make** in Windows explained [here](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) could solve the problem).
-
 To run BIRCH algorithm, the open source visualization software Graphviz is required. To install it, write in the command line
 ```python
 pip install graphviz
@@ -48,19 +45,13 @@ os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 
 ## Repository structure
 
-1) The folder **DOCUMENTS** contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
+1) The folder ```data/DOCUMENTS``` contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
 
-2) The folder **algorithms** contains the scripts necessary to run the algorithms.
+2) The folder ```clustviz``` contains the scripts necessary to run the clustering algorithms.
 
-3) The folder **GUI_classes** contains the scripts necessary to run the GUI.
+3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
 
-4) The folder **Images** serves the purpose of storing the images plotted when using the GUI, if desired by the user.
-
-5) The notebook **Clustering_visualization_notebook** lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
-
-6) The script **Clustering_visualization_notebook** is just a .py version of the notebook.
-
-7) The script **gui** starts the GUI for the visualization of clustering algorithms.
+4) The folder ```tests``` contains pytest tests
 
 <img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic1_gui.JPG" width="450" height="350">
 

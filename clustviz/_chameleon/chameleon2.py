@@ -1,9 +1,6 @@
 import itertools
-import pandas as pd
-from collections import OrderedDict
-from tqdm.auto import tqdm
-from algorithms.chameleon.graphtools import *
-from algorithms.chameleon.chameleon import (
+from clustviz._chameleon.graphtools import *
+from clustviz._chameleon.chameleon import (
     internal_closeness,
     get_cluster,
     len_edges,
@@ -234,7 +231,6 @@ def prepro_edge(knn_gr):
 
 def conn_comp(knn_gr):
     """return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes"""
-    from algorithms.chameleon.graphtools import knn_graph, pre_part_graph
 
     g1 = prepro_edge(knn_gr)
 

@@ -1,5 +1,5 @@
-from algorithms.chameleon.graphtools import knn_graph, pre_part_graph
-from algorithms.chameleon.chameleon2 import cluster2, conn_comp
+from clustviz._chameleon.graphtools import knn_graph, pre_part_graph
+from clustviz._chameleon.chameleon2 import cluster2, conn_comp
 import pandas as pd
 
 

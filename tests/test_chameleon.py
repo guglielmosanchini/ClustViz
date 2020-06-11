@@ -1,11 +1,11 @@
-from algorithms.chameleon.graphtools import (
+from clustviz._chameleon.graphtools import (
     knn_graph,
     knn_graph_sym,
     pre_part_graph,
     get_cluster,
     connecting_edges,
 )
-from algorithms.chameleon.chameleon import (
+from clustviz._chameleon.chameleon import (
     merge_best,
     cluster,
     rebuild_labels,

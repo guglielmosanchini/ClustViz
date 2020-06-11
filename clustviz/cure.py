@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from algorithms.optics import dist1
-from algorithms.agglomerative import dist_mat_gen, encircle, convert_colors
+from clustviz.optics import dist1
+from clustviz.agglomerative import dist_mat_gen, encircle, convert_colors
 from matplotlib.patches import Rectangle
 from collections import Counter, OrderedDict
 from copy import deepcopy

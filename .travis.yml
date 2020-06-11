@@ -39,7 +39,7 @@ matrix:
         - cd ..
 # command to run tests, code coverage also reporting missing code lines, flake8 style check
 script:
-  - python3 -m pytest --cov=clustviz/algorithms --cov-report term-missing --flake8
+  - python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
 
 after_success:
   - python3 -m coveralls  # command to visualize coverage report on coveralls.io

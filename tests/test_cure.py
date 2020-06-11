@@ -1,4 +1,4 @@
-from algorithms.cure import (
+from clustviz.cure import (
     dist_clust_cure,
     update_mat_cure,
     sel_rep_fast,
@@ -8,7 +8,7 @@ from algorithms.cure import (
     cure_sample_part,
     cure,
 )
-from algorithms.agglomerative import dist_mat_gen
+from clustviz.agglomerative import dist_mat_gen
 
 import numpy as np
 import pandas as pd

@@ -29,7 +29,7 @@ import scipy
 import itertools
 import graphviz
 import numpy as np
-from algorithms.pam import plot_pam
+from clustviz.pam import plot_pam
 
 from pyclustering.cluster.encoder import type_encoding
 

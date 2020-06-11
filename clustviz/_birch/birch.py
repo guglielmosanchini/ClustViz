@@ -25,11 +25,8 @@
 """
 
 from pyclustering.utils import linear_sum, square_sum
-
 from pyclustering.cluster.encoder import type_encoding
-
-from algorithms.birch.cftree import cftree, measurement_type
-
+from clustviz._birch.cftree import cftree, measurement_type
 from pyclustering.container.cftree import cfentry
 
 
