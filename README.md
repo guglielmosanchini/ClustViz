@@ -2,9 +2,12 @@
 [![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/ClustViz/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/ClustViz?branch=master)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
-# ClustViz2D Clustering Visualization
-Visualizing clustering algorithms step by step.
+# ClustViz
+<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/clustviz_log.png" width="200" height="200">
 
+## 2D Clustering Algorithms Visualization
+
+#### Check out [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI), too!
 The aim of ```ClustViz``` is to visualize every step of each clustering algorithm, in the case of 2D input data.
 
 The following algorithms have been examined:
@@ -27,14 +30,15 @@ The following algorithms have been examined:
 - DENCLUE
 
 ## Instructions
-Just open the notebook **Clustering_visualization_notebook** and run whatever section you like, using 2D datasets (for visualization purposes, the cardinality of the datasets should be <= 250 points), to see each algorithm in action.
-
-To run BIRCH algorithm, the open source visualization software Graphviz is required. To install it, write in the command line
+Install with 
 ```python
-pip install graphviz
+pip install -i https://test.pypi.org/simple/ clustviz
 ```
-and then, after installing Graphviz from the official webpage (https://graphviz.gitlab.io/download/) or using HomeBrew,
-the PATH variable has to be modified as follows (replace the string according to the path where you installed Graphviz):
+
+To run BIRCH algorithm, the open source visualization software Graphviz is required. 
+Install Graphviz from the official webpage (https://graphviz.gitlab.io/download/) or using HomeBrew, then 
+modify the PATH variable as follows (replace the string according to the path where you installed Graphviz):
+
 ```python
 import os
 # on Windows usually
@@ -42,6 +46,46 @@ os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin'
 # on MacOS usually
 os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 ```
+
+To run CHAMELEON and CHAMELEON2 algorithms, the [METIS](https://metis.readthedocs.io/en/latest/) library is required.
+To install it on MacOS, execute the following commands (partially taken from [here](http://glaros.dtc.umn.edu/gkhome/metis/metis/download)):
+
+```
+# download the file using wget (do it from the website if you prefer)
+wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+# uncompress it
+gunzip metis-5.1.0.tar.gz
+# untar it
+tar -xvf metis-5.1.0.tar
+# remove the tar
+rm metis-5.1.0.tar
+# go inside the folder
+cd metis-5.1.0
+# install it using make
+make config shared=1
+make install
+# export the dll
+export METIS_DLL=/usr/local/lib/libmetis.dylib
+```
+
+## Usage
+Let's see a basic example using OPTICS:
+
+```python
+from clustviz.optics import OPTICS, plot_clust
+from sklearn.datasets import make_blobs
+
+# create a random dataset
+X, y = make_blobs(n_samples=30, centers=4, n_features=2, cluster_std=1.8, random_state=42)
+
+# perform OPTICS algorithm, with plotting enabled
+ClustDist, CoreDist = OPTICS(X, eps=2, minPTS=3, plot=True, plot_reach=True)
+
+# plot the final clusters
+plot_clust(X, ClustDist, CoreDist, eps=2, eps_db=1.9)
+```
+
+For many other examples, take a look at the detailed [clustviz_example](https://github.com/guglielmosanchini/ClustViz/blob/master/data/clustviz_example.ipnyb) notebook.
 
 ## Repository structure
 
@@ -52,12 +96,6 @@ os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
 
 4) The folder ```tests``` contains pytest tests
-
-<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic1_gui.JPG" width="450" height="350">
-
-<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic2_gui.JPG" width="450" height="350">
-
-<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/README_pics/pic3_gui.JPG" width="450" height="350">
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
@@ -78,17 +116,13 @@ https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/claran
 https://github.com/Moonpuck/chameleon_cluster
 
 The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius (https://github.com/dariomonici), 
-the GUI Meister, for the help with PyQt5.
+the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI).
 
 ## Possible improvements
-- wrap it as a python package
 - add more clustering algorithms
-- add a pause/resume button for every algorithm
 - comment every code block and improve code quality
 
 ## TravisCI path
-- added empty ```conftest.py``` in ```clustviz``` to make **pytest** work, otherwise it wasn't able to import
-any of the modules inside ```clustviz```.
 - if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use
 ```yamllint``` to correct it
 - add package update

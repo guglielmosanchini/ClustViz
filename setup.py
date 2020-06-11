@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
         requirements.append(library)
 
 setuptools.setup(
-    name="clustviz",  # Replace with your own username
+    name="clustviz",
     version="0.0.1",
     author="Guglielmo Sanchini",
     author_email="guglielmosanchini@gmail.com",
