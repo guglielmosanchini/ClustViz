@@ -126,3 +126,4 @@ the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.
 - if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use
 ```yamllint``` to correct it
 - add package update
+- for the deployment phase: brew install ruby, bre install travis, 
