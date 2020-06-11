@@ -3,7 +3,7 @@
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 # ClustViz
-<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/clustviz_log.png" width="200" height="200">
+<img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/clustviz_logo.png" width="200" height="200">
 
 ## 2D Clustering Algorithms Visualization
 
@@ -50,7 +50,7 @@ os.environ["PATH"] += os.pathsep + '/usr/local/bin'
 To run CHAMELEON and CHAMELEON2 algorithms, the [METIS](https://metis.readthedocs.io/en/latest/) library is required.
 To install it on MacOS, execute the following commands (partially taken from [here](http://glaros.dtc.umn.edu/gkhome/metis/metis/download)):
 
-```
+```bash
 # download the file using wget (do it from the website if you prefer)
 wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
 # uncompress it
