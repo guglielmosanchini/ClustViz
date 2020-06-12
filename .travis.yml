@@ -56,6 +56,7 @@ matrix:
         - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
+        - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
         - dotnet build build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
