@@ -10,8 +10,8 @@ matrix:
         - python -m pip install -U pip
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        - PATH=$MSBUILD_PATH:$PATH
+        #- MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+        #- PATH=$MSBUILD_PATH:$PATH
       install:
         # - MSBuild.exe -help
         - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
@@ -19,6 +19,7 @@ matrix:
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
+        - powershell ./pre_prova.bat
         # - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/Common7/IDE/VC/VCTargets"
@@ -26,7 +27,7 @@ matrix:
         - powershell ./prova.bat
         - cd build/windows
         #- dotnet build METIS.sln
-        - MSBuild.exe build/windows/METIS.sln //p:Configuration=Release
+        - MSBuild.exe build/windows/METIS.sln //p:Configuration=Release //p:Platform=x64
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
     - name: "Python 3.7.0 on Windows2"
@@ -46,6 +47,7 @@ matrix:
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
+        - powershell ./pre_prova.bat
         # - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
@@ -53,7 +55,7 @@ matrix:
         # - dotnet build build/windows/METIS.sln
         - powershell ./prova.bat
         - cd build/windows
-        - MSBuild.exe METIS.sln //p:Configuration=Release
+        - MSBuild.exe METIS.sln //p:Configuration=Release //p:Platform=x32
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
     - name: "Python 3.7.0 on Windows3"
@@ -64,7 +66,7 @@ matrix:
         - python -m pip install -U pip
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+        - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
         - PATH=$MSBUILD_PATH:$PATH
       install:
         - MSBuild.exe -help
@@ -73,6 +75,7 @@ matrix:
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
+        - powershell ./pre_prova.bat
         # - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
@@ -83,7 +86,7 @@ matrix:
         - MSBuild.exe METIS.sln //p:Configuration=Release
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
-    - name: "Python 3.7.0 on Windows3"
+    - name: "Python 3.7.0 on Windows4"
       os: windows           # Windows 10.0.17134 N/A Build 17134
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
@@ -100,6 +103,7 @@ matrix:
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
+        - powershell ./pre_prova.bat
         # - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
