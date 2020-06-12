@@ -54,7 +54,7 @@ matrix:
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
         - cmake --help
-        - powershell .\vsgen.bat
+        - powershell ./vsgen.bat
         - C:\ProgramFiles(x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSbuild.exe build\windows\METIS.sln
         - setx METIS_DLL C:\Users\your_username\Desktop\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
