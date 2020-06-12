@@ -1,36 +1,47 @@
+language: python
+
+python:
+  - 3.6.8
+
 matrix:
 
   include:
 
-    - name: "Python 3.7.0 on Windows1"
-      os: windows           # Windows 10.0.17134 N/A Build 17134
-      language: shell       # 'language: python' is an error on Travis CI Windows
-      before_install:
-        - choco install python --version 3.7.0
-        - python -m pip install -U pip
-      env:
-        - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        #- MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        #- PATH=$MSBUILD_PATH:$PATH
+    - name: "Python 3.7.7 on MacOS 10.14.6"
+      os: osx
+      osx_image: xcode11.2
+      language: shell
       install:
-        # - MSBuild.exe -help
-        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
-        - pip install -r tests/test_requirements.txt
-        - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
-        - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
-        - cd conda-metis-master
-        - powershell ./pre_prova.bat
-        # - cmake --help
-        - powershell ./vsgen.bat
-        # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/Common7/IDE/VC/VCTargets"
-        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
-        - powershell ./prova.bat
-        - cd build/windows
-        #- dotnet build METIS.sln
-        - MSBuild.exe build/windows/METIS.sln //p:Configuration=Release //p:Platform=x64
-        - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
+        - python3 --version
+        - pip3 install -U pip --user
+        - pip3 install -r tests/test_requirements.txt --user
+        - wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+        - gunzip metis-5.1.0.tar.gz
+        - tar -xvf metis-5.1.0.tar
+        - rm metis-5.1.0.tar
+        - cd metis-5.1.0
+        - make config shared=1
+        - make install
+        # libmetis.dylib on MacOS
+        - export METIS_DLL=/usr/local/lib/libmetis.dylib
+        - cd ..
 
-    - name: "Python 3.7.0 on Windows2"
+    - name: "Python 3.6.8 on Xenial Linux"
+      install:
+        - pip install -U pip
+        - pip install -r tests/test_requirements.txt
+        - wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+        - gunzip metis-5.1.0.tar.gz
+        - tar -xvf metis-5.1.0.tar
+        - rm metis-5.1.0.tar
+        - cd metis-5.1.0
+        - make config prefix=~/ClustViz/METIS_temp shared=1
+        - make install
+        # libmetis.so on Linux
+        - export METIS_DLL=/home/travis/ClustViz/METIS_temp/lib/libmetis.so
+        - cd ..
+
+    - name: "Python 3.7.0 on Windows"
       os: windows           # Windows 10.0.17134 N/A Build 17134
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
@@ -41,36 +52,8 @@ matrix:
         - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
         - PATH=$MSBUILD_PATH:$PATH
       install:
-        # - MSBuild.exe -help
-        #- set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
-        - pip install -r tests/test_requirements.txt
-        - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
-        - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
-        - cd conda-metis-master
-        - powershell ./pre_prova.bat
-        # - cmake --help
-        - powershell ./vsgen.bat
-        # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
-        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
-        # - dotnet build build/windows/METIS.sln
-        - powershell ./prova.bat
-        - cd build/windows
-        - MSBuild.exe METIS.sln //p:Configuration=Release //p:Platform=x32
-        - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
-
-    - name: "Python 3.7.0 on Windows3"
-      os: windows           # Windows 10.0.17134 N/A Build 17134
-      language: shell       # 'language: python' is an error on Travis CI Windows
-      before_install:
-        - choco install python --version 3.7.0
-        - python -m pip install -U pip
-      env:
-        - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        - PATH=$MSBUILD_PATH:$PATH
-      install:
         - MSBuild.exe -help
-        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
+        # - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
@@ -85,34 +68,8 @@ matrix:
         - cd build/windows
         - MSBuild.exe METIS.sln //p:Configuration=Release
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
-
-    - name: "Python 3.7.0 on Windows4"
-      os: windows           # Windows 10.0.17134 N/A Build 17134
-      language: shell       # 'language: python' is an error on Travis CI Windows
-      before_install:
-        - choco install python --version 3.7.0
-        - python -m pip install -U pip
-      env:
-        - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        - PATH=$MSBUILD_PATH:$PATH
-      install:
-        # - MSBuild.exe -help
-        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
-        - pip install -r tests/test_requirements.txt
-        - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
-        - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
-        - cd conda-metis-master
-        - powershell ./pre_prova.bat
-        # - cmake --help
-        - powershell ./vsgen.bat
-        # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
-        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
-        # - dotnet build build/windows/METIS.sln
-        - powershell ./prova.bat
-        - dotnet build build/windows/METIS.sln
-        - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
-
+  allow_failures:
+    - os: windows
 
 script:
   - python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8 || python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
