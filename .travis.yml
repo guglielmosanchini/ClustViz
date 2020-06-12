@@ -52,7 +52,7 @@ matrix:
         - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
         - PATH=$MSBUILD_PATH:$PATH
       install:
-        - msbuild -help
+        - MSBuild.exe -help
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
