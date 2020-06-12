@@ -47,7 +47,6 @@ matrix:
       before_install:
         - choco install python --version 3.7.0
         - python -m pip install -U pip
-        - choco install visualstudio-installer
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
       install:
         - pip install -r tests/test_requirements.txt
@@ -55,7 +54,7 @@ matrix:
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
         - cmake --help
-        - vsgen.bat
+        - powershell .\vsgen.bat
         - C:\ProgramFiles(x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSbuild.exe build\windows\METIS.sln
         - setx METIS_DLL C:\Users\your_username\Desktop\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
