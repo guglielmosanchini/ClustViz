@@ -55,7 +55,7 @@ matrix:
         - cd conda-metis-master
         - cmake --help
         - powershell ./vsgen.bat
-        - msbuild build/windows/METIS.sln
+        - msbuild.exe build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
 
