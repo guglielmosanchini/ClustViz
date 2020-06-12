@@ -14,15 +14,17 @@ matrix:
         - PATH=$MSBUILD_PATH:$PATH
       install:
         - MSBuild.exe -help
+        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
         - cd conda-metis-master
         - cmake --help
         - powershell ./vsgen.bat
-        # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
-        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
-        - dotnet build build/windows/METIS.sln
+        # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/Common7/IDE/VC/VCTargets"
+        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
+        - cd build/windows
+        - dotnet build METIS.sln
         # - MSBuild.exe build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
@@ -38,6 +40,7 @@ matrix:
         - PATH=$MSBUILD_PATH:$PATH
       install:
         - MSBuild.exe -help
+        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
@@ -63,6 +66,7 @@ matrix:
         - PATH=$MSBUILD_PATH:$PATH
       install:
         - MSBuild.exe -help
+        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
