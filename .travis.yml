@@ -10,11 +10,11 @@ matrix:
         - python -m pip install -U pip
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        #- MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        #- PATH=$MSBUILD_PATH:$PATH
+        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+        - PATH=$MSBUILD_PATH:$PATH
       install:
         # - MSBuild.exe -help
-        #- set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
+        - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
@@ -26,7 +26,7 @@ matrix:
         - powershell ./prova.bat
         - cd build/windows
         #- dotnet build METIS.sln
-        - MSBuild.exe build/windows/METIS.sln
+        - MSBuild.exe build/windows/METIS.sln //p:Configuration=Release
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
     - name: "Python 3.7.0 on Windows2"
@@ -53,7 +53,7 @@ matrix:
         # - dotnet build build/windows/METIS.sln
         - powershell ./prova.bat
         - cd build/windows
-        - MSBuild.exe METIS.sln
+        - MSBuild.exe METIS.sln //p:Configuration=Release
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
     - name: "Python 3.7.0 on Windows3"
@@ -64,10 +64,10 @@ matrix:
         - python -m pip install -U pip
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        #- MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-        #- PATH=$MSBUILD_PATH:$PATH
+        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+        - PATH=$MSBUILD_PATH:$PATH
       install:
-        # - MSBuild.exe -help
+        - MSBuild.exe -help
         - set VCTargetPaths="C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
@@ -80,7 +80,7 @@ matrix:
         # - dotnet build build/windows/METIS.sln
         - powershell ./prova.bat
         - cd build/windows
-        - MSBuild.exe METIS.sln
+        - MSBuild.exe METIS.sln //p:Configuration=Release
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
     - name: "Python 3.7.0 on Windows3"
