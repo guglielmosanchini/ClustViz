@@ -55,20 +55,20 @@ matrix:
         - cd conda-metis-master
         - cmake --help
         - powershell ./vsgen.bat
-        - "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd"
+        - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
         - msbuild.exe build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
 
 script:
-- python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8 || python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
+  - python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8 || python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
 
 after_success:
-- python3 -m coveralls || python -m coveralls
+  - python3 -m coveralls || python -m coveralls
 
 deploy:
   provider: pypi
-  server: https://test.pypi.org/legacy/ # remove when using the real pypi
+  server: https://test.pypi.org/legacy/  # remove when using the real pypi
   username: __token__
   password:
     secure: FXYcYrFMKeTbvfXLIQo4YMwQHm8yeDqHPImVbZlKSdel5dFGpxH5ug01ty9zPyU3ldA1DZZp049uIAremr5tr2PR0LJYRsxcP3qEAyvEqsmTp9dQRdFVe1ZBP2ra1ljVujp9ZuJ+IQCzufm9SPtC29cV3XG0IGAy6CScSRZiQxw/kyXUXMXJVGECTuvIkiI9gjjJmzvlanDJcXy0gQFMXK0VMXQ9MCXGDYTs+RGq0VQtrpyeO5WWPkmqqwhga6mXdgbz1I1HGTMDoxHMwvvyNnYi5cZBJyxDcuCZHMart6P4VPM1coMxd+spusfaN5tyGZhmJsmKA9+6/urYrSEfi+DYkcOC8tDGMHxxxJ2lfPd0XS0GnCo9RJrCkGuZcVCBhlggkv2qPVEymSVBkAUZ4IdTkNPfQl25b5L4vKrWAEtIEbKEH17+iPjJbHmuErU860KAe9DRQRIF6k2M7XKF0cqqunWg7MKJXOM6BQBsnH2VOLyKzRC1f9wRFicUdJNYv5SPDWhJj8g+3AlwXEpuaeSWCsZN4H2blB1Z5IoU0TV/hfy5ZdS4CMy6EakpudBUvZZ2ewpOB0ra3UfCHBE/ob126zliC2Mj6nu2fvSn3Imt+Kljh5MeYaagAkuehPoBjE+SlPryWze+VPfJt7J6o0AoYxs7vRxz5lhs52EvO1o=
