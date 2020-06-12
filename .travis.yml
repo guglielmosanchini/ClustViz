@@ -23,6 +23,7 @@ matrix:
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/Common7/IDE/VC/VCTargets"
         # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\Common7\IDE\VC\VCTargets"
+        - move /y gk_arch.h GKlib/gk_arch.h
         - cd build/windows
         - dotnet build METIS.sln
         # - MSBuild.exe build/windows/METIS.sln
@@ -50,6 +51,7 @@ matrix:
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
         # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
         # - dotnet build build/windows/METIS.sln
+        - move /y gk_arch.h GKlib/gk_arch.h
         - cd build/windows
         - MSBuild.exe METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
@@ -62,7 +64,7 @@ matrix:
         - python -m pip install -U pip
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\Current\Bin"
+        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
         - PATH=$MSBUILD_PATH:$PATH
       install:
         - MSBuild.exe -help
@@ -76,7 +78,8 @@ matrix:
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
         # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
         # - dotnet build build/windows/METIS.sln
-        - MSBuild.exe build/windows/METIS.sln
+        - move /y gk_arch.h GKlib/gk_arch.h
+        - dotnet build build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
 
