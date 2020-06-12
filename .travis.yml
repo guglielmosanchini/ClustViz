@@ -47,8 +47,12 @@ matrix:
       before_install:
         - choco install python --version 3.7.0
         - python -m pip install -U pip
-      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+      env:
+        - PATH=/c/Python37:/c/Python37/Scripts:$PATH
+        - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+        - PATH=$MSBUILD_PATH:$PATH
       install:
+        - msbuild -help
         - pip install -r tests/test_requirements.txt
         - powershell -command "& { iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip }"
         - powershell -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.'); }"
@@ -56,8 +60,9 @@ matrix:
         - cmake --help
         - powershell ./vsgen.bat
         # - "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/Common7/Tools/VsDevCmd"
-        - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
-        - dotnet build build/windows/METIS.sln
+        # - setx VCTargetsPath "C:\Program Files (x86)\Microsoft Visual Studio\2017\MSBuild\Microsoft\VC\v160"
+        # - dotnet build build/windows/METIS.sln
+        - msbuild build/windows/METIS.sln
         - setx METIS_DLL C:\Users\travis\build\guglielmosanchini\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
 
 
