@@ -23,11 +23,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        ls
         python -m pip install --upgrade pip
         python -m pip install -r tests/test_requirements.txt
-        #python -m pytest
-        #cd clustviz
-        #New-Item conftest.py >$null
-        #ls
-        #cd ..
-        python -m pytest --collect-only
+    - name: ciao
+      run: |
+        ls
+        iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip
+        Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.')
+    - name: mona
+      run: |
+        ls
+
