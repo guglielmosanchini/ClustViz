@@ -3,8 +3,8 @@ name: prova solo test
 on: [push]
 
 jobs:
-  build:
-
+  windows_job:
+    name: Windows job
     runs-on: [windows-latest]
     #runs-on: ${{ matrix.os }}
     strategy:
