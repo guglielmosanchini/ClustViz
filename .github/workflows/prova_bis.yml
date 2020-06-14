@@ -25,9 +25,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r tests/test_requirements.txt
-        python -m pytest
+        #python -m pytest
         #cd clustviz
         #New-Item conftest.py >$null
         #ls
         #cd ..
-        #python -m pytest --collect-only
+        python -m pytest --collect-only
