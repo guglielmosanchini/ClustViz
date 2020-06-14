@@ -40,4 +40,4 @@ jobs:
         cd ../../../..
         python -m pytest
       env:
-        METIS_DLL: D:\a\prova-windows-travis\prova-windows-travis\conda-metis-master\build\windows\libmetis\Release\metis.dll
+        METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
