@@ -25,22 +25,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r tests/test_requirements.txt
-    - name: ciao
+    - name: Download conda-metis
       run: |
         iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip
         Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.')
-    - name: mona
+    - name: Generate VS files
       run: |
         cd conda-metis-master
         ./prova.bat # moved upwards
         ./vsgen.bat
-    - name: bufu
+    - name: Build with Visual Studio Code (this step fails but it doesnt matter)
       run: |
         cd conda-metis-master/build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
-    - name: zibo
+    - name: Perform tests
+      if: always() # otherwise it would not be executed, since the previous step failed
       run: |
-        ls
         python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
