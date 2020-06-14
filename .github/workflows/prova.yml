@@ -11,7 +11,7 @@ jobs:
       max-parallel: 3
       matrix:
         #os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        python-version: [3.6]
+        python-version: ["3.6", "3.7"]
 
     steps:
     - name: setup-msbuild # install Visual Studio Code
@@ -32,9 +32,8 @@ jobs:
         ./vsgen.bat
         cd build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
-        cd libmetis/Release
-        cd ../../../../..
+        cd ../../..
         python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
-        python -m coveralls
+        # python -m coveralls Not on TravisCI. You have to provide either repo_token in .coveralls.yml or set the COVERALLS_REPO_TOKEN env var.
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
