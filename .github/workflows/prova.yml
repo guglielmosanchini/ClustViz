@@ -27,17 +27,18 @@ jobs:
         python -m pip install -r tests/test_requirements.txt
         iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip
         Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.')
+        python -m pytest --collect-only
         cd clustviz
         New-Item conftest.py
+        ls
         cd ..
+        python -m pytest --collect-only
         cd conda-metis-master
         ./prova.bat # moved upwards
         ./vsgen.bat
         pwd
         cd build/windows
-        pwd
         MSBuild.exe METIS.sln /p:Configuration=Release
-        pwd
         cd libmetis/Release
         ls
         cd ../../../..
