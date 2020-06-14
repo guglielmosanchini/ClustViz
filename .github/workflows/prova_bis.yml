@@ -23,7 +23,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        ls
         python -m pip install --upgrade pip
         python -m pip install -r tests/test_requirements.txt
     - name: ciao
@@ -37,13 +36,11 @@ jobs:
         ./vsgen.bat
     - name: bufu
       run: |
-        ls
-        cd build/windows
+        cd conda-metis-master/build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
     - name: zibo
       run: |
         ls
-        cd ../../..
         python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
