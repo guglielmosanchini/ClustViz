@@ -40,7 +40,8 @@ jobs:
         MSBuild.exe METIS.sln /p:Configuration=Release
         cd libmetis/Release
         ls
-        cd ../../../..
+        cd ../../../../..
+        ls
         python -m pytest --collect-only
         python -m pytest
       env:
