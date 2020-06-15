@@ -24,6 +24,7 @@ jobs:
     - name: reg query
       run: |
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0
+        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersion\4.0
 
 
 
