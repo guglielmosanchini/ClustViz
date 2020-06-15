@@ -1,4 +1,4 @@
-name: prova_both
+name: CI testing
 
 on: [push]
 
@@ -38,6 +38,7 @@ jobs:
       run: |
         cd conda-metis-master/build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
+        exit 1
     - name: Perform tests
       if: always() # otherwise it would not be executed, since the previous step failed
       run: |
@@ -52,7 +53,7 @@ jobs:
       max-parallel: 3
       matrix:
         os: ['ubuntu-latest', 'macos-latest']
-        python-version: [3.6]
+        python-version: ["3.6", "3.7", "3.8"]
 
     steps:
       - uses: actions/checkout@v2
@@ -75,13 +76,12 @@ jobs:
           cd metis-5.1.0
           make config shared=1
           make
-          echo $RUNNER_OS
       - name: setting env
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            echo "::set-env name=METIS_DLL::/home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
+            echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            echo "::set-env name=METIS_DLL::/Users/runner/runners/2.263.0/work/ClustViz/ClustViz/metis-5.1.0/build/Darwin-x86_64/libmetis/libmetis.dylib"
+            echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Darwin-x86_64/libmetis/libmetis.dylib"
           else
             echo "$RUNNER_OS not supported"
             exit 1

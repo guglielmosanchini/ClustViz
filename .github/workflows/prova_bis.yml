@@ -1,4 +1,4 @@
-name: prova_bis
+name: reg attempt
 
 on: [push]
 
@@ -24,7 +24,7 @@ jobs:
     - name: reg query
       run: |
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0
-        reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersion\4.0
+        reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersion
 
 
 
