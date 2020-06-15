@@ -1,5 +1,5 @@
 language: python
-
+TOGLIERE PER FAR FUNZIONARE TRAVIS
 python:
   - 3.6.8
 

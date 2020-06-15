@@ -2,4 +2,5 @@
 /dist/
 /.coverage
 /venv37/
+/venv/
 /clustviz.egg-info/
