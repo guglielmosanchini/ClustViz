@@ -105,6 +105,8 @@ jobs:
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build distribution
         if: $RUNNER_OS == "Linux" && ${{ matrix.python-version }} == "3.6"
