@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: setup-msbuild # install Visual Studio Code
       uses: microsoft/setup-msbuild@v1
+      with:
+        vs-version: [15, 15]
 
     - uses: actions/checkout@v2
 
@@ -103,12 +105,12 @@ jobs:
         run: |
           python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
 
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.1.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
-          parallel: true
+      #- name: Coveralls GitHub Action
+      #  uses: coverallsapp/github-action@v1.1.1
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      #    flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
+      #    parallel: true
 
       - name: Build distribution
         if: $RUNNER_OS == "Linux" && ${{ matrix.python-version }} == "3.6"
