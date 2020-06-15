@@ -118,7 +118,7 @@ jobs:
         run: echo "Hello tag ${{ github.ref }}"
 
       - name: this triple conditions iniz
-        if: (2==2) && (3==3) && (4==4) && (${{ matrix.python-version }} == "3.6")
+        if: (2==2) && (3==3) && (4==4) && (matrix.python-version == "3.6")
         run: echo "ciao mona"
 
       - name: this triple conditions
@@ -130,7 +130,7 @@ jobs:
         run: echo "ciao mona"
 
       - name: Build distribution
-        if: ($RUNNER_OS == "Linux") && (${{ matrix.python-version }} == "3.6") && (startsWith(github.ref, 'refs/tags') == true)
+        if: ($RUNNER_OS == "Linux") && (matrix.python-version == "3.6") && (startsWith(github.ref, 'refs/tags') == true)
         run: |
           python -m pip install setuptools wheel
           python setup.py sdist bdist_wheel
