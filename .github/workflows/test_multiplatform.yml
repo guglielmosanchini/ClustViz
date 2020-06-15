@@ -45,7 +45,7 @@ jobs:
         MSBuild.exe METIS.sln /p:Configuration=Release
         exit 0
 
-    - name: Perform tests
+    - name: Perform tests and coveralls
       if: always() # otherwise it would not be executed, since the previous step failed
       run: |
         python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
@@ -53,6 +53,9 @@ jobs:
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
 
   unix_job:
     name: Unix job
@@ -100,13 +103,16 @@ jobs:
             exit 1
           fi
 
-      - name: Perform tests
+      - name: Perform tests and coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
         if: always() # otherwise it would not be executed, since the previous step failed
         run: |
           python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
           python3 -m coveralls
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
 
       - name: Build distribution
         if: (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.6') && (startsWith(github.ref, 'refs/tags') == true)
