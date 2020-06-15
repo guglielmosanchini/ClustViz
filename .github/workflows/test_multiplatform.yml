@@ -110,7 +110,7 @@ jobs:
       #    flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
       #    parallel: true
       - name: this when it is not tagged
-        if: !startsWith(github.ref, 'ref/tags/')
+        if: startsWith(github.ref, 'ref/tags/') == false
         run: echo "Hello tag ${{ github.ref }}"
 
       - name: this when it is  tagged
