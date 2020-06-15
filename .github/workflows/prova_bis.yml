@@ -34,7 +34,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install -r tests/test_requirements.txt
+        python -m pip install metis
+        # python -m pip install -r tests/test_requirements.txt
 
     - name: Download conda-metis
       run: |
@@ -46,11 +47,11 @@ jobs:
         cd conda-metis-master
         ./prova.bat # moved upwards
         cmake --help
-        ./vsgen.bat -G "Visual Studio 15 2017 Win64"
+        ./vsgen -G "Visual Studio 15 2017 Win64"
         #./vsgen.bat
 
     - name: Build with Visual Studio Code (this step fails but it doesnt matter)
       run: |
         cd conda-metis-master/build/windows
-        C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\MSBuild.exe METIS.sln
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" METIS.sln
         # MSBuild.exe METIS.sln /p:Configuration=Release
