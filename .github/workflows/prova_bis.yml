@@ -46,10 +46,11 @@ jobs:
         cd conda-metis-master
         ./prova.bat # moved upwards
         cmake --help
-        ./vsgen.bat
+        ./vsgen.bat -G "Visual Studio 15 2017 Win64"
+        #./vsgen.bat
 
     - name: Build with Visual Studio Code (this step fails but it doesnt matter)
       run: |
         cd conda-metis-master/build/windows
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\MSBuild.exe" METIS.sln
+        C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\MSBuild.exe METIS.sln
         # MSBuild.exe METIS.sln /p:Configuration=Release
