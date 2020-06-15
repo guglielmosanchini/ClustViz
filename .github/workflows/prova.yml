@@ -38,7 +38,7 @@ jobs:
       run: |
         cd conda-metis-master/build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
-        exit 1
+        exit 0
     - name: Perform tests
       if: always() # otherwise it would not be executed, since the previous step failed
       run: |
