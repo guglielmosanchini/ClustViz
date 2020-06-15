@@ -26,12 +26,12 @@ jobs:
       # C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe
     - name: adding to path
       run: |
-        echo "::add-path::C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15\Bin"
+        echo "::add-path::C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
     - name: reg query
       run: |
-        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0 /v MSBuildOverrideTasksPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\" /f
+        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0 /v MSBuildOverrideTasksPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\" /f
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0
-        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0 /v MSBuildToolPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\" /f
+        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0 /v MSBuildToolPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\" /f
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0
 
     - name: Install dependencies
