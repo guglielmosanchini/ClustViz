@@ -24,6 +24,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
       # C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe
+    - name:
+      run: |
+        echo "::add-path::C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
     - name: reg query
       run: |
         reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0 /v MSBuildOverrideTasksPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\" /f
@@ -53,5 +56,5 @@ jobs:
     - name: Build with Visual Studio Code (this step fails but it doesnt matter)
       run: |
         cd conda-metis-master/build/windows
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" METIS.sln
+        MSBuild.exe METIS.sln
         # MSBuild.exe METIS.sln /p:Configuration=Release
