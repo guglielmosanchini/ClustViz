@@ -118,7 +118,7 @@ jobs:
         run: echo "Hello tag ${{ github.ref }}"
 
       - name: this triple conditions
-        if: 2==2 && 3==3 && 4==4 && $RUNNER_OS == "Linux"
+        if: 2==2 && 3==3 && 4==4 && ($RUNNER_OS == "Linux")
         run: echo "ciao mona"
 
       - name: this triple conditions parenthesis
