@@ -32,9 +32,9 @@ jobs:
         reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0 /v MSBuildToolPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\" /f
 
     - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r tests/test_requirements.txt
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r tests/test_requirements.txt
 
     - name: Download conda-metis
       run: |
@@ -51,6 +51,3 @@ jobs:
       run: |
         cd conda-metis-master/build/windows
         MSBuild.exe METIS.sln /p:Configuration=Release
-
-
-
