@@ -1,4 +1,4 @@
-name: prova solo test
+name: prova_bis
 
 on: [push]
 
@@ -21,27 +21,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: reg query
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install -r tests/test_requirements.txt
-    - name: Download conda-metis
-      run: |
-        iwr https://github.com/guglielmosanchini/conda-metis/archive/master.zip -OutFile conda-metis-master.zip
-        Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('conda-metis-master.zip', '.')
-    - name: Generate VS files
-      run: |
-        cd conda-metis-master
-        ./prova.bat # moved upwards
-        ./vsgen.bat
-    - name: Build with Visual Studio Code (this step fails but it doesnt matter)
-      run: |
-        cd conda-metis-master/build/windows
-        MSBuild.exe METIS.sln /p:Configuration=Release
-    - name: Perform tests
-      if: always() # otherwise it would not be executed, since the previous step failed
-      run: |
-        python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
-      env:
-        METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
+        reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0
+
+
 

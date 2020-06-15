@@ -1,4 +1,4 @@
-name: prova solo test
+name: prova_both
 
 on: [push]
 
@@ -76,9 +76,16 @@ jobs:
           make config shared=1
           make
           ls
+      - name: setting env
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            echo "::set-env name=METIS_DLL::/home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            echo "::set-env name=METIS_DLL::/home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.dylib"
+
       - name: Perform tests
         if: always() # otherwise it would not be executed, since the previous step failed
         run: |
           python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
-        env:
-          METIS_DLL: /usr/local/lib/libmetis.dylib
+        #env:
+        #  METIS_DLL: /home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so
