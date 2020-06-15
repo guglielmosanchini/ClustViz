@@ -15,8 +15,6 @@ jobs:
     steps:
     - name: setup-msbuild # install Visual Studio Code
       uses: microsoft/setup-msbuild@v1
-      with:
-        vs-version: [15, 15]
 
     - uses: actions/checkout@v2
 
