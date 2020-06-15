@@ -75,13 +75,17 @@ jobs:
           cd metis-5.1.0
           make config shared=1
           make
-          ls
+          echo $RUNNER_OS
       - name: setting env
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             echo "::set-env name=METIS_DLL::/home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
           elif [ "$RUNNER_OS" == "macOS" ]; then
             echo "::set-env name=METIS_DLL::/home/runner/work/ClustViz/ClustViz/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.dylib"
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
 
       - name: Perform tests
         if: always() # otherwise it would not be executed, since the previous step failed
