@@ -104,10 +104,12 @@ jobs:
           python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
 
       - name: Coveralls GitHub Action
+        env:
+          COVERALLS_FLAG_NAME: run-${{ matrix.os }}-${{ matrix.python-version }}
         uses: coverallsapp/github-action@v1.1.1
         with:
           github-token: ${{ secrets.github_token }}
-          flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
+          # flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
           parallel: true
 
       - name: Build distribution
