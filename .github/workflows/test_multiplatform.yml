@@ -49,8 +49,10 @@ jobs:
       if: always() # otherwise it would not be executed, since the previous step failed
       run: |
         python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
+        python -m coveralls
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
 
   unix_job:
     name: Unix job
@@ -99,6 +101,8 @@ jobs:
           fi
 
       - name: Perform tests
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
         if: always() # otherwise it would not be executed, since the previous step failed
         run: |
           python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
