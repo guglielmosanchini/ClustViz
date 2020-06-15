@@ -14,8 +14,8 @@ jobs:
         python-version: [3.6]
 
     steps:
-    - name: setup-msbuild # install Visual Studio Code
-      uses: microsoft/setup-msbuild@v1
+    #- name: setup-msbuild # install Visual Studio Code
+    #  uses: microsoft/setup-msbuild@v1
 
     - uses: actions/checkout@v2
 
@@ -26,10 +26,10 @@ jobs:
       # C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe
     - name: reg query
       run: |
+        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0 /v MSBuildOverrideTasksPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\" /f
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0
-        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\4.0 /v MSBuildOverrideTasksPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\" /f
+        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0 /v MSBuildToolPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\" /f
         reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0
-        reg add HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0 /v MSBuildToolPath /d "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\" /f
 
     - name: Install dependencies
       run: |
@@ -45,9 +45,11 @@ jobs:
       run: |
         cd conda-metis-master
         ./prova.bat # moved upwards
+        cmake --help
         ./vsgen.bat
 
     - name: Build with Visual Studio Code (this step fails but it doesnt matter)
       run: |
         cd conda-metis-master/build/windows
-        MSBuild.exe METIS.sln /p:Configuration=Release
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\15.0\Bin\MSBuild.exe" METIS.sln
+        # MSBuild.exe METIS.sln /p:Configuration=Release
