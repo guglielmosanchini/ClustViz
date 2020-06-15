@@ -1,5 +1,5 @@
 name: CI testing
-TOGLIERE PER RUNNARE
+
 on: [push]
 
 jobs:
