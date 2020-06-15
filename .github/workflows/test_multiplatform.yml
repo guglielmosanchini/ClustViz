@@ -45,14 +45,14 @@ jobs:
         MSBuild.exe METIS.sln /p:Configuration=Release
         exit 0
 
-    - name: Perform tests and coveralls
+    - name: Perform tests (coveralls is skipped, replaced by codecov below)
       if: always() # otherwise it would not be executed, since the previous step failed
       run: |
-        python -m pytest --cov=clustviz/ --cov-report term-missing --flake8
-        python -m coveralls
+        python -m pytest --cov=clustviz/ --cov-report xml  --flake8
+        # python -m coveralls
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
+        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
@@ -103,13 +103,13 @@ jobs:
             exit 1
           fi
 
-      - name: Perform tests and coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
+      - name: Perform tests (coveralls is skipped, replaced by codecov below)
+        # env:
+          # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
         if: always() # otherwise it would not be executed, since the previous step failed
         run: |
-          python3 -m pytest --cov=clustviz/ --cov-report term-missing --flake8
-          python3 -m coveralls
+          python3 -m pytest --cov=clustviz/ --cov-report xml  --flake8
+          # python3 -m coveralls
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
