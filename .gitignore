@@ -4,3 +4,5 @@
 /venv37/
 /venv/
 /clustviz.egg-info/
+/coverage.xml
+/nb_for_logo.ipynb

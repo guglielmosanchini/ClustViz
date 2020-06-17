@@ -8,6 +8,7 @@ from matplotlib import colors
 
 
 def encircle(x, y, ax, **kw):
+    """plot a line-boundary around a cluster (at least 3 points are required)"""
     p = np.c_[x, y]
     hull = ConvexHull(p)
     poly = plt.Polygon(p[hull.vertices, :], **kw)
@@ -15,6 +16,7 @@ def encircle(x, y, ax, **kw):
 
 
 def convert_colors(dict_colors, alpha=0.5):
+    """modify the transparency of each color of a dictionary of colors to the desired alpha"""
     new_dict_colors = {}
 
     for i, col in enumerate(dict_colors.values()):
@@ -75,7 +77,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
     When using Ward linkage, also the increment in distance is shown.
 
     :param X: input data as array.
-    :param a: distance matrix built by agg_clust/agg_clust_mod.
+    :param a: distance matrix built by agg_clust.
     :param level_txt: dist_tot displayed.
     :param level2_txt: dist_incr displayed.
     """
@@ -190,7 +192,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
 def dist_mat(df, linkage):
     """
-    Takes as input the dataframe created by agg_clust/agg_clust_mod and outputs
+    Takes as input the dataframe created by agg_clust and outputs
     the distance matrix; it is actually an upper triangular matrix, the symmetrical
     values are replaced with  np.inf.
 
@@ -226,49 +228,6 @@ def dist_mat(df, linkage):
                     D.loc[i, j] = cl_dist(a, b)
                 elif linkage == "average":
                     D.loc[i, j] = avg_dist(a, b)
-            else:
-
-                D.loc[i, j] = np.inf
-
-        k += 1
-
-    D = D.fillna(np.inf)
-
-    return D
-
-
-# DEPRECATED
-def dist_mat_full(df, linkage):
-    """Variation of dist_mat, outputs the full distance matrix instead of an upper triangular one"""
-
-    even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
-    D = pd.DataFrame()
-    ind = list(df.index)
-    k = 0
-    for i in ind:
-        for j in ind[k:]:
-            if i != j:
-
-                a = df.loc[i].values
-                b = df.loc[j].values
-                z1 = [i for i in even_num if i <= len(a)]
-                z2 = [i for i in even_num if i <= len(b)]
-                a = [a[: z1[0]]] + [
-                    a[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
-                ]
-                b = [b[: z2[0]]] + [
-                    b[z2[i]: z2[i + 1]] for i in range(len(z2) - 1)
-                ]
-
-                if linkage == "single":
-                    D.loc[i, j] = sl_dist(a, b)
-                    D.loc[j, i] = sl_dist(a, b)
-                elif linkage == "complete":
-                    D.loc[i, j] = cl_dist(a, b)
-                    D.loc[j, i] = cl_dist(a, b)
-                elif linkage == "average":
-                    D.loc[i, j] = avg_dist(a, b)
-                    D.loc[j, i] = avg_dist(a, b)
             else:
 
                 D.loc[i, j] = np.inf
@@ -320,7 +279,7 @@ def compute_var(X, df):
     Compute total intra-cluster variance of the cluster configuration inferred from df.
 
     :param X: input data as array.
-    :param df: input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+    :param df: input dataframe built by agg_clust, listing the cluster and the x and y
                 coordinates of each point.
     :return: centroids dataframe with their coordinates and the single variances of the corresponding
              clusters, and the total intra-cluster variance.
@@ -358,7 +317,7 @@ def compute_var_sing(df, centroids):
     Compute every internal variance in clusters; clusters are found in df,
     whereas centroids are saved in centroids.
 
-    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+    :param df:  input dataframe built by agg_clust, listing the cluster and the x and y
                 coordinates of each point.
     :param centroids: dataframe of the centroids of clusters, with their x and y coordinates.
     :return var_int: list of intra-cluster variances.
@@ -389,7 +348,7 @@ def compute_ward_ij(data, df):
     distance, and finds the best cluster according to Ward criterion.
 
     :param data: input data array.
-    :param df:  input dataframe built by agg_clust/agg_clust_mod, listing the cluster and the x and y
+    :param df:  input dataframe built by agg_clust, listing the cluster and the x and y
                 coordinates of each point.
     :return: (i,j) indices of best cluster (the one for which the increase in intra-cluster variance is minimum)
              new_summ: new total intra-cluster variance
@@ -441,8 +400,6 @@ def compute_ward_ij(data, df):
     (i, j) = min(variances, key=variances.get)
     new_summ = np.min(list(variances.values()))
     par_var = partial_var[(i, j)]
-    if new_summ == summ:
-        print("wrong")
 
     return (i, j), new_summ, par_var
 
@@ -485,105 +442,14 @@ def avg_dist(a, b):
     return np.mean(distances)
 
 
-# DEPRECATED, agg_clust_mod is faster
-def agg_clust(X, linkage):
+def agg_clust(X, linkage, plotting=True):
     """
     Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
     of cluster aggregation.
 
     :param X: input data array
     :param linkage: linkage method; can be single, complete, average or ward.
-    """
-    levels = []
-    levels2 = []
-    ind_list = []
-
-    l = [[i, i] for i in range(len(X))]
-    flat_list = [item for sublist in l for item in sublist]
-    col = [
-        str(el) + "x" if i % 2 == 0 else str(el) + "y"
-        for i, el in enumerate(flat_list)
-    ]
-
-    a = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
-
-    a["0x"] = X.T[0]
-    a["0y"] = X.T[1]
-
-    while len(a) > 1:
-
-        b = a.dropna(axis=1, how="all")
-
-        if (linkage == "single") or (linkage == "average"):
-
-            b = b.fillna(np.inf)
-
-        elif linkage == "complete":
-
-            b = b.fillna(np.NINF)
-
-        elif linkage == "ward":
-
-            b = b.fillna(np.inf)
-
-            if len(a) == len(X):
-                var_sum = 0
-                levels.append(var_sum)
-                levels2.append(var_sum)
-
-        else:
-            print("input metric is not valid")
-            return
-
-        if linkage != "ward":
-            X_dist1 = dist_mat(b, linkage)
-            # find indexes of minimum
-            (i, j) = np.unravel_index(
-                np.array(X_dist1).argmin(), np.array(X_dist1).shape
-            )
-            levels.append(np.min(np.array(X_dist1)))
-            ind_list.append((i, j))
-            new_clust = a.iloc[[i, j], :]
-
-        elif linkage == "ward":
-            ((i, j), var_sum, par_var) = compute_ward_ij(X, b)
-
-            levels.append(var_sum)
-            levels2.append(par_var)
-            ind_list.append((i, j))
-            new_clust = a.loc[[i, j], :]
-
-        a = a.drop([new_clust.iloc[0].name], 0)
-        a = a.drop([new_clust.iloc[1].name], 0)
-
-        dim1 = int(new_clust.iloc[0].notna().sum())
-
-        a.loc[
-        "("
-        + new_clust.iloc[0].name
-        + ")"
-        + "-"
-        + "("
-        + new_clust.iloc[1].name
-        + ")",
-        :,
-        ] = new_clust.iloc[0].fillna(0) + new_clust.iloc[1].shift(
-            dim1, fill_value=0
-        )
-
-        if linkage != "ward":
-            point_plot_mod(X, a, levels[-1])
-        else:
-            point_plot_mod(X, a, levels[-2], levels2[-1])
-
-
-def agg_clust_mod(X, linkage):
-    """
-    Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
-    of cluster aggregation.
-
-    :param X: input data array
-    :param linkage: linkage method; can be single, complete, average or ward.
+    :param plotting: if True, execute plots.
     """
 
     levels = []
@@ -656,7 +522,9 @@ def agg_clust_mod(X, linkage):
             0
         ) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
-        if linkage != "ward":
-            point_plot_mod(X, a, levels[-1])
-        else:
-            point_plot_mod(X, a, levels[-2], levels2[-1])
+        if plotting == True:
+
+            if linkage != "ward":
+                point_plot_mod(X, a, levels[-1])
+            else:
+                point_plot_mod(X, a, levels[-2], levels2[-1])

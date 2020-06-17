@@ -87,7 +87,7 @@ ClustDist, CoreDist = OPTICS(X, eps=2, minPTS=3, plot=True, plot_reach=True)
 plot_clust(X, ClustDist, CoreDist, eps=2, eps_db=1.9)
 ```
 
-For many other examples, take a look at the detailed [clustviz_example](https://github.com/guglielmosanchini/ClustViz/blob/master/data/clustviz_example.ipnyb) notebook.
+For many other examples, take a look at the detailed [clustviz_example](https://github.com/guglielmosanchini/ClustViz/blob/master/data/clustviz_example.ipynb) notebook.
 
 ## Repository structure
 
