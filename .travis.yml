@@ -1,3 +1,4 @@
+# remove the line below to let travis CI run
 language: python
 REMOVE THIS LINE TO LET TRAVIS RUN
 python:
