@@ -193,7 +193,8 @@ class clarans:
 
         return self.__optimal_medoids
 
-    def get_cluster_encoding(self):
+    @staticmethod
+    def get_cluster_encoding():
         """!
         @brief Returns clustering result representation type that indicate how clusters are encoded.
 
@@ -391,11 +392,13 @@ class clarans:
 
 def compute_cost_clarans(data, _cur_choice):
     # modified from that of CLARA
-    """A function to compute the configuration cost.
-        :param data: The input dataframe.
-        :param _cur_choice: The current set of medoid choices.
-        :return: The total configuration cost, the medoids.
-        """
+    """
+    A function to compute the configuration cost.
+
+    :param data: The input dataframe.
+    :param _cur_choice: The current set of medoid choices.
+    :return: The total configuration cost, the medoids.
+    """
     total_cost = 0.0
     medoids = {}
     for idx in _cur_choice:

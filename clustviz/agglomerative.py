@@ -1,28 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from clustviz.optics import dist1
 from matplotlib.patches import Rectangle
-from scipy.spatial import ConvexHull
-from matplotlib import colors
-
-
-def encircle(x, y, ax, **kw):
-    """plot a line-boundary around a cluster (at least 3 points are required)"""
-    p = np.c_[x, y]
-    hull = ConvexHull(p)
-    poly = plt.Polygon(p[hull.vertices, :], **kw)
-    ax.add_patch(poly)
-
-
-def convert_colors(dict_colors, alpha=0.5):
-    """modify the transparency of each color of a dictionary of colors to the desired alpha"""
-    new_dict_colors = {}
-
-    for i, col in enumerate(dict_colors.values()):
-        new_dict_colors[i] = tuple(list(colors.to_rgb(col)) + [alpha])
-
-    return new_dict_colors
+from clustviz.utils import convert_colors, encircle, dist1, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
 
 
 def update_mat(mat, i, j, linkage):
@@ -88,28 +68,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
     a = a.dropna(1, how="all")
 
-    color_dict = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "navy",
-        6: "orange",
-        7: "purple",
-        8: "salmon",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "red",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
-
-    color_dict_rect = convert_colors(color_dict, alpha=0.3)
+    color_dict_rect = convert_colors(COLOR_DICT, alpha=0.3)
 
     len_ind = [len(i.split("-")) for i in list(a.index)]
     start = np.min([i for i in range(len(len_ind)) if len_ind[i] > 1])
@@ -121,7 +80,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
         X_clust = [X[point[j], 0] for j in range(len(point))]
         Y_clust = [X[point[j], 1] for j in range(len(point))]
 
-        plt.scatter(X_clust, Y_clust, s=350, color=color_dict[ind % 17])
+        plt.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)])
 
     point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
     point = [int(i) for i in point]
@@ -140,7 +99,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
                 rect_diff[0] + xwidth * 0.04,
                 rect_diff[1] + ywidth * 0.08,
                 fill=True,
-                color=color_dict_rect[ind % 17],
+                color=color_dict_rect[ind % len(COLOR_DICT)],
                 linewidth=3,
                 ec="red",
             )
@@ -150,7 +109,7 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
             X_clust,
             Y_clust,
             ax=ax,
-            color=color_dict_rect[ind % 17],
+            color=color_dict_rect[ind % len(COLOR_DICT)],
             linewidth=3,
             ec="red",
         )
@@ -159,33 +118,41 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
         ax.annotate(
             txt,
             (X[:, 0][i], X[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
 
-    ax.annotate(
-        "dist_tot: " + str(round(level_txt, 5)),
-        (xmax * 0.75, ymax * 0.9),
-        fontsize=12,
-        size=12,
-    )
+    num_clust = "n° clust: " + str(len(a))
+    dist_tot = "dist_tot: " + str(round(level_txt, 5))
+    dist_incr = "dist_incr: " + str(round(level2_txt, 5)) if level2_txt is not None else ""
 
-    if level2_txt is not None:
-        ax.annotate(
-            "dist_incr: " + str(round(level2_txt, 5)),
-            (xmax * 0.75, ymax * 0.8),
-            fontsize=12,
-            size=12,
-        )
+    title = num_clust + " --- " + dist_tot + " --- " + dist_incr
 
-    ax.annotate(
-        "n° clust: " + str(len(a)),
-        (xmax * 0.75, ymax * 0.7),
-        fontsize=12,
-        size=12,
-    )
+    ax.set_title(title, fontsize=FONTSIZE_BIGGER)
+
+    # ax.annotate(
+    #     "dist_tot: " + str(round(level_txt, 5)),
+    #     (xmax * 0.75, ymax * 0.9),
+    #     fontsize=FONTSIZE_BIGGER,
+    #     size=SIZE_BIGGER,
+    # )
+    #
+    # if level2_txt is not None:
+    #     ax.annotate(
+    #         "dist_incr: " + str(round(level2_txt, 5)),
+    #         (xmax * 0.75, ymax * 0.8),
+    #         fontsize=FONTSIZE_BIGGER,
+    #         size=SIZE_BIGGER,
+    #     )
+    #
+    # ax.annotate(
+    #     "n° clust: " + str(len(a)),
+    #     (xmax * 0.75, ymax * 0.7),
+    #     fontsize=FONTSIZE_BIGGER,
+    #     size=SIZE_BIGGER,
+    # )
 
     plt.show()
 
@@ -194,7 +161,7 @@ def dist_mat(df, linkage):
     """
     Takes as input the dataframe created by agg_clust and outputs
     the distance matrix; it is actually an upper triangular matrix, the symmetrical
-    values are replaced with  np.inf.
+    values are replaced with np.inf.
 
     :param df: input dataframe, with first column corresponding to x-coordinates and
                second column corresponding to y-coordinates of data points.
@@ -511,9 +478,7 @@ def agg_clust(X, linkage, plotting=True):
         new_cluster_name = (
                 "("
                 + new_clust.iloc[0].name
-                + ")"
-                + "-"
-                + "("
+                + ")-("
                 + new_clust.iloc[1].name
                 + ")"
         )
@@ -522,7 +487,7 @@ def agg_clust(X, linkage, plotting=True):
             0
         ) + new_clust.iloc[1].shift(dim1, fill_value=0)
 
-        if plotting == True:
+        if plotting is True:
 
             if linkage != "ward":
                 point_plot_mod(X, a, levels[-1])

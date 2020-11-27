@@ -5,23 +5,29 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
-class ClaraClustering(object):
-    """The clara clustering algorithm.
+class ClaraClustering:
+    """
+    The clara clustering algorithm.
     Basically an iterative guessing version of k-medoids that makes things a lot faster
     for bigger data sets.
     """
 
     def __init__(self, max_iter=100000):
-        """Class initialization.
+        """
+        Class initialization.
+
         :param max_iter: The default number of max iterations
         """
         self.max_iter = max_iter
         self.dist_cache = dict()
 
     def clara(self, _df, _k, _fn):
-        """The main clara clustering iterative algorithm.
+        """
+        The main clara clustering iterative algorithm.
+
         :param _df: Input dataframe.
         :param _k: Number of medoids.
         :param _fn: The distance function to use.
@@ -94,7 +100,9 @@ class ClaraClustering(object):
         return min_avg_cost, best_choices, best_results
 
     def k_medoids(self, _df, _k, _fn, _niter):
-        """The original k-medoids algorithm.
+        """
+        The original k-medoids algorithm.
+
         :param _df: Input data frame.
         :param _k: Number of medoids.
         :param _fn: The distance function to use.
@@ -170,7 +178,9 @@ class ClaraClustering(object):
         return current_cost, best_choices, best_results
 
     def compute_cost(self, _df, _fn, _cur_choice, cache_on=False):
-        """A function to compute the configuration cost.
+        """
+        A function to compute the configuration cost.
+
         :param _df: The input dataframe.
         :param _fn: The distance function.
         :param _cur_choice: The current set of medoid choices.
@@ -217,7 +227,9 @@ class ClaraClustering(object):
         return total_cost, medoids
 
     def average_cost(self, _df, _fn, _cur_choice):
-        """A function to compute the average cost.
+        """
+        A function to compute the average cost.
+
         :param _df: The input data frame.
         :param _fn: The distance function.
         :param _cur_choice: The current medoid candidates.
@@ -228,7 +240,9 @@ class ClaraClustering(object):
         return avg_cost, _m
 
     def cheat_at_sampling(self, _df, _k, _fn, _nsamp):
-        """A function to cheat at sampling for speed ups.
+        """
+        A function to cheat at sampling for speed ups.
+
         :param _df: The input dataframe.
         :param _k: The number of medoids.
         :param _fn: The distance function.
@@ -257,7 +271,9 @@ class ClaraClustering(object):
         return score_holder[idx], list(ms)
 
     def euclidean_distance(self, v1, v2):
-        """Slow function for euclidean distance.
+        """
+        Slow function for computing euclidean distance.
+
         :param v1: The first vector.
         :param v2: The second vector.
         :return: The euclidean distance between v1 and v2.
@@ -268,7 +284,9 @@ class ClaraClustering(object):
         return dist
 
     def fast_euclidean(self, v1, v2):
-        """Faster function for euclidean distance.
+        """
+        Faster function for euclidean distance.
+
         :param v1: The first vector.
         :param v2: The second vector.
         :return: The euclidean distance between v1 and v2.
@@ -276,7 +294,9 @@ class ClaraClustering(object):
         return np.linalg.norm(v1 - v2)
 
     def manhattan_distance(self, v1, v2):
-        """Function for manhattan distance.
+        """
+        Function for manhattan distance.
+
         :param v1: The first vector.
         :param v2: The second vector.
         :return: The manhattan distance between v1 and v2.
@@ -287,7 +307,9 @@ class ClaraClustering(object):
         return dist
 
     def cosine_distance(self, v1, v2):
-        """Function for cosine distance.
+        """
+        Function for cosine distance.
+
         :param v1: The first vector.
         :param v2: The second vector.
         :return: The cosine distance between v1 and v2.
@@ -315,7 +337,7 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
 
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    # just as a habit, it actually doesnt plot anything because points are white with white edgecolor
+    # just as placeholder, it actually doesnt plot anything because points are white with white edgecolor
     plt.scatter(
         full.iloc[:, 0],
         full.iloc[:, 1],
@@ -324,34 +346,13 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
         edgecolor="white",
     )
 
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
-
     # plot the sampled point, with colors according to the cluster they belong to
     for i, el in enumerate(list(cl.values())):
         plt.scatter(
             data.loc[el, 0],
             data.loc[el, 1],
             s=300,
-            color=colors[i % 18],
+            color=COLOR_DICT[i % len(COLOR_DICT)],
             edgecolor="black",
         )
 
@@ -371,8 +372,8 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
         ax.annotate(
             txt,
             (full.iloc[i, 0], full.iloc[i, 1]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )

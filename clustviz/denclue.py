@@ -8,10 +8,7 @@ from tqdm.auto import tqdm
 from itertools import groupby
 from collections import OrderedDict, Counter
 
-
-def euclidean_distance(a, b):
-    """Returns Euclidean distance of two arrays"""
-    return np.linalg.norm(np.array(a) - np.array(b))
+from clustviz.utils import euclidean_distance, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
 def gauss_infl_function(x, y, s, dist="euclidean"):
@@ -361,7 +358,7 @@ def plot_3d_or_contour(data, s, three=False, scatter=False, prec=3):
         plt.show()
     else:
         CS = ax.contour(xx, yy, z, cmap="winter", edgecolor="none")
-        ax.clabel(CS, inline=1, fontsize=10)
+        ax.clabel(CS, inline=1, fontsize=FONTSIZE_NORMAL)
 
         if (scatter is True) and (three is False):
             plt.scatter(
@@ -443,7 +440,7 @@ def plot_infl(data, s, xi):
     # add indexes to points in plot
     for i, txt in enumerate(range(len(data))):
         ax.annotate(
-            txt, (i, z[i]), fontsize=10, size=10, ha="center", va="center"
+            txt, (i, z[i]), fontsize=FONTSIZE_NORMAL, size=SIZE_NORMAL, ha="center", va="center"
         )
 
     ax.legend()
@@ -597,37 +594,8 @@ def density_attractor(
 def plot_clust_dict(data, lab_dict):
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-        18: "lime",
-        19: "peru",
-        20: "dodgerblue",
-        21: "teal",
-        22: "royalblue",
-        23: "tomato",
-        24: "bisque",
-        25: "palegreen",
-    }
-
     col = [
-        colors[lab_dict.label[i] % len(colors)]
+        COLOR_DICT[lab_dict.label[i] % len(COLOR_DICT)]
         if lab_dict.label[i] != -1
         else "red"
         for i in range(len(lab_dict))
@@ -659,8 +627,8 @@ def plot_clust_dict(data, lab_dict):
         ax.annotate(
             txt,
             (np.array(data)[i, 0], np.array(data)[i, 1]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
@@ -669,6 +637,7 @@ def plot_clust_dict(data, lab_dict):
 
 
 def extract_cluster_labels(data, cld, tol=2):
+
     def similarity(x, y, tol=0.1):
         if (abs(x[0] - y[0]) <= tol) and (abs(x[1] - y[1]) <= tol):
             return True

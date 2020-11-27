@@ -28,6 +28,7 @@ from pyclustering.utils import linear_sum, square_sum
 from pyclustering.cluster.encoder import type_encoding
 from clustviz._birch.cftree import cftree, measurement_type
 from pyclustering.container.cftree import cfentry
+from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
 def plot_tree_fin(tree, info=False):
@@ -53,27 +54,6 @@ def plot_tree_fin(tree, info=False):
         print("Too many nodes, limit is 2704")
 
         return
-
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
 
     def feat_create(level_nodes):
         """
@@ -142,7 +122,7 @@ def plot_tree_fin(tree, info=False):
                 dot.node(
                     lett[placeholder + q],
                     str(single_entries[q - 1]),
-                    color=colors[(q - 1) % 17],
+                    color=COLOR_DICT[(q - 1) % len(COLOR_DICT)],
                     style="filled",
                 )
 
@@ -181,27 +161,6 @@ def plot_birch_leaves(tree, data):
 
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
-
     # plot every point in white
     plt.scatter(
         np.array(data)[:, 0],
@@ -220,7 +179,7 @@ def plot_birch_leaves(tree, data):
                 plt.scatter(
                     entry.linear_sum[0],
                     entry.linear_sum[1],
-                    color=colors[i % 18],
+                    color=COLOR_DICT[i % len(COLOR_DICT)],
                     s=300,
                     edgecolor="black",
                 )
@@ -229,7 +188,7 @@ def plot_birch_leaves(tree, data):
                 plt.scatter(
                     entry.get_centroid()[0],
                     entry.get_centroid()[1],
-                    color=colors[i % 18],
+                    color=COLOR_DICT[i % len(COLOR_DICT)],
                     marker="X",
                     s=200,
                 )
@@ -244,8 +203,8 @@ def plot_birch_leaves(tree, data):
         ax.annotate(
             txt,
             (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )

@@ -1,13 +1,15 @@
+import math
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from clustviz.optics import dist1
-from clustviz.agglomerative import dist_mat_gen, encircle, convert_colors
+from clustviz.agglomerative import dist_mat_gen
 from matplotlib.patches import Rectangle
 from collections import Counter, OrderedDict
 from copy import deepcopy
 import random
-import math
+
+from clustviz.utils import dist1, encircle, convert_colors, chernoffBounds, COLOR_DICT, CURE_REPS_COLORS, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
 
 
 def point_plot_mod2(
@@ -69,27 +71,7 @@ def point_plot_mod2(
     # drops the totally null columns, so that the number of columns goes to 2*(cardinality of biggest cluster)
     a = a.dropna(1, how="all")
 
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
-    color_dict_rect = convert_colors(colors, alpha=0.3)
+    color_dict_rect = convert_colors(COLOR_DICT, alpha=0.3)
 
     # to speed things up, this splits all points inside the clusters' names, and start gives the starting index
     # that shows where clusters with more than 1 element start (because they are always appended to a)
@@ -104,13 +86,13 @@ def point_plot_mod2(
             X_clust = [X[diz[point[j]], 0] for j in range(len(point))]
             Y_clust = [X[diz[point[j]], 1] for j in range(len(point))]
 
-            ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
+            ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)])
         else:
             point = [int(i) for i in point]
             X_clust = [X[point[j], 0] for j in range(len(point))]
             Y_clust = [X[point[j], 1] for j in range(len(point))]
 
-            ax.scatter(X_clust, Y_clust, s=350, color=colors[ind % 18])
+            ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)])
 
     # last merged cluster, so the last element of matrix a
     point = a.iloc[-1].name.replace("(", "").replace(")", "").split("-")
@@ -150,7 +132,7 @@ def point_plot_mod2(
                 rect_diff[0] + xwidth * 0.04,
                 rect_diff[1] + ywidth * 0.08,
                 fill=True,
-                color=color_dict_rect[ind % 18],
+                color=color_dict_rect[ind % len(COLOR_DICT)],
                 linewidth=3,
                 ec="red",
             )
@@ -160,7 +142,7 @@ def point_plot_mod2(
             X_clust,
             Y_clust,
             ax=ax,
-            color=color_dict_rect[ind % 18],
+            color=color_dict_rect[ind % len(COLOR_DICT)],
             linewidth=3,
             ec="red",
         )
@@ -172,8 +154,8 @@ def point_plot_mod2(
             ax.annotate(
                 txt,
                 (X[:, 0][i], X[:, 1][i]),
-                fontsize=10,
-                size=10,
+                fontsize=FONTSIZE_NORMAL,
+                size=SIZE_NORMAL,
                 ha="center",
                 va="center",
             )
@@ -182,8 +164,8 @@ def point_plot_mod2(
             ax.annotate(
                 txt,
                 (X[:, 0][i], X[:, 1][i]),
-                fontsize=10,
-                size=10,
+                fontsize=FONTSIZE_NORMAL,
+                size=SIZE_NORMAL,
                 ha="center",
                 va="center",
             )
@@ -192,23 +174,23 @@ def point_plot_mod2(
     ax.annotate(
         "min_dist: " + str(round(level_txt, 5)),
         (xmax * 0.75, ymax * 0.9),
-        fontsize=12,
-        size=12,
+        fontsize=FONTSIZE_BIGGER,
+        size=SIZE_BIGGER,
     )
 
     if level2_txt is not None:
         ax.annotate(
             "dist_incr: " + str(round(level2_txt, 5)),
             (xmax * 0.75, ymax * 0.8),
-            fontsize=12,
-            size=12,
+            fontsize=FONTSIZE_BIGGER,
+            size=SIZE_BIGGER,
         )
 
     ax.annotate(
         "n° clust: " + str(len(a)),
         (xmax * 0.75, ymax * 0.7),
-        fontsize=12,
-        size=12,
+        fontsize=FONTSIZE_BIGGER,
+        size=SIZE_BIGGER,
     )
 
     plt.show()
@@ -231,21 +213,12 @@ def point_plot_mod2(
                     X[diz[point[j]], 0],
                     X[diz[point[j]], 1],
                     s=350,
-                    color=colors[ind % 18],
+                    color=COLOR_DICT[ind % len(COLOR_DICT)],
                 )
             point = [diz[point[i]] for i in range(len(point))]
             coms.append(X[point].mean(axis=0))
 
         # variations of red to plot the representative points of the various clusters
-        colors_reps = [
-            "red",
-            "crimson",
-            "indianred",
-            "lightcoral",
-            "salmon",
-            "darksalmon",
-            "firebrick",
-        ]
 
         # flattening the last_reps values
         flat_reps = [
@@ -266,13 +239,13 @@ def point_plot_mod2(
             ]
 
             plt.scatter(
-                x, y, s=400, color=colors_reps[i % 7], edgecolor="black"
+                x, y, s=400, color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)], edgecolor="black"
             )
             plt.scatter(
                 coms[i][0],
                 coms[i][1],
                 s=400,
-                color=colors_reps[i % 7],
+                color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
                 marker="X",
                 edgecolor="black",
             )
@@ -282,7 +255,7 @@ def point_plot_mod2(
                     plt.Circle(
                         (x[num], y[num]),
                         xwidth * 0.03,
-                        color=colors_reps[i % 7],
+                        color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
                         fill=False,
                         linewidth=3,
                         alpha=0.7,
@@ -320,8 +293,8 @@ def point_plot_mod2(
             ax.annotate(
                 txt,
                 (X[:, 0][i], X[:, 1][i]),
-                fontsize=10,
-                size=10,
+                fontsize=FONTSIZE_NORMAL,
+                size=SIZE_NORMAL,
                 ha="center",
                 va="center",
             )
@@ -331,8 +304,8 @@ def point_plot_mod2(
                 ax.annotate(
                     txt,
                     (not_sampled[:, 0][i], not_sampled[:, 1][i]),
-                    fontsize=10,
-                    size=10,
+                    fontsize=FONTSIZE_NORMAL,
+                    size=SIZE_NORMAL,
                     ha="center",
                     va="center",
                 )
@@ -558,27 +531,20 @@ def cure(
     not_sampled_ind=None,
 ):
     """
-    CURE algorithm: hierarchical agglomerative clustering using representatives.
+    CURE algorithm: hierarchical agglomerative clustering using representatives. The parameters which default to
+    None are used for the large dataset variation of CURE.
 
     :param X: input data array.
     :param k: desired number of clusters.
     :param c: number of representatives for each cluster.
     :param alpha: parameter that regulates the shrinking of representative points toward the centroid.
     :param plotting: if True, plots all intermediate steps.
-
-    #the following parameter are used for the large dataset variation of CURE
-
-    :param preprocessed_data: if not None, must be of the form (clusters,representatives,matrix_a,X_dist1),
-                              which is used to perform a warm start.
-    :param partial_index: if not None, is is used as index of the matrix_a, of cluster points and of
-                          representatives.
+    :param preprocessed_data: if not None, must be of the form (clusters,representatives,matrix_a,X_dist1), which is used to perform a warm start.
+    :param partial_index: if not None, is is used as index of the matrix_a, of cluster points and of representatives.
     :param n_rep_finalclust: the final representative points used to classify the not_sampled points.
     :param not_sampled: points not sampled in the initial phase.
     :param not_sampled_ind: indexes of not_sampled points.
-    :return (clusters, rep, a): returns the clusters dictionary, the dictionary of representatives,
-                                the matrix a
-
-
+    :return (clusters, rep, a): returns the clusters dictionary, the dictionary of representatives, the matrix a
     """
 
     # starting from raw data
@@ -771,38 +737,11 @@ def plot_results_cure(clust):
     for num_clust in range(len(clust)):
         cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
         try:
-            plt.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1], s=300)
+            ax.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1], s=300)
         except:
-            plt.scatter(cl_list[-1][0], cl_list[-1][1], s=300)
+            ax.scatter(cl_list[-1][0], cl_list[-1][1], s=300)
+
     plt.show()
-
-
-def Chernoff_Bounds(u_min, f, N, d, k):
-    """
-    u_min: size of the smallest cluster u.
-    f: percentage of cluster points (0 <= f <= 1).
-    N: total size.
-    s: sample size.
-    d: 0 <= d <= 1
-    the probability that the sample contains less than f*|u| points of cluster u is less than d.
-
-    If one uses as |u| the minimum cluster size we are interested in, the result is
-    the minimum sample size that guarantees that for k clusters
-    the probability of selecting fewer than f*|u| points from any one of the clusters u is less than k*d.
-
-    """
-
-    l = np.log(1 / d)
-    res = (
-        f * N + N / u_min * l + N / u_min * np.sqrt(l ** 2 + 2 * f * u_min * l)
-    )
-    print(
-        "If the sample size is {0}, the probability of selecting fewer "
-        "than {1} points from".format(math.ceil(res), round(f * u_min))
-        + " any one of the clusters is less than {0}".format(k * d)
-    )
-
-    return res
 
 
 def dist_mat_gen_cure(dictionary):
@@ -867,8 +806,7 @@ def cure_sample_part(
     :param q: the number >1 such that each partition reduces to n/(pq) clusters.
     :param n_rep_finalclust: number of representatives to use in the final assignment phase.
     :param plotting: if True, plots all intermediate steps.
-    :return (clusters, rep, mat_a): returns the clusters dictionary, the dictionary of representatives,
-                                the matrix a
+    :return (clusters, rep, mat_a): returns the clusters dictionary, the dictionary of representatives, the matrix a.
     """
 
     # choose the parameters suggested by the paper if the user doesnt provide input parameters
@@ -895,10 +833,11 @@ def cure_sample_part(
             print("new f: ", f)
             print("new d: ", d)
             n = math.ceil(
-                Chernoff_Bounds(u_min=u_min, f=f, N=len(X), k=k, d=d)
+                chernoffBounds(u_min=u_min, f=f, N=len(X), k=k, d=d)
             )
             b_sampled = b.sample(n, random_state=42)
             break
+
         except:
             if f >= 0.19:
                 f = f - 0.1
@@ -934,10 +873,10 @@ def cure_sample_part(
     for num_p in range(p):
         try:
             b_partitions.append(
-                b_sampled.iloc[lin_sp[num_p] : lin_sp[num_p + 1]]
+                b_sampled.iloc[lin_sp[num_p]: lin_sp[num_p + 1]]
             )
         except:
-            b_partitions.append(b_sampled.iloc[lin_sp[num_p] :])
+            b_partitions.append(b_sampled.iloc[lin_sp[num_p]:])
 
     k_prov = round(n / (p * q))
 

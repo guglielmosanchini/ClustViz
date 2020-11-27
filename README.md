@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/guglielmosanchini/ClustViz.svg?branch=master)](https://travis-ci.com/guglielmosanchini/ClustViz)
-[![Coverage Status](https://coveralls.io/repos/github/guglielmosanchini/ClustViz/badge.svg?branch=master)](https://coveralls.io/github/guglielmosanchini/ClustViz?branch=master)
+[![codecov](https://codecov.io/gh/guglielmosanchini/ClustViz/branch/master/graph/badge.svg)](https://codecov.io/gh/guglielmosanchini/ClustViz)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 # ClustViz

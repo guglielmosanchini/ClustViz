@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import pprint
+from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
 class KMedoids:
@@ -50,7 +51,6 @@ class KMedoids:
         self.__data = data
         self.__set_data_type()
         self.__start_algo()
-        return self
 
     def __start_algo(self):
         print("starting algo")
@@ -317,34 +317,13 @@ def plot_pam(data, cl, equal_axis_scale=False):
         edgecolor="black",
     )
 
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-    }
-
     # plot the points with colors according to the cluster they belong to
     for i, el in enumerate(list(cl.values())):
         plt.scatter(
             np.array(data)[el, 0],
             np.array(data)[el, 1],
             s=300,
-            color=colors[i % 18],
+            color=COLOR_DICT[i % len(COLOR_DICT)],
             edgecolor="black",
         )
 
@@ -364,8 +343,8 @@ def plot_pam(data, cl, equal_axis_scale=False):
         ax.annotate(
             txt,
             (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )

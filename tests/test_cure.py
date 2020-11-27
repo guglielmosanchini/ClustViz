@@ -3,7 +3,7 @@ from clustviz.cure import (
     update_mat_cure,
     sel_rep_fast,
     sel_rep,
-    Chernoff_Bounds,
+    chernoffBounds,
     dist_mat_gen_cure,
     cure_sample_part,
     cure,
@@ -83,7 +83,7 @@ def test_Chernoff_Bounds():
     d = 0.9
     k = 3
 
-    assert round(Chernoff_Bounds(u_min, f, N, d, k), 2) == 23.03
+    assert round(chernoffBounds(u_min, f, N, d, k), 2) == 23.03
 
 
 def test_dist_mat_gen_cure():

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 import pandas as pd
 
+from clustviz.utils import dist1, dist2, DBSCAN_COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+
 
 def point_plot(X, X_dict, o, eps, processed=None, col="yellow"):
     """
@@ -50,23 +52,13 @@ def point_plot(X, X_dict, o, eps, processed=None, col="yellow"):
         ax.annotate(
             txt,
             (X[:, 0][i], X[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
 
     plt.show()
-
-
-def dist1(x, y):
-    """Original euclidean distance"""
-    return np.sqrt(np.sum((x - y) ** 2))
-
-
-def dist2(data, x, y):
-    """ Euclidean distance which takes keys of a dictionary (X_dict) as inputs """
-    return np.sqrt(np.sum((data[x] - data[y]) ** 2))
 
 
 def scan_neigh1(data, point, eps):
@@ -360,23 +352,6 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
         index=new_dict.keys(),
     )
 
-    colors = {
-        -1: "red",
-        0: "lightblue",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "navy",
-        6: "orange",
-        7: "purple",
-        8: "salmon",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "lime",
-    }
-
     # first plot: scatter plot of points colored according to the cluster they belong to
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
 
@@ -388,7 +363,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
             x="x",
             y="y",
             label=key,
-            color=colors[key % 13 if key != -1 else -1],
+            color=DBSCAN_COLOR_DICT[key % len(DBSCAN_COLOR_DICT) if key != -1 else -1],
             s=300,
             edgecolor="black",
         )
@@ -400,8 +375,8 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
         ax1.annotate(
             txt,
             (X[:, 0][i], X[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
@@ -422,7 +397,7 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax2.bar(
         plot_dic.keys(),
         plot_dic.values(),
-        color=[colors[i % 13] if i != -1 else "red" for i in df.label],
+        color=[DBSCAN_COLOR_DICT[i % len(DBSCAN_COLOR_DICT)] if i != -1 else DBSCAN_COLOR_DICT[-1] for i in df.label],
     )
 
     ax2.axhline(eps, color="black", linewidth=3)

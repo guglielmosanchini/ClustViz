@@ -5,10 +5,7 @@ from tqdm.auto import tqdm
 from collections import OrderedDict, Counter
 import matplotlib.pyplot as plt
 import metis
-
-
-def euclidean_distance(a, b):
-    return np.linalg.norm(np.array(a) - np.array(b))
+from clustviz.utils import euclidean_distance, COLOR_DICT
 
 
 def knn_graph(df, k, verbose=False):
@@ -22,7 +19,7 @@ def knn_graph(df, k, verbose=False):
     )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1 : k + 1]  # second through kth closest
+        closests = np.argsort(distances)[1: k + 1]  # second through kth closest
         for c in closests:
             g.add_edge(
                 i,
@@ -46,10 +43,10 @@ def knn_graph_sym(df, k, verbose=False):
     )
     for i, p in iterpoints:
         distances = list(map(lambda x: euclidean_distance(p, x), points))
-        closests = np.argsort(distances)[1 : k + 1]  # second through kth closest
+        closests = np.argsort(distances)[1: k + 1]  # second through kth closest
         for c in closests:
             distances2 = list(map(lambda x: euclidean_distance(points[c], x), points))
-            closests2 = np.argsort(distances2)[1 : k + 1]
+            closests2 = np.argsort(distances2)[1: k + 1]
             if i in closests2:
                 g.add_edge(
                     i,
@@ -127,6 +124,7 @@ def connecting_edges(partitions, graph):
     return only the edges that connect nodes of the first cluster with nodes of the second cluster, in the form of
     a list of tuples [(0, 5), (3, 5)] (e.g. the only connecting-edges are the ones connecting node_0 to node_5 and
     node_3 to node_5
+
     :param partitions: tuple with two clusters.
     :param graph: NetworkX graph.
 
@@ -162,38 +160,10 @@ def bisection_weights(graph, cluster):
 
 def plot2d_graph(graph, print_clust=True):
     pos = nx.get_node_attributes(graph, "pos")
-    colors = {
-        0: "seagreen",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "turquoise",
-        6: "orange",
-        7: "purple",
-        8: "yellowgreen",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "plum",
-        13: "rosybrown",
-        14: "lightblue",
-        15: "khaki",
-        16: "gainsboro",
-        17: "peachpuff",
-        18: "lime",
-        19: "peru",
-        20: "dodgerblue",
-        21: "teal",
-        22: "royalblue",
-        23: "tomato",
-        24: "bisque",
-        25: "palegreen",
-    }
 
     el = nx.get_node_attributes(graph, "cluster").values()
     cmc = Counter(el).most_common()
-    c = [colors[i % len(colors)] for i in el]
+    c = [COLOR_DICT[i % len(COLOR_DICT)] for i in el]
 
     if print_clust is True:
         print("clusters: ", cmc)

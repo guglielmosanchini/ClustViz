@@ -105,7 +105,7 @@ jobs:
 
       - name: Perform tests (coveralls is skipped, replaced by codecov below)
         # env:
-          # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
+          # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TravisCI
         if: always() # otherwise it would not be executed, since the previous step failed
         run: |
           python3 -m pytest --cov=clustviz/ --cov-report xml  --flake8

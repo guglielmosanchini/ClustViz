@@ -1,8 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import OrderedDict
-from clustviz.optics import dist1
 import random
+from clustviz.utils import dist1, DBSCAN_COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
 def scan_neigh1_mod(data, point, eps):
@@ -43,23 +43,6 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
     """
 
-    colors = {
-        -1: "red",
-        0: "lightblue",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "navy",
-        6: "orange",
-        7: "purple",
-        8: "salmon",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "lime",
-    }
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # plot scatter points in color lime
@@ -68,7 +51,7 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
     # plot colors according to clusters
     for i in ClustDict:
         plt.scatter(
-            X_dict[i][0], X_dict[i][1], color=colors[ClustDict[i] % 12], s=300
+            X_dict[i][0], X_dict[i][1], color=DBSCAN_COLOR_DICT[ClustDict[i] % (len(DBSCAN_COLOR_DICT) - 1)], s=300
         )
 
     # plot the last added point bigger and black, with a red circle surrounding it
@@ -91,8 +74,8 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
         ax.annotate(
             txt,
             (X[:, 0][i], X[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
@@ -102,14 +85,14 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
 
 def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     """
-    Scatter plot of the data points, colored according to the cluster they belong to; circle_class Plots
-    circles around some or all points, with a radius of eps; if Noise_circle is True, circle are also plotted
+    Scatter plot of the data points, colored according to the cluster they belong to; circle_class plots
+    circles around some or all points, with a radius of eps; if noise_circle is True, circle are also plotted
     around noise points.
 
     :param X: input array.
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN.
     :param eps: radius of the circles to plot around the points.
-    :param circle_class: if == "true", plots circles around every non-noise point, else plots circles
+    :param circle_class: if == "all", plots circles around every non-noise point, else plots circles
                          only around points belonging to certain clusters, e.g. circle_class = [1,2] will
                          plot circles around points belonging to clusters 1 and 2.
     :param noise_circle: if True, plots circles around noise points
@@ -135,23 +118,6 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
         index=new_dict.keys(),
     )
 
-    colors = {
-        -1: "red",
-        0: "lightblue",
-        1: "lightcoral",
-        2: "yellow",
-        3: "grey",
-        4: "pink",
-        5: "navy",
-        6: "orange",
-        7: "purple",
-        8: "salmon",
-        9: "olive",
-        10: "brown",
-        11: "tan",
-        12: "lime",
-    }
-
     fig, ax1 = plt.subplots(1, 1, figsize=(18, 6))
 
     lista_lab = list(df.label.value_counts().index)
@@ -162,7 +128,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
         plt.scatter(
             df_sub.x,
             df_sub.y,
-            color=colors[lab % 12],
+            color=DBSCAN_COLOR_DICT[lab % (len(DBSCAN_COLOR_DICT) - 1)],
             s=300,
             edgecolor="black",
         )
@@ -187,7 +153,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     # plot circles around points, colored according to the cluster they belong to
     if circle_class is not None:
         # around every points or only around specified clusters
-        if circle_class != "true":
+        if circle_class != "all":
             lista_lab = circle_class
 
         for lab in lista_lab:
@@ -201,7 +167,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
                         plt.Circle(
                             (df_temp["x"].iloc[i], df_temp["y"].iloc[i]),
                             eps,
-                            color=colors[lab],
+                            color=DBSCAN_COLOR_DICT[lab % (len(DBSCAN_COLOR_DICT) - 1)],
                             fill=False,
                             linewidth=3,
                             alpha=0.7,
@@ -216,8 +182,8 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
         ax1.annotate(
             txt,
             (X[:, 0][i], X[:, 1][i]),
-            fontsize=10,
-            size=10,
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
             ha="center",
             va="center",
         )
