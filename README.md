@@ -124,6 +124,9 @@ the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.
 - add more clustering algorithms
 - comment every code block and improve code quality
 - pymetis doesnt work on Windows, but could be an option for MacOS
+- to use the latest NetworkX (currrently, 2.5), replace all .node to .nodes in chameleon.py, chameleon2.py, 
+graphtools.py and in metis.py (venv/Lib/site-packages/metis.py); this would allow, too, to upgrade 
+Matplotlib.
 
 
 ## TravisCI path
