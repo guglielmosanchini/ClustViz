@@ -52,7 +52,7 @@ jobs:
         # python -m coveralls
       env:
         METIS_DLL: D:\a\ClustViz\ClustViz\conda-metis-master\build\windows\libmetis\Release\metis.dll
-        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TraviCI
+        # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }} # it isnt needed on TravisCI
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
@@ -95,7 +95,8 @@ jobs:
       - name: setting env
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
+        # echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so"
+            echo "METIS_DLL=$GITHUB_WORKSPACE/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so" >> $GITHUB_ENV
           elif [ "$RUNNER_OS" == "macOS" ]; then
             echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Darwin-x86_64/libmetis/libmetis.dylib"
           else
