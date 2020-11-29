@@ -281,7 +281,7 @@ def connect_cubes(hp_cubes, cubes, s, dist="euclidean"):
                     rel_keys.append([k1, k2])
         i += 1
 
-    keys_fin = [item for sublist in rel_keys for item in sublist]
+    keys_fin = flatten_list(rel_keys)
 
     new_cubes = {i: cubes[i] for i in keys_fin}
 
@@ -299,7 +299,7 @@ def near_with_cube(x, cube_x, tot_cubes, s):  # includes the point itself
         if (d <= 4 * s) and (check_connection(cube_x, cube, s)):
             near_list.append(cube[2])
 
-    near_list = [item for sublist in near_list for item in sublist]
+    near_list = flatten_list(near_list)
 
     return near_list
 
@@ -326,7 +326,7 @@ def near_without_cube(
         if (d <= 4 * s) and (check_connection(cube_x, cube, s)):
             near_list.append(cube[2])
 
-    near_list = [item for sublist in near_list for item in sublist]
+    near_list = flatten_list(near_list)
 
     return near_list
 

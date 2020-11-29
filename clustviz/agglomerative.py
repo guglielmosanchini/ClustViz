@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.patches import Rectangle
-from clustviz.utils import convert_colors, encircle, dist1, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
+from clustviz.utils import convert_colors, encircle, dist1, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
 
 
 def update_mat(mat, i, j, linkage):
@@ -425,7 +425,7 @@ def agg_clust(X, linkage, plotting=True):
 
     # build matrix a, used to store points of clusters with their coordinates
     l = [[i, i] for i in range(len(X))]
-    flat_list = [item for sublist in l for item in sublist]
+    flat_list = flatten_list(l)
     col = [
         str(el) + "x" if i % 2 == 0 else str(el) + "y"
         for i, el in enumerate(flat_list)

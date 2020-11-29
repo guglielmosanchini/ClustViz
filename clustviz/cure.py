@@ -9,7 +9,7 @@ from collections import Counter, OrderedDict
 from copy import deepcopy
 import random
 
-from clustviz.utils import dist1, encircle, convert_colors, chernoffBounds, COLOR_DICT, CURE_REPS_COLORS, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
+from clustviz.utils import dist1, encircle, convert_colors, chernoffBounds, flatten_list, COLOR_DICT, CURE_REPS_COLORS, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
 
 
 def point_plot_mod2(
@@ -221,9 +221,7 @@ def point_plot_mod2(
         # variations of red to plot the representative points of the various clusters
 
         # flattening the last_reps values
-        flat_reps = [
-            item for sublist in list(last_reps.values()) for item in sublist
-        ]
+        flat_reps = flatten_list(list(last_reps.values()))
 
         # plotting the representatives, surrounded by small circles, and the centers of mass, marked with X
         for i in range(len(last_reps)):
@@ -551,7 +549,7 @@ def cure(
     if preprocessed_data is None:
         # building a dataframe storing the x and y coordinates of input data points
         l = [[i, i] for i in range(len(X))]
-        flat_list = [item for sublist in l for item in sublist]
+        flat_list = flatten_list(l)
         col = [
             str(el) + "x" if i % 2 == 0 else str(el) + "y"
             for i, el in enumerate(flat_list)
@@ -817,7 +815,7 @@ def cure_sample_part(
         n_rep_finalclust = c
 
     l = [[i, i] for i in range(len(X))]
-    flat_list = [item for sublist in l for item in sublist]
+    flat_list = flatten_list(l)
     col = [
         str(el) + "x" if i % 2 == 0 else str(el) + "y"
         for i, el in enumerate(flat_list)
