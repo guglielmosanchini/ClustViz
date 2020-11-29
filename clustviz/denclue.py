@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from itertools import groupby
 from collections import OrderedDict, Counter
 
-from clustviz.utils import euclidean_distance, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import euclidean_distance, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
 
 
 def gauss_infl_function(x, y, s, dist="euclidean"):
@@ -702,11 +702,10 @@ def DENCLUE(
         plot_3d_both(data, s=s, xi=xi, prec=prec)
 
     if len(new_cubes) != 0:
-        points_to_process = [
-            item
-            for sublist in np.array(list(new_cubes.values()))[:, 2]
-            for item in sublist
-        ]
+
+        temp_points = [cube[2] for cube in list(new_cubes.values())]
+        points_to_process = flatten_list(temp_points)
+
     else:
         points_to_process = []
 
