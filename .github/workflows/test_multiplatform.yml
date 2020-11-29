@@ -97,7 +97,7 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then
             echo "METIS_DLL=$GITHUB_WORKSPACE/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.so" >> $GITHUB_ENV
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            echo "::set-env name=METIS_DLL::$GITHUB_WORKSPACE/metis-5.1.0/build/Darwin-x86_64/libmetis/libmetis.dylib"
+            echo "METIS_DLL=$GITHUB_WORKSPACE/metis-5.1.0/build/Darwin-x86_64/libmetis/libmetis.dylib" >> $GITHUB_ENV
           else
             echo "$RUNNER_OS not supported"
             exit 1
