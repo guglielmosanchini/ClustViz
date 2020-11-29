@@ -89,6 +89,10 @@ CURE_REPS_COLORS = [
 ]
 
 
+def flatten_list(input_list):
+    return [item for sublist in input_list for item in sublist]
+
+
 def encircle(x, y, ax, **kwargs):
     """plot a line-boundary around a cluster (at least 3 points are required)"""
     p = np.c_[x, y]
