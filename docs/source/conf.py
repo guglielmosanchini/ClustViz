@@ -15,7 +15,7 @@ import os
 import sys
 current_dir = os.path.dirname(__file__)
 target_dir = os.path.abspath(os.path.join(current_dir, "../../"))
-target_dir_internal = os.path.abspath(os.path.join(current_dir, "../../clustviz/"))  # for birch and chameleon
+target_dir_internal = os.path.abspath(os.path.join(current_dir, "../../clustviz/"))  # for chameleon
 sys.path.insert(0, target_dir)
 sys.path.insert(1, target_dir_internal)
 

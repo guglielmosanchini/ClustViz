@@ -1,6 +1,6 @@
 import itertools
-from clustviz._chameleon.graphtools import *
-from clustviz._chameleon.chameleon import (
+from clustviz.chameleon.graphtools import *
+from clustviz.chameleon.chameleon import (
     internal_closeness,
     get_cluster,
     len_edges,

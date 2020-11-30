@@ -1,2 +1,2 @@
-from ._birch import birch
-from ._chameleon import chameleon, chameleon2
+# from ._birch import birch
+from .chameleon import chameleon, chameleon2

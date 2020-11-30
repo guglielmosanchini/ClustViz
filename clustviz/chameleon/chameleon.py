@@ -1,5 +1,5 @@
 import itertools
-from clustviz._chameleon.graphtools import *
+from clustviz.chameleon.graphtools import *
 from collections import Counter
 
 

@@ -1,11 +1,11 @@
-from clustviz._chameleon.graphtools import (
+from clustviz.chameleon.graphtools import (
     knn_graph,
     pre_part_graph,
     plot2d_graph,
     plot2d_data,
 )
-from clustviz._chameleon.chameleon2 import cluster2, conn_comp
-from clustviz._chameleon.chameleon import merge_best
+from clustviz.chameleon.chameleon2 import cluster2, conn_comp
+from clustviz.chameleon.chameleon import merge_best
 
 import pandas as pd
 from sklearn.datasets import make_blobs
