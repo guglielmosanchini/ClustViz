@@ -50,7 +50,8 @@ class clarans:
         represented by list or tuple.
         @param[in] number_clusters (uint): Amount of clusters that should be allocated.
         @param[in] numlocal (uint): The number of local minima obtained (amount of iterations for solving the
-        problem). @param[in] maxneighbor (uint): The maximum number of neighbors examined.
+        problem).
+        @param[in] maxneighbor (uint): The maximum number of neighbors examined.
 
         """
 

@@ -132,8 +132,7 @@ def chernoffBounds(u_min, f, N, d, k):
     f: percentage of cluster points (0 <= f <= 1).
     N: total size.
     s: sample size.
-    d: 0 <= d <= 1
-    the probability that the sample contains less than f*|u| points of cluster u is less than d.
+    d: the probability that the sample contains less than f*|u| points of cluster u is less than d.
 
     If one uses as |u| the minimum cluster size we are interested in, the result is
     the minimum sample size that guarantees that for k clusters
