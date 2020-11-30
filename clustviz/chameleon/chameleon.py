@@ -111,8 +111,8 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
 
         df.loc[df["cluster"] == cj, "cluster"] = ci
         for i, p in enumerate(graph.nodes()):
-            if graph.node[p]["cluster"] == cj:
-                graph.node[p]["cluster"] = ci
+            if graph.nodes[p]["cluster"] == cj:
+                graph.nodes[p]["cluster"] = ci
     else:
         if verbose:
             print("No Merging")
@@ -148,7 +148,7 @@ def cluster(
 
     # to account for cases where initial_clust is too big or k is already reached before the merging phase
     cl_dict = OrderedDict({
-        list(graph.node)[i]: graph.node[i]["cluster"]
+        list(graph.nodes)[i]: graph.nodes[i]["cluster"]
         for i in range(len(graph))
     })
     m = len(Counter(cl_dict.values()))

@@ -4,7 +4,7 @@ import networkx as nx
 from tqdm.auto import tqdm
 from collections import OrderedDict, Counter
 import matplotlib.pyplot as plt
-import metis
+import metispy as metis
 from clustviz.utils import euclidean_distance, COLOR_DICT
 
 
@@ -27,7 +27,7 @@ def knn_graph(df, k, verbose=False):
                 weight=1.0 / distances[c],
                 similarity=int(1.0 / distances[c] * 1e4),
             )
-        g.node[i]["pos"] = p
+        g.nodes[i]["pos"] = p
     g.graph["edge_weight_attr"] = "similarity"
     return g
 
@@ -54,7 +54,7 @@ def knn_graph_sym(df, k, verbose=False):
                     weight=1.0 / distances[c],
                     similarity=int(1.0 / distances[c] * 1e4),
                 )
-        g.node[i]["pos"] = p
+        g.nodes[i]["pos"] = p
     g.graph["edge_weight_attr"] = "similarity"
     return g
 
@@ -64,7 +64,7 @@ def part_graph(graph, k, df=None):
     edgecuts, parts = metis.part_graph(graph, 2, objtype="cut", ufactor=250, seed=42)
     # print(edgecuts)
     for i, p in enumerate(graph.nodes()):
-        graph.node[p]["cluster"] = parts[i]
+        graph.nodes[p]["cluster"] = parts[i]
     if df is not None:
         df["cluster"] = nx.get_node_attributes(graph, "cluster").values()
     return graph
@@ -76,8 +76,8 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
         print("Begin clustering...")
     clusters = 0
     for i, p in enumerate(graph.nodes()):
-        graph.node[p]["cluster"] = 0
-    cnts = OrderedDict({0: len(graph.node())})
+        graph.nodes[p]["cluster"] = 0
+    cnts = OrderedDict({0: len(graph.nodes())})
     while clusters < k - 1:
         maxc = -1
         maxcnt = 0
@@ -87,7 +87,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
                 maxc = key
                 maxcnt = val
         # take the nodes of the biggest cluster
-        s_nodes = [n for n in graph.node if graph.node[n]["cluster"] == maxc]
+        s_nodes = [n for n in graph.nodes if graph.nodes[n]["cluster"] == maxc]
         s_graph = graph.subgraph(s_nodes)
         # bisect the biggest cluster such that the edge-cut is minimized
         edgecuts, parts = metis.part_graph(
@@ -98,7 +98,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
         new_biggest_clust_label = pd.Series(parts).value_counts().idxmax()
         for i, p in enumerate(s_graph.nodes()):
             if parts[i] == new_biggest_clust_label:
-                graph.node[p]["cluster"] = clusters + 1
+                graph.nodes[p]["cluster"] = clusters + 1
                 new_part_cnt += 1
         if plotting is True:
             plot2d_graph(graph)
@@ -115,7 +115,7 @@ def pre_part_graph(graph, k, df=None, verbose=True, plotting=False):
 
 def get_cluster(graph, clusters):
     """return the list of nodes belonging to specific cluster(s)"""
-    nodes = [n for n in graph.node if graph.node[n]["cluster"] in clusters]
+    nodes = [n for n in graph.nodes if graph.nodes[n]["cluster"] in clusters]
     return nodes
 
 

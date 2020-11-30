@@ -108,8 +108,8 @@ def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
 
         df.loc[df["cluster"] == cj, "cluster"] = ci
         for i, p in enumerate(graph.nodes()):
-            if graph.node[p]["cluster"] == cj:
-                graph.node[p]["cluster"] = ci
+            if graph.nodes[p]["cluster"] == cj:
+                graph.nodes[p]["cluster"] = ci
     else:
         print("No Merging")
         print("score: ", max_score)
@@ -240,7 +240,7 @@ def conn_comp(knn_gr):
 def flood_fill(graph, knn_gr, df):
     len_0_clusters = 0
     cl_dict = {
-        list(graph.node)[i]: graph.node[i]["cluster"]
+        list(graph.nodes)[i]: graph.nodes[i]["cluster"]
         for i in range(len(graph))
     }
     new_cl_ind = max(cl_dict.values()) + 1
@@ -273,7 +273,7 @@ def flood_fill(graph, knn_gr, df):
     df["cluster"] = list(cl_dict.values())
 
     for i in range(len(graph)):
-        graph.node[i]["cluster"] = cl_dict[i]
+        graph.nodes[i]["cluster"] = cl_dict[i]
 
     increased_m = max(cl_dict.values()) + 1 - len_0_clusters
 
