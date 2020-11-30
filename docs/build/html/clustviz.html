@@ -1,0 +1,1460 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>clustviz package &mdash; ClustViz 0.0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="clustviz.chameleon package" href="clustviz.chameleon.html" />
+    <link rel="prev" title="clustviz" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ClustViz
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">clustviz</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">clustviz package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="clustviz.chameleon.html">clustviz.chameleon package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.agglomerative">clustviz.agglomerative module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.birch">clustviz.birch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.clara">clustviz.clara module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.clarans">clustviz.clarans module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.cure">clustviz.cure module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.dbscan">clustviz.dbscan module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.denclue">clustviz.denclue module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.optics">clustviz.optics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.pam">clustviz.pam module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz.utils">clustviz.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-clustviz">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ClustViz</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">clustviz</a> &raquo;</li>
+        
+      <li>clustviz package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/clustviz.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="clustviz-package">
+<h1>clustviz package<a class="headerlink" href="#clustviz-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="clustviz.chameleon.html">clustviz.chameleon package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clustviz.chameleon.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustviz.chameleon.html#module-clustviz.chameleon.chameleon">clustviz.chameleon.chameleon module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustviz.chameleon.html#module-clustviz.chameleon.chameleon2">clustviz.chameleon.chameleon2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustviz.chameleon.html#module-clustviz.chameleon.graphtools">clustviz.chameleon.graphtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustviz.chameleon.html#module-clustviz.chameleon">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-clustviz.agglomerative">
+<span id="clustviz-agglomerative-module"></span><h2>clustviz.agglomerative module<a class="headerlink" href="#module-clustviz.agglomerative" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.agglomerative.agg_clust">
+<code class="sig-name descname">agg_clust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">linkage</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.agg_clust" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
+of cluster aggregation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data array</p></li>
+<li><p><strong>linkage</strong> – linkage method; can be single, complete, average or ward.</p></li>
+<li><p><strong>plotting</strong> – if True, execute plots.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.avg_dist">
+<code class="sig-name descname">avg_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.avg_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance for average_linkage method, i.e. mean[dist(x,y)] for x in a &amp; y in b</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.cl_dist">
+<code class="sig-name descname">cl_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.cl_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a &amp; y in b</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.compute_var">
+<code class="sig-name descname">compute_var</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.compute_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute total intra-cluster variance of the cluster configuration inferred from df.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data as array.</p></li>
+<li><p><strong>df</strong> – input dataframe built by agg_clust, listing the cluster and the x and y
+coordinates of each point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>centroids dataframe with their coordinates and the single variances of the corresponding
+clusters, and the total intra-cluster variance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.compute_var_sing">
+<code class="sig-name descname">compute_var_sing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">centroids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.compute_var_sing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute every internal variance in clusters; clusters are found in df,
+whereas centroids are saved in centroids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – input dataframe built by agg_clust, listing the cluster and the x and y
+coordinates of each point.</p></li>
+<li><p><strong>centroids</strong> – dataframe of the centroids of clusters, with their x and y coordinates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return var_int</dt>
+<dd class="field-even"><p>list of intra-cluster variances.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.compute_ward_ij">
+<code class="sig-name descname">compute_ward_ij</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.compute_ward_ij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute difference in total within-cluster variance, with squared euclidean
+distance, and finds the best cluster according to Ward criterion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data array.</p></li>
+<li><p><strong>df</strong> – input dataframe built by agg_clust, listing the cluster and the x and y
+coordinates of each point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(i,j) indices of best cluster (the one for which the increase in intra-cluster variance is minimum)
+new_summ: new total intra-cluster variance
+par_var: increment in total intra-cluster variance, i.e. minimum increase in total intra-cluster variance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.dist_mat">
+<code class="sig-name descname">dist_mat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">linkage</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.dist_mat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes as input the dataframe created by agg_clust and outputs
+the distance matrix; it is actually an upper triangular matrix, the symmetrical
+values are replaced with np.inf.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – input dataframe, with first column corresponding to x-coordinates and
+second column corresponding to y-coordinates of data points.</p></li>
+<li><p><strong>linkage</strong> – linkage method; can be single, complete, average or ward.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return D</dt>
+<dd class="field-even"><p>distance matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.dist_mat_gen">
+<code class="sig-name descname">dist_mat_gen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.dist_mat_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variation of dist_mat, uses only single_linkage method</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.point_plot_mod">
+<code class="sig-name descname">point_plot_mod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">level_txt</span></em>, <em class="sig-param"><span class="n">level2_txt</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.point_plot_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatter plot of data points, colored according to the cluster they belong to. The most recently
+merged cluster is enclosed in a rectangle of the same color as its points, with red borders.
+In the top right corner, the total distance is shown, along with the current number of clusters.
+When using Ward linkage, also the increment in distance is shown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data as array.</p></li>
+<li><p><strong>a</strong> – distance matrix built by agg_clust.</p></li>
+<li><p><strong>level_txt</strong> – dist_tot displayed.</p></li>
+<li><p><strong>level2_txt</strong> – dist_incr displayed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.sl_dist">
+<code class="sig-name descname">sl_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.sl_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance for single_linkage method, i.e. min[dist(x,y)] for x in a &amp; y in b</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.agglomerative.update_mat">
+<code class="sig-name descname">update_mat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">linkage</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.agglomerative.update_mat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the input distance matrix in the position (i,j), according to the provided
+linkage method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> – input matrix as dataframe.</p></li>
+<li><p><strong>i</strong> – row index.</p></li>
+<li><p><strong>j</strong> – column indexes.</p></li>
+<li><p><strong>linkage</strong> – linkage method; can be single, complete, average or ward.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return mat</dt>
+<dd class="field-even"><p>updated matrix as dataframe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.birch">
+<span id="clustviz-birch-module"></span><h2>clustviz.birch module<a class="headerlink" href="#module-clustviz.birch" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clustviz.birch.birch">
+<em class="property">class </em><code class="sig-name descname">birch</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">number_clusters</em>, <em class="sig-param">branching_factor=50</em>, <em class="sig-param">max_node_entries=200</em>, <em class="sig-param">diameter=0.5</em>, <em class="sig-param">type_measurement=&lt;measurement_type.CENTROID_EUCLIDEAN_DISTANCE: 0&gt;</em>, <em class="sig-param">entry_size_limit=500</em>, <em class="sig-param">diameter_multiplier=1.5</em>, <em class="sig-param">ccore=True</em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.birch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pyclustering.cluster.birch.birch</span></code></p>
+<dl class="py method">
+<dt id="clustviz.birch.birch.process">
+<code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.birch.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>!
+&#64;brief Performs cluster analysis in line with rules of BIRCH algorithm.</p>
+<p>&#64;return (birch) Returns itself (BIRCH instance).</p>
+<p>&#64;see get_clusters()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.birch.birch.return_tree">
+<code class="sig-name descname">return_tree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.birch.return_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the tree built by the algorithm</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="clustviz.birch.cftree">
+<em class="property">class </em><code class="sig-name descname">cftree</code><span class="sig-paren">(</span><em class="sig-param">branch_factor</em>, <em class="sig-param">max_entries</em>, <em class="sig-param">threshold</em>, <em class="sig-param">type_measurement=&lt;measurement_type.CENTROID_EUCLIDEAN_DISTANCE: 0&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.cftree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pyclustering.container.cftree.cftree</span></code></p>
+<dl class="py method">
+<dt id="clustviz.birch.cftree.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">entry</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.cftree.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>!
+&#64;brief Insert clustering feature to the tree.</p>
+<p>&#64;param[in] entry (cfentry): Clustering feature that should be inserted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.birch.cftree.show_feature_distribution">
+<code class="sig-name descname">show_feature_distribution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.cftree.show_feature_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>!
+&#64;brief Shows feature distribution.
+&#64;details Only features in 1D, 2D, 3D space can be visualized.</p>
+<p>&#64;param[in] data (list): List of points that will be used for visualization,
+if it not specified than feature will be displayed only.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.birch.plot_birch_leaves">
+<code class="sig-name descname">plot_birch_leaves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tree</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.plot_birch_leaves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatter plot of data point, with colors according to the leaf the belong to. Points in the same entry in a leaf
+are represented by a cross, with the number of points over it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree</strong> – tree built during BIRCH algorithm execution.</p></li>
+<li><p><strong>data</strong> – input data as array of list of list</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.birch.plot_tree_fin">
+<code class="sig-name descname">plot_tree_fin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tree</span></em>, <em class="sig-param"><span class="n">info</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.birch.plot_tree_fin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the final CFtree built by BIRCH. Leaves are colored, and every node displays the
+total number of elements in its child nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree</strong> – tree built during BIRCH algorithm execution.</p></li>
+<li><p><strong>info</strong> – if True, tree height, number of nodes, leaves and entries are printed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.clara">
+<span id="clustviz-clara-module"></span><h2>clustviz.clara module<a class="headerlink" href="#module-clustviz.clara" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clustviz.clara.ClaraClustering">
+<em class="property">class </em><code class="sig-name descname">ClaraClustering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The clara clustering algorithm.
+Basically an iterative guessing version of k-medoids that makes things a lot faster
+for bigger data sets.</p>
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.average_cost">
+<code class="sig-name descname">average_cost</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_df</span></em>, <em class="sig-param"><span class="n">_fn</span></em>, <em class="sig-param"><span class="n">_cur_choice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.average_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to compute the average cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_df</strong> – The input data frame.</p></li>
+<li><p><strong>_fn</strong> – The distance function.</p></li>
+<li><p><strong>_cur_choice</strong> – The current medoid candidates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The average cost, the new medoids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.cheat_at_sampling">
+<code class="sig-name descname">cheat_at_sampling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_df</span></em>, <em class="sig-param"><span class="n">_k</span></em>, <em class="sig-param"><span class="n">_fn</span></em>, <em class="sig-param"><span class="n">_nsamp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.cheat_at_sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to cheat at sampling for speed ups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_df</strong> – The input dataframe.</p></li>
+<li><p><strong>_k</strong> – The number of medoids.</p></li>
+<li><p><strong>_fn</strong> – The distance function.</p></li>
+<li><p><strong>_nsamp</strong> – The number of samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The best score, the medoids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.clara">
+<code class="sig-name descname">clara</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_df</span></em>, <em class="sig-param"><span class="n">_k</span></em>, <em class="sig-param"><span class="n">_fn</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.clara" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main clara clustering iterative algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_df</strong> – Input dataframe.</p></li>
+<li><p><strong>_k</strong> – Number of medoids.</p></li>
+<li><p><strong>_fn</strong> – The distance function to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The minimized cost, the best medoid choices and the final configuration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.compute_cost">
+<code class="sig-name descname">compute_cost</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_df</span></em>, <em class="sig-param"><span class="n">_fn</span></em>, <em class="sig-param"><span class="n">_cur_choice</span></em>, <em class="sig-param"><span class="n">cache_on</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.compute_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to compute the configuration cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_df</strong> – The input dataframe.</p></li>
+<li><p><strong>_fn</strong> – The distance function.</p></li>
+<li><p><strong>_cur_choice</strong> – The current set of medoid choices.</p></li>
+<li><p><strong>cache_on</strong> – Binary flag to turn caching.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The total configuration cost, the medoids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.cosine_distance">
+<code class="sig-name descname">cosine_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span></em>, <em class="sig-param"><span class="n">v2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.cosine_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for cosine distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> – The first vector.</p></li>
+<li><p><strong>v2</strong> – The second vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The cosine distance between v1 and v2.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.euclidean_distance">
+<code class="sig-name descname">euclidean_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span></em>, <em class="sig-param"><span class="n">v2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.euclidean_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slow function for computing euclidean distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> – The first vector.</p></li>
+<li><p><strong>v2</strong> – The second vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The euclidean distance between v1 and v2.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.fast_euclidean">
+<code class="sig-name descname">fast_euclidean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span></em>, <em class="sig-param"><span class="n">v2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.fast_euclidean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Faster function for euclidean distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> – The first vector.</p></li>
+<li><p><strong>v2</strong> – The second vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The euclidean distance between v1 and v2.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.k_medoids">
+<code class="sig-name descname">k_medoids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_df</span></em>, <em class="sig-param"><span class="n">_k</span></em>, <em class="sig-param"><span class="n">_fn</span></em>, <em class="sig-param"><span class="n">_niter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.k_medoids" title="Permalink to this definition">¶</a></dt>
+<dd><p>The original k-medoids algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_df</strong> – Input data frame.</p></li>
+<li><p><strong>_k</strong> – Number of medoids.</p></li>
+<li><p><strong>_fn</strong> – The distance function to use.</p></li>
+<li><p><strong>_niter</strong> – The number of iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cost of configuration, the medoids (list) and the clusters (dictionary).</p>
+</dd>
+</dl>
+<p>Pseudo-code for the k-medoids algorithm.
+1. Sample k of the n data points as the medoids.
+2. Associate each data point to the closest medoid.
+3. While the cost of the data point space configuration is decreasing:
+- For each medoid m and each non-medoid point o:
+– Swap m and o, recompute cost.
+– If global cost increased, swap back.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.clara.ClaraClustering.manhattan_distance">
+<code class="sig-name descname">manhattan_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span></em>, <em class="sig-param"><span class="n">v2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.ClaraClustering.manhattan_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for manhattan distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> – The first vector.</p></li>
+<li><p><strong>v2</strong> – The second vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The manhattan distance between v1 and v2.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.clara.plot_pam_mod">
+<code class="sig-name descname">plot_pam_mod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cl</span></em>, <em class="sig-param"><span class="n">full</span></em>, <em class="sig-param"><span class="n">equal_axis_scale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clara.plot_pam_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatterplot of data points, with colors according to cluster labels. Only sampled
+points are plotted, the others are only displayed with their indexes; moreover,
+centers of mass of the clusters are marked with an X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data sample as dataframe.</p></li>
+<li><p><strong>cl</strong> – cluster dictionary.</p></li>
+<li><p><strong>full</strong> – full input dataframe.</p></li>
+<li><p><strong>equal_axis_scale</strong> – if True, axis are plotted with the same scaling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.clarans">
+<span id="clustviz-clarans-module"></span><h2>clustviz.clarans module<a class="headerlink" href="#module-clustviz.clarans" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clustviz.clarans.clarans">
+<em class="property">class </em><code class="sig-name descname">clarans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">number_clusters</span></em>, <em class="sig-param"><span class="n">numlocal</span></em>, <em class="sig-param"><span class="n">maxneighbor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clarans.clarans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pyclustering.cluster.clarans.clarans</span></code></p>
+<dl class="py method">
+<dt id="clustviz.clarans.clarans.process">
+<code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clarans.clarans.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>!
+&#64;brief Performs cluster analysis in line with rules of CLARANS algorithm.</p>
+<p>&#64;return (clarans) Returns itself (CLARANS instance).</p>
+<p>&#64;see get_clusters()
+&#64;see get_medoids()</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.clarans.compute_cost_clarans">
+<code class="sig-name descname">compute_cost_clarans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">_cur_choice</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clarans.compute_cost_clarans" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to compute the configuration cost. (modified from that of CLARA)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The input dataframe.</p></li>
+<li><p><strong>_cur_choice</strong> – The current set of medoid choices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The total configuration cost, the medoids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.clarans.plot_tree_clarans">
+<code class="sig-name descname">plot_tree_clarans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.clarans.plot_tree_clarans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots G_{k,n} as in the paper of CLARANS; only to use with small input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input DataFrame.</p></li>
+<li><p><strong>k</strong> – number of points in each combination (possible set of medoids).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.cure">
+<span id="clustviz-cure-module"></span><h2>clustviz.cure module<a class="headerlink" href="#module-clustviz.cure" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.cure.cure">
+<code class="sig-name descname">cure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preprocessed_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">partial_index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rep_finalclust</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">not_sampled</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">not_sampled_ind</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.cure" title="Permalink to this definition">¶</a></dt>
+<dd><p>CURE algorithm: hierarchical agglomerative clustering using representatives. The parameters which default to
+None are used for the large dataset variation of CURE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data array.</p></li>
+<li><p><strong>k</strong> – desired number of clusters.</p></li>
+<li><p><strong>c</strong> – number of representatives for each cluster.</p></li>
+<li><p><strong>alpha</strong> – parameter that regulates the shrinking of representative points toward the centroid.</p></li>
+<li><p><strong>plotting</strong> – if True, plots all intermediate steps.</p></li>
+<li><p><strong>preprocessed_data</strong> – if not None, must be of the form (clusters,representatives,matrix_a,X_dist1), which is used to perform a warm start.</p></li>
+<li><p><strong>partial_index</strong> – if not None, is is used as index of the matrix_a, of cluster points and of representatives.</p></li>
+<li><p><strong>n_rep_finalclust</strong> – the final representative points used to classify the not_sampled points.</p></li>
+<li><p><strong>not_sampled</strong> – points not sampled in the initial phase.</p></li>
+<li><p><strong>not_sampled_ind</strong> – indexes of not_sampled points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return (clusters, rep, a)</dt>
+<dd class="field-even"><p>returns the clusters dictionary, the dictionary of representatives, the matrix a</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.cure_sample_part">
+<code class="sig-name descname">cure_sample_part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">u_min</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">f</span><span class="o">=</span><span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">d</span><span class="o">=</span><span class="default_value">0.02</span></em>, <em class="sig-param"><span class="n">p</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rep_finalclust</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.cure_sample_part" title="Permalink to this definition">¶</a></dt>
+<dd><p>CURE algorithm variation for large datasets.
+Partition the sample space into p partitions, each of size len(X)/p, then partially cluster each
+partition until the final number of clusters in each partition reduces to n/(pq). Then run a second
+clustering pass on the n/q partial clusters for all the partitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data array.</p></li>
+<li><p><strong>k</strong> – desired number of clusters.</p></li>
+<li><p><strong>c</strong> – number of representatives for each cluster.</p></li>
+<li><p><strong>alpha</strong> – parameter that regulates the shrinking of representative points toward the centroid.</p></li>
+<li><p><strong>u_min</strong> – size of the smallest cluster u.</p></li>
+<li><p><strong>f</strong> – percentage of cluster points (0 &lt;= f &lt;= 1) we would like to have in the sample.</p></li>
+<li><p><strong>d</strong> – (0 &lt;= d &lt;= 1) the probability that the sample contains less than f*|u| points of cluster u is less than d.</p></li>
+<li><p><strong>p</strong> – the number of partitions.</p></li>
+<li><p><strong>q</strong> – the number &gt;1 such that each partition reduces to n/(pq) clusters.</p></li>
+<li><p><strong>n_rep_finalclust</strong> – number of representatives to use in the final assignment phase.</p></li>
+<li><p><strong>plotting</strong> – if True, plots all intermediate steps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return (clusters, rep, mat_a)</dt>
+<dd class="field-even"><p>returns the clusters dictionary, the dictionary of representatives, the matrix a.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.demo_parameters">
+<code class="sig-name descname">demo_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.demo_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Four plots showing the effects on the sample size of various parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.dist_clust_cure">
+<code class="sig-name descname">dist_clust_cure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rep_u</span></em>, <em class="sig-param"><span class="n">rep_v</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.dist_clust_cure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the distance of two clusters based on the minimum distance found between the
+representatives of one cluster and the ones of the other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rep_u</strong> – list of representatives of the first cluster</p></li>
+<li><p><strong>rep_v</strong> – list of representatives of the second cluster</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>distance between two clusters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.dist_mat_gen_cure">
+<code class="sig-name descname">dist_mat_gen_cure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dictionary</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.dist_mat_gen_cure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build distance matrix for CURE algorithm, using the dictionary of representatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> – dictionary of representative points, the only ones used to compute distances
+between clusters.</p>
+</dd>
+<dt class="field-even">Return D</dt>
+<dd class="field-even"><p>distance matrix as dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.plot_results_cure">
+<code class="sig-name descname">plot_results_cure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clust</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.plot_results_cure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatter plot of data points, colored according to the cluster they belong to, after performing
+CURE algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>clust</strong> – output of CURE algorithm, dictionary of the form cluster_labels+point_indices: coords of points</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.point_plot_mod2">
+<code class="sig-name descname">point_plot_mod2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">reps</span></em>, <em class="sig-param"><span class="n">level_txt</span></em>, <em class="sig-param"><span class="n">level2_txt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">par_index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">u</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">u_cl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_ind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">last_reps</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">not_sampled</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">not_sampled_ind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rep_fin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.point_plot_mod2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatter-plot of input data points, colored according to the cluster they belong to.
+A rectangle with red borders is displayed around the last merged cluster; representative points
+of last merged cluster are also plotted in red, along with the center of mass, plotted as a
+red cross. The current number of clusters and current distance are also displayed in the right
+upper corner.
+In the last phase of CURE algorithm variation for large datasets, arrows are
+displayed from every not sampled point to its closest representative point; moreover, representative
+points are surrounded by small circles, to make them more visible. Representative points of different
+clusters are plotted in different nuances of red.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input data array.</p></li>
+<li><p><strong>a</strong> – input dataframe built by CURE algorithm, listing the cluster and the x and y
+coordinates of each point.</p></li>
+<li><p><strong>reps</strong> – list of the coordinates of representative points.</p></li>
+<li><p><strong>level_txt</strong> – distance at which current merging occurs displayed in the upper right corner.</p></li>
+<li><p><strong>level2_txt</strong> – incremental distance (not used).</p></li>
+<li><p><strong>par_index</strong> – partial index to take the shuffling of indexes into account.</p></li>
+<li><p><strong>u</strong> – first cluster to be merged.</p></li>
+<li><p><strong>u_cl</strong> – second cluster to be merged.</p></li>
+<li><p><strong>initial_ind</strong> – initial partial index.</p></li>
+<li><p><strong>last_reps</strong> – dictionary of last representative points.</p></li>
+<li><p><strong>not_sampled</strong> – coordinates of points that have not been initially sampled, in the large dataset version.</p></li>
+<li><p><strong>not_sampled_ind</strong> – indexes of not_sampled point_indices.</p></li>
+<li><p><strong>n_rep_fin</strong> – number of representatives to use for each cluster in the final assignment phase in the large
+dataset version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return list_keys_diz</dt>
+<dd class="field-even"><p>if par_index is not None, returns the new indexes of par_index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.sel_rep">
+<code class="sig-name descname">sel_rep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clusters</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.sel_rep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select c representatives of the clusters: first one is the farthest from the centroid,
+the others c-1 are the farthest from the already selected representatives. It doesn’t use
+the old representatives, so it is slower than sel_rep_fast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clusters</strong> – dictionary of clusters.</p></li>
+<li><p><strong>name</strong> – name of the cluster we want to select representatives from.</p></li>
+<li><p><strong>c</strong> – number of representatives we want to extract.</p></li>
+<li><p><strong>alpha</strong> – 0&lt;=float&lt;=1, it determines how much the representative points are moved
+toward the centroid: 0 means they aren’t modified, 1 means that all points
+collapse to the centroid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return others</dt>
+<dd class="field-even"><p>list of representative points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.sel_rep_fast">
+<code class="sig-name descname">sel_rep_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prec_reps</span></em>, <em class="sig-param"><span class="n">clusters</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.sel_rep_fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select c representatives of the clusters from the previously computed representatives,
+so it is faster than sel_rep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prec_reps</strong> – list of previously computed representatives.</p></li>
+<li><p><strong>clusters</strong> – dictionary of clusters.</p></li>
+<li><p><strong>name</strong> – name of the cluster we want to select representatives from.</p></li>
+<li><p><strong>c</strong> – number of representatives we want to extract.</p></li>
+<li><p><strong>alpha</strong> – 0&lt;=float&lt;=1, it determines how much the representative points are moved
+toward the centroid: 0 means they aren’t modified, 1 means that all points
+collapse to the centroid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return others</dt>
+<dd class="field-even"><p>list of representative points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.cure.update_mat_cure">
+<code class="sig-name descname">update_mat_cure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">rep_new</span></em>, <em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.cure.update_mat_cure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update distance matrix of CURE, by computing the new distances from the new representatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> – input dataframe built by CURE algorithm, listing the cluster and the x and y
+coordinates of each point.</p></li>
+<li><p><strong>i</strong> – row index of cluster to be merged.</p></li>
+<li><p><strong>j</strong> – column index of cluster to be merged.</p></li>
+<li><p><strong>rep_new</strong> – dictionary of new representatives.</p></li>
+<li><p><strong>name</strong> – string of the form “(” + u + “)” + “-” + “(” + u_cl + “)”, containing the new
+name of the newly merged cluster.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return mat</dt>
+<dd class="field-even"><p>updated matrix with new distances</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.dbscan">
+<span id="clustviz-dbscan-module"></span><h2>clustviz.dbscan module<a class="headerlink" href="#module-clustviz.dbscan" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.dbscan.DBSCAN">
+<code class="sig-name descname">DBSCAN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">minPTS</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">print_details</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.dbscan.DBSCAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>DBSCAN algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input array.</p></li>
+<li><p><strong>eps</strong> – radius of a point within which to search for minPTS points.</p></li>
+<li><p><strong>minPTS</strong> – minimum number of neighbors for a point to be considered a core point.</p></li>
+<li><p><strong>plotting</strong> – if True, executes point_plot_mod, plotting every time a points is
+added to a clusters</p></li>
+<li><p><strong>print_details</strong> – if True, prints the length of the “external” NearestNeighborhood
+and of the “internal” one (in the while loop).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return ClustDict</dt>
+<dd class="field-even"><p>dictionary of the form point_index:cluster_label.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.dbscan.plot_clust_DB">
+<code class="sig-name descname">plot_clust_DB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">ClustDict</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">circle_class</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">noise_circle</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.dbscan.plot_clust_DB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatter plot of the data points, colored according to the cluster they belong to; circle_class plots
+circles around some or all points, with a radius of eps; if noise_circle is True, circle are also plotted
+around noise points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input array.</p></li>
+<li><p><strong>ClustDict</strong> – dictionary of the form point_index:cluster_label, built by DBSCAN.</p></li>
+<li><p><strong>eps</strong> – radius of the circles to plot around the points.</p></li>
+<li><p><strong>circle_class</strong> – if == “all”, plots circles around every non-noise point, else plots circles
+only around points belonging to certain clusters, e.g. circle_class = [1,2] will
+plot circles around points belonging to clusters 1 and 2.</p></li>
+<li><p><strong>noise_circle</strong> – if True, plots circles around noise points</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.dbscan.point_plot_mod">
+<code class="sig-name descname">point_plot_mod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">X_dict</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">ClustDict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.dbscan.point_plot_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a scatter plot of points, where the point (x,y) is light black and
+surrounded by a red circle of radius eps, where already processed point are plotted
+according to ClustDict and without edgecolor, whereas still-to-process points are green
+with black edgecolor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input array.</p></li>
+<li><p><strong>X_dict</strong> – input dictionary version of X.</p></li>
+<li><p><strong>point</strong> – coordinates of the point that is currently inspected.</p></li>
+<li><p><strong>eps</strong> – radius of the circle to plot around the point (x,y).</p></li>
+<li><p><strong>ClustDict</strong> – dictionary of the form point_index:cluster_label, built by DBSCAN</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.dbscan.scan_neigh1_mod">
+<code class="sig-name descname">scan_neigh1_mod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.dbscan.scan_neigh1_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighborhood search for a point of a given dataset-dictionary (data)
+with a fixed eps; it returns also the point itself, differently from
+scan_neigh1 of OPTICS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>point</strong> – point whose neighborhood is to be examined.</p></li>
+<li><p><strong>eps</strong> – radius of search.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of neighborhood points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.denclue">
+<span id="clustviz-denclue-module"></span><h2>clustviz.denclue module<a class="headerlink" href="#module-clustviz.denclue" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.denclue.DENCLUE">
+<code class="sig-name descname">DENCLUE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">xi</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">xi_c</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em>, <em class="sig-param"><span class="n">prec</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.DENCLUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.FindPoint">
+<code class="sig-name descname">FindPoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x1</span></em>, <em class="sig-param"><span class="n">y1</span></em>, <em class="sig-param"><span class="n">x2</span></em>, <em class="sig-param"><span class="n">y2</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.FindPoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.FindRect">
+<code class="sig-name descname">FindRect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">coord_dict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.FindRect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.assign_cluster">
+<code class="sig-name descname">assign_cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">others</span></em>, <em class="sig-param"><span class="n">attractor</span></em>, <em class="sig-param"><span class="n">clust_dict</span></em>, <em class="sig-param"><span class="n">processed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.assign_cluster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.center_of_mass">
+<code class="sig-name descname">center_of_mass</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.center_of_mass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.check_border_points_rectangles">
+<code class="sig-name descname">check_border_points_rectangles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">pop_clust</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.check_border_points_rectangles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.check_connection">
+<code class="sig-name descname">check_connection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cube1</span></em>, <em class="sig-param"><span class="n">cube2</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.check_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.connect_cubes">
+<code class="sig-name descname">connect_cubes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hp_cubes</span></em>, <em class="sig-param"><span class="n">cubes</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.connect_cubes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.density_attractor">
+<code class="sig-name descname">density_attractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">coord_dict</span></em>, <em class="sig-param"><span class="n">tot_cubes</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">xi</span></em>, <em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.density_attractor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.extract_cluster_labels">
+<code class="sig-name descname">extract_cluster_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cld</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.extract_cluster_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.form_populated_cubes">
+<code class="sig-name descname">form_populated_cubes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.form_populated_cubes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.gauss_dens">
+<code class="sig-name descname">gauss_dens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">D</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.gauss_dens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.gauss_infl_function">
+<code class="sig-name descname">gauss_infl_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.gauss_infl_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.grad_gauss_dens">
+<code class="sig-name descname">grad_gauss_dens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">D</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.grad_gauss_dens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.highly_pop_cubes">
+<code class="sig-name descname">highly_pop_cubes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pop_cub</span></em>, <em class="sig-param"><span class="n">xi_c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.highly_pop_cubes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.min_bound_rect">
+<code class="sig-name descname">min_bound_rect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.min_bound_rect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.near_with_cube">
+<code class="sig-name descname">near_with_cube</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">cube_x</span></em>, <em class="sig-param"><span class="n">tot_cubes</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.near_with_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.near_without_cube">
+<code class="sig-name descname">near_without_cube</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">coord_dict</span></em>, <em class="sig-param"><span class="n">tot_cubes</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.near_without_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.plot_3d_both">
+<code class="sig-name descname">plot_3d_both</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">xi</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prec</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.plot_3d_both" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.plot_3d_or_contour">
+<code class="sig-name descname">plot_3d_or_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">three</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">scatter</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">prec</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.plot_3d_or_contour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.plot_clust_dict">
+<code class="sig-name descname">plot_clust_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">lab_dict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.plot_clust_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.plot_grid_rect">
+<code class="sig-name descname">plot_grid_rect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">cube_kind</span><span class="o">=</span><span class="default_value">'populated'</span></em>, <em class="sig-param"><span class="n">color_grids</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.plot_grid_rect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.plot_infl">
+<code class="sig-name descname">plot_infl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">xi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.plot_infl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.pop_cubes">
+<code class="sig-name descname">pop_cubes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.pop_cubes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.square_wave_dens">
+<code class="sig-name descname">square_wave_dens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">D</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.square_wave_dens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.square_wave_grad">
+<code class="sig-name descname">square_wave_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">D</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.square_wave_grad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.denclue.square_wave_infl">
+<code class="sig-name descname">square_wave_infl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">'euclidean'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.denclue.square_wave_infl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.optics">
+<span id="clustviz-optics-module"></span><h2>clustviz.optics module<a class="headerlink" href="#module-clustviz.optics" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.optics.ExtractDBSCANclust">
+<code class="sig-name descname">ExtractDBSCANclust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ClustDist</span></em>, <em class="sig-param"><span class="n">CoreDist</span></em>, <em class="sig-param"><span class="n">eps_db</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.ExtractDBSCANclust" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts cluster in a DBSCAN fashion; one can use any eps_db &lt;= eps of OPTICS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ClustDist</strong> – ClustDist of OPTICS, a dictionary of the form point_index:reach_dist</p></li>
+<li><p><strong>CoreDist</strong> – CoreDist of OPTICS, a dictionary of the form point_index:core_dist</p></li>
+<li><p><strong>eps_db</strong> – the eps to choose for DBSCAN</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return ClustDict</dt>
+<dd class="field-even"><p>dictionary of clusters, of the form point_index:cluster_label</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.OPTICS">
+<code class="sig-name descname">OPTICS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">minPTS</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_reach</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.OPTICS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input array</p></li>
+<li><p><strong>eps</strong> – radius of a point within which to search for minPTS points.</p></li>
+<li><p><strong>minPTS</strong> – minimum number of neighbors for a point to be considered a core point.</p></li>
+<li><p><strong>plot</strong> – if True, the scatter plot of the function point_plot is displayed at each step.</p></li>
+<li><p><strong>plot_reach</strong> – if True, the reachability plot is displayed at each step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return (ClustDist, CoreDist)</dt>
+<dd class="field-even"><p>ClustDist, a dictionary of the form point_index:reach_dist, and
+CoreDist, a dictionary of the form point_index:core_dist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.minPTSdist">
+<code class="sig-name descname">minPTSdist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">o</span></em>, <em class="sig-param"><span class="n">minPTS</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.minPTSdist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the minPTS-distance of a point if it is a core point,
+else it returns np.inf</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>o</strong> – key of point of interest.</p></li>
+<li><p><strong>minPTS</strong> – minimum number of neighbors for a point to be considered a core point.</p></li>
+<li><p><strong>eps</strong> – radius of a point within which to search for minPTS points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>minPTS-distance of data[o] or np.inf</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.plot_clust">
+<code class="sig-name descname">plot_clust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">ClustDist</span></em>, <em class="sig-param"><span class="n">CoreDist</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">eps_db</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.plot_clust" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a scatter plot on the left, where points are colored according to the cluster they belong to,
+and a reachability plot on the right, where colors correspond to the clusters, and the two horizontal
+lines represent eps and eps_db</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input array</p></li>
+<li><p><strong>ClustDist</strong> – ClustDist of OPTICS, a dictionary of the form point_index:reach_dist</p></li>
+<li><p><strong>CoreDist</strong> – CoreDist of OPTICS, a dictionary of the form point_index:core_dist</p></li>
+<li><p><strong>eps</strong> – the eps used to run OPTICS</p></li>
+<li><p><strong>eps_db</strong> – the eps to choose for DBSCAN</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.point_plot">
+<code class="sig-name descname">point_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">X_dict</span></em>, <em class="sig-param"><span class="n">o</span></em>, <em class="sig-param"><span class="n">eps</span></em>, <em class="sig-param"><span class="n">processed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">col</span><span class="o">=</span><span class="default_value">'yellow'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.point_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a scatter plot of points, where the point (x,y) is light black and
+surrounded by a red circle of radius eps, where processed point are plotted
+in col (yellow by default) and without edgecolor, whereas still-to-process points are green
+with black edgecolor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – input array.</p></li>
+<li><p><strong>X_dict</strong> – input dictionary version of X.</p></li>
+<li><p><strong>o</strong> – coordinates of the point that is currently inspected.</p></li>
+<li><p><strong>eps</strong> – radius of the circle to plot around the point (x,y).</p></li>
+<li><p><strong>processed</strong> – already processed points, to plot in col</p></li>
+<li><p><strong>col</strong> – color to use for processed points, yellow by default.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.reach_dist">
+<code class="sig-name descname">reach_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">minPTS</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.reach_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reachability distance
+(even if it is not a distance because it isn’t symmetrical)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>x</strong> – first point.</p></li>
+<li><p><strong>y</strong> – second point.</p></li>
+<li><p><strong>minPTS</strong> – minimum number of neighbors for a point to be considered a core point.</p></li>
+<li><p><strong>eps</strong> – radius of a point within which to search for minPTS points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>reachability distance of x and y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.reach_plot">
+<code class="sig-name descname">reach_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">ClustDist</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.reach_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the reachability plot, along with a horizontal line denoting eps,
+from the ClustDist produced by OPTICS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>ClustDist</strong> – output of OPTICS function, dictionary of the form point_index:reach_dist.</p></li>
+<li><p><strong>eps</strong> – radius of a point within which to search for minPTS points.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.scan_neigh1">
+<code class="sig-name descname">scan_neigh1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.scan_neigh1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighborhood search for a point of a given dataset-dictionary (data)
+with a fixed eps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>point</strong> – point whose neighborhood is to be examined.</p></li>
+<li><p><strong>eps</strong> – radius of search.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of neighborhood points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.optics.scan_neigh2">
+<code class="sig-name descname">scan_neigh2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">eps</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.optics.scan_neigh2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variation of scan_neigh1 that returns only the keys of the input dictionary
+with the euclidean distances &lt;= eps from the point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input dictionary.</p></li>
+<li><p><strong>point</strong> – point whose neighborhood is to be examined.</p></li>
+<li><p><strong>eps</strong> – radius of search.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys of dictionary of neighborhood points, ordered by distance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.pam">
+<span id="clustviz-pam-module"></span><h2>clustviz.pam module<a class="headerlink" href="#module-clustviz.pam" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clustviz.pam.KMedoids">
+<em class="property">class </em><code class="sig-name descname">KMedoids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_cluster</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">start_prob</span><span class="o">=</span><span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">end_prob</span><span class="o">=</span><span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">42</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.pam.KMedoids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="clustviz.pam.KMedoids.calculate_distance_of_clusters">
+<code class="sig-name descname">calculate_distance_of_clusters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cluster_dist</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.pam.KMedoids.calculate_distance_of_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>if no argument is provided, just sum the distances of the existing cluster_distances, else sum the distances
+of the input cluster_distances</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.pam.KMedoids.calculate_inter_cluster_distance">
+<code class="sig-name descname">calculate_inter_cluster_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">medoid</span></em>, <em class="sig-param"><span class="n">cluster_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.pam.KMedoids.calculate_inter_cluster_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the average distance of points in a cluster from their medoid</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clustviz.pam.KMedoids.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.pam.KMedoids.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.pam.plot_pam">
+<code class="sig-name descname">plot_pam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cl</span></em>, <em class="sig-param"><span class="n">equal_axis_scale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.pam.plot_pam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scatterplot of data points, with colors according to cluster labels.
+Centers of mass of the clusters are marked with an X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data sample as dataframe.</p></li>
+<li><p><strong>cl</strong> – cluster dictionary.</p></li>
+<li><p><strong>equal_axis_scale</strong> – if True, axis are plotted with the same scaling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.utils">
+<span id="clustviz-utils-module"></span><h2>clustviz.utils module<a class="headerlink" href="#module-clustviz.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.utils.chernoffBounds">
+<code class="sig-name descname">chernoffBounds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u_min</span></em>, <em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.chernoffBounds" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u_min</strong> – size of the smallest cluster u.</p></li>
+<li><p><strong>f</strong> – percentage of cluster points (0 &lt;= f &lt;= 1).</p></li>
+<li><p><strong>N</strong> – total size.</p></li>
+<li><p><strong>d</strong> – the probability that the sample contains less than f*|u| points of cluster u is less than d.</p></li>
+<li><p><strong>k</strong> – cluster size.</p></li>
+</ul>
+</dd>
+</dl>
+<p>If one uses as <a href="#id1"><span class="problematic" id="id2">|u|</span></a> the minimum cluster size we are interested in, the result is
+the minimum sample size that guarantees that for k clusters
+the probability of selecting fewer than f*|u| points from any one of the clusters u is less than k*d.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.convert_colors">
+<code class="sig-name descname">convert_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_colors</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.convert_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>modify the transparency of each color of a dictionary of colors to the desired alpha</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.dist1">
+<code class="sig-name descname">dist1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.dist1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original euclidean distance</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.dist2">
+<code class="sig-name descname">dist2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.dist2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Euclidean distance which takes keys of a dictionary (X_dict) as inputs</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.encircle">
+<code class="sig-name descname">encircle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.encircle" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot a line-boundary around a cluster (at least 3 points are required)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.euclidean_distance">
+<code class="sig-name descname">euclidean_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.euclidean_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Euclidean distance of two arrays</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.utils.flatten_list">
+<code class="sig-name descname">flatten_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.utils.flatten_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clustviz">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-clustviz" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="clustviz.chameleon.html" class="btn btn-neutral float-right" title="clustviz.chameleon package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="clustviz" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guglielmo Sanchini
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>clustviz.chameleon package &mdash; ClustViz 0.0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="clustviz package" href="clustviz.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> ClustViz
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">clustviz</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="clustviz.html">clustviz package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="clustviz.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">clustviz.chameleon package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.agglomerative">clustviz.agglomerative module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.birch">clustviz.birch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.clara">clustviz.clara module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.clarans">clustviz.clarans module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.cure">clustviz.cure module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.dbscan">clustviz.dbscan module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.denclue">clustviz.denclue module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.optics">clustviz.optics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.pam">clustviz.pam module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz.utils">clustviz.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustviz.html#module-clustviz">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ClustViz</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">clustviz</a> &raquo;</li>
+        
+          <li><a href="clustviz.html">clustviz package</a> &raquo;</li>
+        
+      <li>clustviz.chameleon package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/clustviz.chameleon.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="clustviz-chameleon-package">
+<h1>clustviz.chameleon package<a class="headerlink" href="#clustviz-chameleon-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-clustviz.chameleon.chameleon">
+<span id="clustviz-chameleon-chameleon-module"></span><h2>clustviz.chameleon.chameleon module<a class="headerlink" href="#module-clustviz.chameleon.chameleon" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.cluster">
+<code class="sig-name descname">cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">knn</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">m</span><span class="o">=</span><span class="default_value">30</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">2.0</span></em>, <em class="sig-param"><span class="n">verbose0</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose1</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose2</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.cluster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.internal_closeness">
+<code class="sig-name descname">internal_closeness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.internal_closeness" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.internal_interconnectivity">
+<code class="sig-name descname">internal_interconnectivity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.internal_interconnectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>the weighted sum of edges that partition the graph into two roughly equal parts</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.len_edges">
+<code class="sig-name descname">len_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.len_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the number of edges that interconnect the nodes of the input cluster
+:param graph: NetworkX graph.
+:param cluster: cluster represented by a list of nodes belonging to that cluster</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.merge_best">
+<code class="sig-name descname">merge_best</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose2</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.merge_best" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.merge_score">
+<code class="sig-name descname">merge_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">g</span></em>, <em class="sig-param"><span class="n">ci</span></em>, <em class="sig-param"><span class="n">cj</span></em>, <em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.merge_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.rebuild_labels">
+<code class="sig-name descname">rebuild_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.rebuild_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.relative_closeness">
+<code class="sig-name descname">relative_closeness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster_i</span></em>, <em class="sig-param"><span class="n">cluster_j</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.relative_closeness" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon.relative_interconnectivity">
+<code class="sig-name descname">relative_interconnectivity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster_i</span></em>, <em class="sig-param"><span class="n">cluster_j</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon.relative_interconnectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the relative interconnectivity of two clusters of a graph, measured on the connecting edges</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.chameleon.chameleon2">
+<span id="clustviz-chameleon-chameleon2-module"></span><h2>clustviz.chameleon.chameleon2 module<a class="headerlink" href="#module-clustviz.chameleon.chameleon2" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.cluster2">
+<code class="sig-name descname">cluster2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">knn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">m</span><span class="o">=</span><span class="default_value">30</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">2.0</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">m_fact</span><span class="o">=</span><span class="default_value">1000.0</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose1</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose2</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">auto_extract</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.cluster2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.conn_comp">
+<code class="sig-name descname">conn_comp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">knn_gr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.conn_comp" title="Permalink to this definition">¶</a></dt>
+<dd><p>return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.connected_components">
+<code class="sig-name descname">connected_components</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.connected_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>return generator of connected component of a graph</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.extract_optimal_n_clust">
+<code class="sig-name descname">extract_optimal_n_clust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">f</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">eta</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.extract_optimal_n_clust" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.find_bigger_jump">
+<code class="sig-name descname">find_bigger_jump</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">th</span></em>, <em class="sig-param"><span class="n">jump</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.find_bigger_jump" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.find_nearest_height">
+<code class="sig-name descname">find_nearest_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">th</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.find_nearest_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.first_jump_cutoff">
+<code class="sig-name descname">first_jump_cutoff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">th</span></em>, <em class="sig-param"><span class="n">mult</span></em>, <em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.first_jump_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.flood_fill">
+<code class="sig-name descname">flood_fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">knn_gr</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.flood_fill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.merge_best2">
+<code class="sig-name descname">merge_best2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">m_fact</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose2</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.merge_best2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.merge_score2">
+<code class="sig-name descname">merge_score2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">g</span></em>, <em class="sig-param"><span class="n">ci</span></em>, <em class="sig-param"><span class="n">cj</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">m_fact</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.merge_score2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.prepro_edge">
+<code class="sig-name descname">prepro_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">knn_gr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.prepro_edge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.relative_closeness2">
+<code class="sig-name descname">relative_closeness2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster_i</span></em>, <em class="sig-param"><span class="n">cluster_j</span></em>, <em class="sig-param"><span class="n">m_fact</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.relative_closeness2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.relative_interconnectivity2">
+<code class="sig-name descname">relative_interconnectivity2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster_i</span></em>, <em class="sig-param"><span class="n">cluster_j</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.relative_interconnectivity2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.rho">
+<code class="sig-name descname">rho</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster_i</span></em>, <em class="sig-param"><span class="n">cluster_j</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.rho" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.tree_height">
+<code class="sig-name descname">tree_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.tree_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.chameleon2.w_int_closeness">
+<code class="sig-name descname">w_int_closeness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.chameleon2.w_int_closeness" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.chameleon.graphtools">
+<span id="clustviz-chameleon-graphtools-module"></span><h2>clustviz.chameleon.graphtools module<a class="headerlink" href="#module-clustviz.chameleon.graphtools" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.bisection_weights">
+<code class="sig-name descname">bisection_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">cluster</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.bisection_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the weights of the edges that ‘roughly’ bisect the cluster</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.connecting_edges">
+<code class="sig-name descname">connecting_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">partitions</span></em>, <em class="sig-param"><span class="n">graph</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.connecting_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>return only the edges that connect nodes of the first cluster with nodes of the second cluster, in the form of
+a list of tuples [(0, 5), (3, 5)] (e.g. the only connecting-edges are the ones connecting node_0 to node_5 and
+node_3 to node_5</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partitions</strong> – tuple with two clusters.</p></li>
+<li><p><strong>graph</strong> – NetworkX graph.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.get_cluster">
+<code class="sig-name descname">get_cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">clusters</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.get_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the list of nodes belonging to specific cluster(s)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.get_weights">
+<code class="sig-name descname">get_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">edges</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.get_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.knn_graph">
+<code class="sig-name descname">knn_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.knn_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the weighted K-NearestNeighbor graph of input df</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.knn_graph_sym">
+<code class="sig-name descname">knn_graph_sym</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.knn_graph_sym" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the weighted symmetrical K-NearestNeighbor graph of input df</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.min_cut_bisector">
+<code class="sig-name descname">min_cut_bisector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.min_cut_bisector" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the edges that connect nodes belonging to the two new partitions obtained through min-cut bisection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.part_graph">
+<code class="sig-name descname">part_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.part_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the input graph with the clustering obtained through mincut-bisection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.plot2d_data">
+<code class="sig-name descname">plot2d_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col_i</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.plot2d_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.plot2d_graph">
+<code class="sig-name descname">plot2d_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">print_clust</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.plot2d_graph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clustviz.chameleon.graphtools.pre_part_graph">
+<code class="sig-name descname">pre_part_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">graph</span></em>, <em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plotting</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clustviz.chameleon.graphtools.pre_part_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the graph after partitioning it into k clusters</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-clustviz.chameleon">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-clustviz.chameleon" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="clustviz.html" class="btn btn-neutral float-left" title="clustviz package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Guglielmo Sanchini
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
