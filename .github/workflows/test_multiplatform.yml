@@ -121,6 +121,7 @@ jobs:
           python setup.py sdist bdist_wheel
 
       - name: Publish to Test PyPI # only if pushed commit is tagged, remember to change version in setup.py
+        # tag the last commit using Git UI in PyCharm and remember to check 'push tags' when pushing using PyCharm
         if: (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.6') && (startsWith(github.ref, 'refs/tags') == true)
         uses: pypa/gh-action-pypi-publish@master
         with:
