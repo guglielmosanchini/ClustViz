@@ -1,34 +1,122 @@
-"""!
-
-@brief Cluster analysis algorithm: BIRCH
-@details Implementation based on paper @cite article::birch::1.
-
-@authors Andrei Novikov (pyclustering@yandex.ru)
-@date 2014-2019
-@copyright GNU Public License
-
-@cond GNU_PUBLIC_LICENSE
-    PyClustering is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    PyClustering is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-@endcond
-
-"""
-
-from pyclustering.utils import linear_sum, square_sum
-from pyclustering.cluster.encoder import type_encoding
-from clustviz._birch.cftree import cftree, measurement_type
-from pyclustering.container.cftree import cfentry
+import numpy as np
+from pyclustering.cluster.agglomerative import agglomerative, type_link
+from pyclustering.cluster.encoder import cluster_encoder, type_encoding
+from pyclustering.container.cftree import measurement_type
+from pyclustering.cluster.birch import birch as birch_pyclustering
+from clustviz._birch.cftree import cftree
 from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+
+
+class birch(birch_pyclustering):
+
+    def __init__(self, data, number_clusters, branching_factor=50, max_node_entries=200, diameter=0.5,
+                 type_measurement=measurement_type.CENTROID_EUCLIDEAN_DISTANCE,
+                 entry_size_limit=500,
+                 diameter_multiplier=1.5,
+                 ccore=True):
+
+        super().__init__(data, number_clusters, branching_factor, max_node_entries, diameter, type_measurement,
+                         entry_size_limit, diameter_multiplier, ccore)
+
+        # otherwise it would refer to pyclustering original cftree
+        self.__tree = cftree(branching_factor, max_node_entries, diameter, type_measurement)
+
+    def return_tree(self):
+        """return the tree built by the algorithm"""
+        return self.__tree
+
+    def process(self, plotting=False):
+        """!
+        @brief Performs cluster analysis in line with rules of BIRCH algorithm.
+
+        @return (birch) Returns itself (BIRCH instance).
+
+        @see get_clusters()
+
+        """
+
+        self.__insert_data(plotting=plotting)
+        print("extracting features")
+        self.__extract_features()
+
+        print("features: ", self.__features)
+
+        cf_data = [feature.get_centroid() for feature in self.__features]
+
+        algorithm = agglomerative(cf_data, self.__number_clusters, type_link.SINGLE_LINK).process()
+        self.__cf_clusters = algorithm.get_clusters()
+
+        cf_labels = cluster_encoder(type_encoding.CLUSTER_INDEX_LIST_SEPARATION, self.__cf_clusters, cf_data). \
+            set_encoding(type_encoding.CLUSTER_INDEX_LABELING).get_clusters()
+
+        self.__clusters = [[] for _ in range(len(self.__cf_clusters))]
+        for index_point in range(len(self.__pointer_data)):
+            index_cf_entry = np.argmin(np.sum(np.square(
+                np.subtract(cf_data, self.__pointer_data[index_point])), axis=1))
+            index_cluster = cf_labels[index_cf_entry]
+            self.__clusters[index_cluster].append(index_point)
+
+        return self
+
+    def __insert_data(self, plotting=False):
+        """!
+        @brief Inserts input data to the tree.
+
+        @remark If number of maximum number of entries is exceeded than diameter is increased and tree is rebuilt.
+
+        """
+
+        for index_point in range(0, len(self.__pointer_data)):
+            if (index_point != 0) and (plotting is True):
+                plot_tree_fin(self.__tree)
+                plot_birch_leaves(self.__tree, data=self.__pointer_data)
+
+            print("\n\n")
+            print("index: {}".format(index_point))
+            point = self.__pointer_data[index_point]
+            print("point {}".format(point))
+            self.__tree.insert_point(point)
+
+            if self.__tree.amount_entries > self.__entry_size_limit:
+                print("rebuilding tree")
+                self.__tree = self.__rebuild_tree(index_point)
+
+    def __rebuild_tree(self, index_point):
+        """!
+        @brief Rebuilt tree in case of maxumum number of entries is exceeded.
+
+        @param[in] index_point (uint): Index of point that is used as end point of re-building.
+
+        @return (cftree) Rebuilt tree with encoded points till specified point from input data space.
+
+        """
+
+        rebuild_result = False
+        increased_diameter = self.__tree.threshold * self.__diameter_multiplier
+
+        tree = None
+
+        while rebuild_result is False:
+            # increase diameter and rebuild tree
+            if increased_diameter == 0.0:
+                increased_diameter = 1.0
+
+            # build tree with update parameters
+            tree = cftree(self.__tree.branch_factor, self.__tree.max_entries, increased_diameter,
+                          self.__tree.type_measurement)
+
+            for index_point in range(0, index_point + 1):
+                point = self.__pointer_data[index_point]
+                tree.insert_point(point)
+
+                if tree.amount_entries > self.__entry_size_limit:
+                    increased_diameter *= self.__diameter_multiplier
+                    continue
+
+            # Re-build is successful.
+            rebuild_result = True
+
+        return tree
 
 
 def plot_tree_fin(tree, info=False):
@@ -50,8 +138,9 @@ def plot_tree_fin(tree, info=False):
         print("Number of leaves: {0}".format(len(tree.leafes)))
         print("Number of entries: {0}".format(tree.amount_entries))
 
-    if tree.amount_nodes > 2704:
-        print("Too many nodes, limit is 2704")
+    node_limit = 2704
+    if tree.amount_nodes > node_limit:
+        print("Too many nodes, limit is {0}".format(node_limit))
 
         return
 
@@ -211,333 +300,3 @@ def plot_birch_leaves(tree, data):
 
     plt.show()
 
-
-class birch:
-    """!
-    @brief Class represents clustering algorithm BIRCH.
-
-    Example how to extract clusters from 'OldFaithful' sample using BIRCH algorithm:
-    @code
-        from pyclustering.cluster.birch import birch, measurement_type
-        from pyclustering.cluster import cluster_visualizer
-        from pyclustering.utils import read_sample
-        from pyclustering.samples.definitions import FAMOUS_SAMPLES
-
-        # Sample for cluster analysis (represented by list)
-        sample = read_sample(FAMOUS_SAMPLES.SAMPLE_OLD_FAITHFUL)
-
-        # Create BIRCH algorithm
-        birch_instance = birch(sample, 2)
-
-        # Cluster analysis
-        birch_instance.process()
-
-        # Obtain results of clustering
-        clusters = birch_instance.get_clusters()
-
-        # Visualize allocated clusters
-        visualizer = cluster_visualizer()
-        visualizer.append_clusters(clusters, sample)
-        visualizer.show()
-    @endcode
-
-    """
-
-    def __init__(
-        self,
-        data,
-        number_clusters,
-        branching_factor=5,
-        max_node_entries=5,
-        initial_diameter=0.1,
-        type_measurement=measurement_type.CENTROID_EUCLIDEAN_DISTANCE,
-        entry_size_limit=200,
-        diameter_multiplier=1.5,
-        ccore=True,
-    ):
-        """!
-        @brief Constructor of clustering algorithm BIRCH.
-
-        @param[in] data (list): Input data presented as list of points (objects), where each point
-        should be represented by list or tuple.
-        @param[in] number_clusters (uint): Number of clusters that should be allocated.
-        @param[in] branching_factor (uint): Maximum number of successor that might be contained
-        by each non-leaf node in CF-Tree.
-        @param[in] max_node_entries (uint): Maximum number of entries that might be contained
-        by each leaf node in CF-Tree.
-        @param[in] initial_diameter (double): Initial diameter that used for CF-Tree construction,
-        it can be increase if entry_size_limit is exceeded.
-        @param[in] type_measurement (measurement_type): Type measurement used for calculation distance metrics.
-        @param[in] entry_size_limit (uint): Maximum number of entries that can be stored in CF-Tree,
-        if it is exceeded during creation then diameter is increased and CF-Tree is rebuilt.
-        @param[in] diameter_multiplier (double): Multiplier that is used for increasing diameter
-         when entry_size_limit is exceeded.
-        @param[in] ccore (bool): If True than CCORE (C++ part of the library) will be used for solving the problem.
-
-        @remark Despite eight arguments only the first two are mandatory, others can be ommitted.
-        In this case default values are used for instance creation.
-
-        """
-
-        self.__pointer_data = data
-        self.__number_clusters = number_clusters
-
-        self.__measurement_type = type_measurement
-        self.__entry_size_limit = entry_size_limit
-        self.__diameter_multiplier = diameter_multiplier
-        self.__ccore = ccore
-
-        self.__verify_arguments()
-
-        self.__features = None
-        self.__tree = cftree(
-            branching_factor,
-            max_node_entries,
-            initial_diameter,
-            type_measurement,
-        )
-
-        self.__clusters = []
-        self.__noise = []
-
-    def process(self, plotting=False):
-        """!
-        @brief Performs cluster analysis in line with rules of BIRCH algorithm.
-
-        @return (birch) Returns itself (BIRCH instance).
-
-        @see get_clusters()
-
-        """
-
-        self.__insert_data(plotting=plotting)
-        self.__extract_features()
-
-        # in line with specification modify hierarchical algorithm should be used for further clustering
-        current_number_clusters = len(self.__features)
-
-        while current_number_clusters > self.__number_clusters:
-            indexes = self.__find_nearest_cluster_features()
-
-            self.__features[indexes[0]] += self.__features[indexes[1]]
-            self.__features.pop(indexes[1])
-
-            current_number_clusters = len(self.__features)
-
-        # decode data
-        self.__decode_data()
-        return self
-
-    def return_tree(self):
-        """modified from the original version by me on 24.11.19"""
-        return self.__tree
-
-    def get_clusters(self):
-        """!
-        @brief Returns list of allocated clusters, each cluster contains indexes of objects in list of data.
-
-        @remark Allocated noise can be returned only after data processing (use method process() before).
-        Otherwise empty list is returned.
-
-        @return (list) List of allocated clusters.
-
-        @see process()
-        @see get_noise()
-
-        """
-
-        return self.__clusters
-
-    def get_cluster_encoding(self):
-        """!
-        @brief Returns clustering result representation type that indicate how clusters are encoded.
-
-        @return (type_encoding) Clustering result representation.
-
-        @see get_clusters()
-
-        """
-
-        return type_encoding.CLUSTER_INDEX_LIST_SEPARATION
-
-    def __verify_arguments(self):
-        """!
-        @brief Verify input parameters for the algorithm and throw exception in case of incorrectness.
-
-        """
-        if len(self.__pointer_data) == 0:
-            raise ValueError(
-                "Input data is empty (size: '%d')." % len(self.__pointer_data)
-            )
-
-        if self.__number_clusters <= 0:
-            raise ValueError(
-                "Amount of cluster (current value: '%d') for allocation should be greater than 0."
-                % self.__number_clusters
-            )
-
-        if self.__entry_size_limit <= 0:
-            raise ValueError(
-                "Limit entry size (current value: '%d') should be greater than 0."
-                % self.__entry_size_limit
-            )
-
-    def __extract_features(self):
-        """!
-        @brief Extracts features from CF-tree cluster.
-
-        """
-        print("extracting features")
-        self.__features = []
-
-        if len(self.__tree.leafes) == 1:
-            # parameters are too general, copy all entries
-            for entry in self.__tree.leafes[0].entries:
-                self.__features.append(entry)
-
-        else:
-            # copy all leaf clustering features
-            for node in self.__tree.leafes:
-                self.__features.append(node.feature)
-
-    def __decode_data(self):
-        """!
-        @brief Decodes data from CF-tree features.
-
-        """
-
-        self.__clusters = [[] for _ in range(self.__number_clusters)]
-        self.__noise = []
-
-        for index_point in range(0, len(self.__pointer_data)):
-            (_, cluster_index) = self.__get_nearest_feature(
-                self.__pointer_data[index_point], self.__features
-            )
-
-            self.__clusters[cluster_index].append(index_point)
-
-    def __insert_data(self, plotting=False):
-        """!
-        @brief Inserts input data to the tree.
-
-        @remark If number of maximum number of entries is exceeded than diameter is increased and tree is rebuilt.
-
-        """
-
-        for index_point in range(0, len(self.__pointer_data)):
-            if (index_point != 0) and (plotting is True):
-                plot_tree_fin(self.__tree)
-                plot_birch_leaves(self.__tree, data=self.__pointer_data)
-
-            print("\n")
-            print("\n")
-            print("index: ", index_point)
-            point = self.__pointer_data[index_point]
-            print("point ", point)
-            self.__tree.insert_cluster([point])
-
-            if self.__tree.amount_entries > self.__entry_size_limit:
-                print("rebuilding tree")
-                self.__tree = self.__rebuild_tree(index_point)
-
-        # self.__tree.show_feature_distribution(self.__pointer_data);
-
-    def __rebuild_tree(self, index_point):
-        """!
-        @brief Rebuilt tree in case of maxumum number of entries is exceeded.
-
-        @param[in] index_point (uint): Index of point that is used as end point of re-building.
-
-        @return (cftree) Rebuilt tree with encoded points till specified point from input data space.
-
-        """
-
-        rebuild_result = False
-        increased_diameter = self.__tree.threshold * self.__diameter_multiplier
-
-        tree = None
-
-        while rebuild_result is False:
-            # increase diameter and rebuild tree
-            if increased_diameter == 0.0:
-                increased_diameter = 1.0
-
-            # build tree with update parameters
-            tree = cftree(
-                self.__tree.branch_factor,
-                self.__tree.max_entries,
-                increased_diameter,
-                self.__tree.type_measurement,
-            )
-
-            for index_point in range(0, index_point + 1):
-                point = self.__pointer_data[index_point]
-                tree.insert_cluster([point])
-
-                if tree.amount_entries > self.__entry_size_limit:
-                    increased_diameter *= self.__diameter_multiplier
-                    continue
-
-            # Re-build is successful.
-            rebuild_result = True
-
-        return tree
-
-    def __find_nearest_cluster_features(self):
-        """!
-        @brief Find pair of nearest CF entries.
-
-        @return (list) List of two nearest entries that are represented by list [index_point1, index_point2].
-
-        """
-
-        minimum_distance = float("Inf")
-        index1 = 0
-        index2 = 0
-
-        print("\n")
-        for index_candidate1 in range(0, len(self.__features)):
-            feature1 = self.__features[index_candidate1]
-            for index_candidate2 in range(
-                index_candidate1 + 1, len(self.__features)
-            ):
-                feature2 = self.__features[index_candidate2]
-
-                distance = feature1.get_distance(
-                    feature2, self.__measurement_type
-                )
-                if distance < minimum_distance:
-                    minimum_distance = distance
-
-                    index1 = index_candidate1
-                    index2 = index_candidate2
-
-        print("nearest features are: ", index1, index2)
-        return [index1, index2]
-
-    def __get_nearest_feature(self, point, feature_collection):
-        """!
-        @brief Find nearest entry for specified point.
-
-        @param[in] point (list): Pointer to point from input dataset.
-        @param[in] feature_collection (list): Feature collection that is used for
-        obtaining nearest feature for the specified point.
-
-        @return (double, uint) Tuple of distance to nearest entry to the specified point and index of that entry.
-
-        """
-
-        minimum_distance = float("Inf")
-        index_nearest_feature = -1
-
-        for index_entry in range(0, len(feature_collection)):
-            point_entry = cfentry(1, linear_sum([point]), square_sum([point]))
-
-            distance = feature_collection[index_entry].get_distance(
-                point_entry, self.__measurement_type
-            )
-            if distance < minimum_distance:
-                minimum_distance = distance
-                index_nearest_feature = index_entry
-
-        return minimum_distance, index_nearest_feature
