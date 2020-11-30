@@ -48,7 +48,9 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+# to remove full name in methods and packages
 add_module_names = False
+# to ensure compatibility with ReadTheDocs
 master_doc = 'index'
 
 # -- Options for HTML output -------------------------------------------------
