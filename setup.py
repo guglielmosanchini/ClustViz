@@ -10,7 +10,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="clustviz",
-    version="0.0.5",
+    version="0.0.6",
     author="Guglielmo Sanchini",
     author_email="guglielmosanchini@gmail.com",
     description="A 2D clustering algorithms visualization package",
