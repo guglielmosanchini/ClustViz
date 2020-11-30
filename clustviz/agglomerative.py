@@ -126,9 +126,9 @@ def point_plot_mod(X, a, level_txt, level2_txt=None):
 
     num_clust = "n° clust: " + str(len(a))
     dist_tot = "dist_tot: " + str(round(level_txt, 5))
-    dist_incr = "dist_incr: " + str(round(level2_txt, 5)) if level2_txt is not None else ""
+    dist_incr = " --- dist_incr: " + str(round(level2_txt, 5)) if level2_txt is not None else ""
 
-    title = num_clust + " --- " + dist_tot + " --- " + dist_incr
+    title = num_clust + " --- " + dist_tot + dist_incr
 
     ax.set_title(title, fontsize=FONTSIZE_BIGGER)
 

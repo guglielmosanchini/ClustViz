@@ -170,28 +170,35 @@ def point_plot_mod2(
                 va="center",
             )
 
+    num_clust = "n° clust: " + str(len(a))
+    min_dist = "min_dist: " + str(round(level_txt, 5))
+    dist_incr = "  ---  dist_incr: " + str(round(level2_txt, 5)) if level2_txt is not None else ""
+
+    title = num_clust + " --- " + min_dist + dist_incr
+
+    ax.set_title(title, fontsize=FONTSIZE_BIGGER)
     # adding the annotations
-    ax.annotate(
-        "min_dist: " + str(round(level_txt, 5)),
-        (xmax * 0.75, ymax * 0.9),
-        fontsize=FONTSIZE_BIGGER,
-        size=SIZE_BIGGER,
-    )
-
-    if level2_txt is not None:
-        ax.annotate(
-            "dist_incr: " + str(round(level2_txt, 5)),
-            (xmax * 0.75, ymax * 0.8),
-            fontsize=FONTSIZE_BIGGER,
-            size=SIZE_BIGGER,
-        )
-
-    ax.annotate(
-        "n° clust: " + str(len(a)),
-        (xmax * 0.75, ymax * 0.7),
-        fontsize=FONTSIZE_BIGGER,
-        size=SIZE_BIGGER,
-    )
+    # ax.annotate(
+    #     "min_dist: " + str(round(level_txt, 5)),
+    #     (xmax * 0.75, ymax * 0.9),
+    #     fontsize=FONTSIZE_BIGGER,
+    #     size=SIZE_BIGGER,
+    # )
+    #
+    # if level2_txt is not None:
+    #     ax.annotate(
+    #         "dist_incr: " + str(round(level2_txt, 5)),
+    #         (xmax * 0.75, ymax * 0.8),
+    #         fontsize=FONTSIZE_BIGGER,
+    #         size=SIZE_BIGGER,
+    #     )
+    #
+    # ax.annotate(
+    #     "n° clust: " + str(len(a)),
+    #     (xmax * 0.75, ymax * 0.7),
+    #     fontsize=FONTSIZE_BIGGER,
+    #     size=SIZE_BIGGER,
+    # )
 
     plt.show()
 
