@@ -32,7 +32,7 @@ The following algorithms have been examined:
 
 ## Instructions
 
-**Documentation**: [clustviz.readthedocs.io](clustviz.readthedocs.io)
+**Documentation**: [click here](https://clustviz.readthedocs.io/en/latest/)
 
 Install with 
 ```python
