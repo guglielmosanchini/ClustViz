@@ -7,9 +7,7 @@ from clustviz.agglomerative import (
     avg_dist,
     cl_dist,
     agg_clust,
-    point_plot_mod,
-    encircle,
-    convert_colors,
+    point_plot_mod
 )
 
 import pandas as pd
@@ -137,21 +135,3 @@ def test_plot_fn(monkeypatch):
 
     monkeypatch.setattr(plt, "show", lambda: None)
     point_plot_mod(X, a, 2.57)
-
-
-def test_encircle(monkeypatch):
-    fig, ax = plt.subplots(figsize=(14, 6))
-    monkeypatch.setattr(plt, "show", lambda: None)
-    X_clust = [1, 2, 3]
-    Y_clust = [7, 3, 5]
-    encircle(X_clust, Y_clust, ax)
-
-
-def test_convert_colors():
-    color_dict = {
-        0: "red",
-        1: "blue",
-    }
-    color_dict_rect = convert_colors(color_dict, alpha=0.3)
-
-    assert color_dict_rect == {0: (1.0, 0.0, 0.0, 0.3), 1: (0.0, 0.0, 1.0, 0.3)}
