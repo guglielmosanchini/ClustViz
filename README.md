@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.com/guglielmosanchini/ClustViz.svg?branch=master)](https://travis-ci.com/guglielmosanchini/ClustViz)
 [![codecov](https://codecov.io/gh/guglielmosanchini/ClustViz/branch/master/graph/badge.svg)](https://codecov.io/gh/guglielmosanchini/ClustViz)
+[![Documentation Status](https://readthedocs.org/projects/clustviz/badge/?version=latest)](https://clustviz.readthedocs.io/en/latest/?badge=latest)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 # ClustViz
@@ -30,6 +31,9 @@ The following algorithms have been examined:
 - DENCLUE
 
 ## Instructions
+
+**Documentation**: [clustviz.readthedocs.io](clustviz.readthedocs.io)
+
 Install with 
 ```python
 pip install -i https://test.pypi.org/simple/ clustviz
@@ -97,7 +101,9 @@ For many other examples, take a look at the detailed [clustviz_example](https://
 
 3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
 
-4) The folder ```tests``` contains pytest tests
+4) The folder ```docs``` contains the necessary files to build the documentation using Sphinx and ReadTheDocs.
+
+5) The folder ```tests``` contains pytest tests.
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
