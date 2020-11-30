@@ -10,11 +10,12 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
 import os
 import sys
 current_dir = os.path.dirname(__file__)
 target_dir = os.path.abspath(os.path.join(current_dir, "../../"))
-target_dir_internal = os.path.abspath(os.path.join(current_dir, "../../clustviz/")) # for birch and chameleon
+target_dir_internal = os.path.abspath(os.path.join(current_dir, "../../clustviz/"))  # for birch and chameleon
 sys.path.insert(0, target_dir)
 sys.path.insert(1, target_dir_internal)
 
@@ -47,6 +48,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+add_module_names = False
 
 # -- Options for HTML output -------------------------------------------------
 
