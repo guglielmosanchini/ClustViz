@@ -128,11 +128,11 @@ def dist2(data, x, y):
 
 def chernoffBounds(u_min, f, N, d, k):
     """
-    u_min: size of the smallest cluster u.
-    f: percentage of cluster points (0 <= f <= 1).
-    N: total size.
-    s: sample size.
-    d: the probability that the sample contains less than f*|u| points of cluster u is less than d.
+    :param u_min: size of the smallest cluster u.
+    :param f: percentage of cluster points (0 <= f <= 1).
+    :param N: total size.
+    :param d: the probability that the sample contains less than f*|u| points of cluster u is less than d.
+    :param k: cluster size.
 
     If one uses as |u| the minimum cluster size we are interested in, the result is
     the minimum sample size that guarantees that for k clusters

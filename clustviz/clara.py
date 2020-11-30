@@ -112,10 +112,10 @@ class ClaraClustering:
         Pseudo-code for the k-medoids algorithm.
         1. Sample k of the n data points as the medoids.
         2. Associate each data point to the closest medoid.
-        3. While the cost of the data point space configuration is decreasing.
-            1. For each medoid m and each non-medoid point o:
-                1. Swap m and o, recompute cost.
-                2. If global cost increased, swap back.
+        3. While the cost of the data point space configuration is decreasing:
+        - For each medoid m and each non-medoid point o:
+        -- Swap m and o, recompute cost.
+        -- If global cost increased, swap back.
         """
 
         # Do some smarter setting of initial cost configuration
