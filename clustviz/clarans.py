@@ -220,7 +220,7 @@ def compute_cost_clarans(data, _cur_choice):
 
 def plot_tree_clarans(data, k):
     """
-    Plots G_{k,n} as in the paper of CLARANS; only to use with small input data.
+    plot G_{k,n} as in the paper of CLARANS; only to use with small input data.
 
     :param data: input DataFrame.
     :param k: number of points in each combination (possible set of medoids).
