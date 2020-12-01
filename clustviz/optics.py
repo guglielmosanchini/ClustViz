@@ -160,6 +160,9 @@ def reach_plot(data, ClustDist, eps):
 
     """
 
+    height_factor_noise = 1.15
+    epsilon_stringcode = "\u03B5"
+
     plot_dic = {}
 
     # create dictionary for reachability plot, keys will be the bar labels and the value will be the height
@@ -167,16 +170,13 @@ def reach_plot(data, ClustDist, eps):
     for key, value in ClustDist.items():
 
         if np.isinf(value) == True:
-
-            plot_dic[key] = eps * 1.15
-
+            plot_dic[key] = eps * height_factor_noise
         else:
-
             plot_dic[key] = ClustDist[key]
 
     missing_keys = list(set(data.keys()) - set(ClustDist.keys()))
 
-    tick_list = list(ClustDist.keys()) + [" "] * (len(missing_keys))
+    tick_list = list(ClustDist.keys()) + [" "] * len(missing_keys)
 
     # add the necessary zeroes for points that are still to be processed
     for m_k in missing_keys:
@@ -185,7 +185,7 @@ def reach_plot(data, ClustDist, eps):
     fig, ax = plt.subplots(1, 1, figsize=(12, 5))
 
     # bar plot of reachability
-    ax.bar(plot_dic.keys(), plot_dic.values())
+    ax.bar(plot_dic.keys(), plot_dic.values(), color="lightblue")
 
     ax.set_xticks(tick_list)
 
@@ -195,7 +195,7 @@ def reach_plot(data, ClustDist, eps):
     ax1 = ax.twinx()
     ax1.set_ylim(ax.get_ylim())
     ax1.set_yticks([eps])
-    ax1.set_yticklabels(["\u03B5"])
+    ax1.set_yticklabels([epsilon_stringcode])
 
     plt.show()
 
@@ -371,10 +371,10 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax1.set_xlabel("")
     ax1.set_ylabel("")
 
-    for i, txt in enumerate([i for i in range(len(X))]):
+    for i, txt in enumerate(range(len(X))):
         ax1.annotate(
             txt,
-            (X[:, 0][i], X[:, 1][i]),
+            (X[i, 0], X[i, 1]),
             fontsize=FONTSIZE_NORMAL,
             size=SIZE_NORMAL,
             ha="center",
@@ -382,13 +382,15 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
         )
 
     # second plot: reachability plot, with colors corresponding to clusters
+    height_factor_noise = 1.15
+    epsilon_stringcode = "\u03B5"
     plot_dic = {}
 
     for key, value in ClustDist.items():
 
         if np.isinf(value) == True:
 
-            plot_dic[key] = eps * 1.15
+            plot_dic[key] = eps * height_factor_noise
 
         else:
 
@@ -407,6 +409,6 @@ def plot_clust(X, ClustDist, CoreDist, eps, eps_db):
     ax3 = ax2.twinx()
     ax3.set_ylim(ax2.get_ylim())
     ax3.set_yticks([eps, eps_db])
-    ax3.set_yticklabels(["\u03B5", "\u03B5" + "'"])
+    ax3.set_yticklabels([epsilon_stringcode, epsilon_stringcode + "'"])
 
     plt.show()
