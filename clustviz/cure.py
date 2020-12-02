@@ -53,7 +53,7 @@ def point_plot_mod2(
     :param not_sampled_ind: indexes of not_sampled point_indices.
     :param n_rep_fin: number of representatives to use for each cluster in the final assignment phase in the large
                       dataset version.
-    :return list_keys_diz: if par_index is not None, returns the new indexes of par_index.
+    :return: if par_index is not None, returns the new indexes of par_index.
 
     """
 
@@ -354,7 +354,7 @@ def update_mat_cure(mat, i, j, rep_new, name):
     :param rep_new: dictionary of new representatives.
     :param name: string of the form "(" + u + ")" + "-" + "(" + u_cl + ")", containing the new
                  name of the newly merged cluster.
-    :return mat: updated matrix with new distances
+    :return: updated matrix with new distances
     """
     # taking the 2 rows to be updated
     a1 = mat.loc[i]
@@ -391,7 +391,7 @@ def sel_rep(clusters, name, c, alpha):
     :param alpha: 0<=float<=1, it determines how much the representative points are moved
                  toward the centroid: 0 means they aren't modified, 1 means that all points
                  collapse to the centroid.
-    :return others: list of representative points.
+    :return: list of representative points.
     """
 
     # if the cluster has c points or less, just take all of them as representatives and shrink them
@@ -465,7 +465,7 @@ def sel_rep_fast(prec_reps, clusters, name, c, alpha):
     :param alpha: 0<=float<=1, it determines how much the representative points are moved
                  toward the centroid: 0 means they aren't modified, 1 means that all points
                  collapse to the centroid.
-    :return others: list of representative points.
+    :return: list of representative points.
     """
 
     com = np.mean(clusters[name], axis=0)
@@ -549,7 +549,7 @@ def cure(
     :param n_rep_finalclust: the final representative points used to classify the not_sampled points.
     :param not_sampled: points not sampled in the initial phase.
     :param not_sampled_ind: indexes of not_sampled points.
-    :return (clusters, rep, a): returns the clusters dictionary, the dictionary of representatives, the matrix a
+    :return, rep, a): returns the clusters dictionary, the dictionary of representatives, the matrix a
     """
 
     # starting from raw data
@@ -755,7 +755,7 @@ def dist_mat_gen_cure(dictionary):
 
     :param dictionary: dictionary of representative points, the only ones used to compute distances
                        between clusters.
-    :return D: distance matrix as dataframe
+    :return: distance matrix as dataframe
 
     """
     D = pd.DataFrame()
@@ -811,7 +811,7 @@ def cure_sample_part(
     :param q: the number >1 such that each partition reduces to n/(pq) clusters.
     :param n_rep_finalclust: number of representatives to use in the final assignment phase.
     :param plotting: if True, plots all intermediate steps.
-    :return (clusters, rep, mat_a): returns the clusters dictionary, the dictionary of representatives, the matrix a.
+    :return, rep, mat_a): returns the clusters dictionary, the dictionary of representatives, the matrix a.
     """
 
     # choose the parameters suggested by the paper if the user doesnt provide input parameters

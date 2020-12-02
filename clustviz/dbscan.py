@@ -202,7 +202,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                      added to a clusters
     :param print_details: if True, prints the length of the "external" NearestNeighborhood
                           and of the "internal" one (in the while loop).
-    :return ClustDict: dictionary of the form point_index:cluster_label.
+    :return: dictionary of the form point_index:cluster_label.
 
     """
 

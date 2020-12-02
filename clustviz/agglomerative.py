@@ -14,7 +14,7 @@ def update_mat(mat, i, j, linkage):
     :param i: row index.
     :param j: column indexes.
     :param linkage: linkage method; can be single, complete, average or ward.
-    :return mat: updated matrix as dataframe.
+    :return: updated matrix as dataframe.
 
     """
 
@@ -166,7 +166,7 @@ def dist_mat(df, linkage):
     :param df: input dataframe, with first column corresponding to x-coordinates and
                second column corresponding to y-coordinates of data points.
     :param linkage: linkage method; can be single, complete, average or ward.
-    :return D: distance matrix.
+    :return: distance matrix.
 
     """
 
@@ -287,7 +287,7 @@ def compute_var_sing(df, centroids):
     :param df:  input dataframe built by agg_clust, listing the cluster and the x and y
                 coordinates of each point.
     :param centroids: dataframe of the centroids of clusters, with their x and y coordinates.
-    :return var_int: list of intra-cluster variances.
+    :return: list of intra-cluster variances.
 
     """
     even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]

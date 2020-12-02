@@ -209,7 +209,7 @@ def OPTICS(X, eps, minPTS, plot=True, plot_reach=False):
     :param minPTS: minimum number of neighbors for a point to be considered a core point.
     :param plot: if True, the scatter plot of the function point_plot is displayed at each step.
     :param plot_reach: if True, the reachability plot is displayed at each step.
-    :return (ClustDist, CoreDist): ClustDist, a dictionary of the form point_index:reach_dist, and
+    :return, CoreDist): ClustDist, a dictionary of the form point_index:reach_dist, and
              CoreDist, a dictionary of the form point_index:core_dist
     """
 
@@ -287,7 +287,7 @@ def ExtractDBSCANclust(ClustDist, CoreDist, eps_db):
     :param ClustDist: ClustDist of OPTICS, a dictionary of the form point_index:reach_dist
     :param CoreDist: CoreDist of OPTICS, a dictionary of the form point_index:core_dist
     :param eps_db: the eps to choose for DBSCAN
-    :return ClustDict: dictionary of clusters, of the form point_index:cluster_label
+    :return: dictionary of clusters, of the form point_index:cluster_label
 
     """
 
