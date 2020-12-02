@@ -4,6 +4,7 @@ Sphinx pipeline
 
 - ```pip install sphinx```
 - ```pip install sphinx_rtd_theme``` # or any other theme you wish to use
+- ```pip install sphinx-autodoc-typehints```
 - ```make clean``` (to delete old html)
 - delete ```clustviz.rst``` and ```modules.rst``` in ```docs/source ```
 - ```sphinx-apidoc -f -o source ../clustviz```
