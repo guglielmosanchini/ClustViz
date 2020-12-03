@@ -1,12 +1,12 @@
 from clustviz.denclue import (
-    gauss_dens,
-    grad_gauss_dens,
-    square_wave_dens,
+    gaussian_density,
+    gradient_gaussian_density,
+    square_wave_density,
     FindRect,
     pop_cubes,
     highly_pop_cubes,
     check_connection,
-    connect_cubes,
+    find_connected_cubes,
     near_with_cube,
     near_without_cube,
     density_attractor,
@@ -18,24 +18,27 @@ import numpy as np
 from sklearn.datasets import make_blobs
 
 
-def test_gauss_dens():
-    D = [[1, 0], [0, 0], [2, 0]]
-    res = gauss_dens([0, 0], D, 1, dist="euclidean")
+def test_gaussian_density():
+    D = np.array([[1, 0], [0, 0], [2, 0]])
+    point = np.array([0, 0])
+    res = gaussian_density(point, D, 1, dist="euclidean")
     assert round(res, 2) == 1.74
 
 
-def test_grad_gauss_dens():
-    D = [[1, 0], [0, 2]]
-    res = grad_gauss_dens([0, 0], D, 1, dist="euclidean")
+def test_gradient_gaussian_density():
+    D = np.array([[1, 0], [0, 2]])
+    point = np.array([0, 0])
+    res = gradient_gaussian_density(point, D, 1, dist="euclidean")
     first_component = round(res[0], 2) == 0.61
     second_component = round(res[1], 2) == 0.27
 
     assert first_component & second_component
 
 
-def test_square_wave_dens():
-    D = [[1, 0], [0, 0], [2, 0]]
-    res = square_wave_dens([0, 0], D, 1, dist="euclidean")
+def test_square_wave_density():
+    D = np.array([[1, 0], [0, 0], [2, 0]])
+    point = np.array([0, 0])
+    res = square_wave_density(point, D, 1, dist="euclidean")
     assert res == 2
 
 
@@ -61,7 +64,7 @@ def test_FindRect():
         (0, 0): (-0.05, -0.05, 1.95, 1.95),
         (0, 1): (-0.05, 1.95, 1.95, 3.95),
     }
-    point = [0, 2]
+    point = np.array([0, 2])
     assert FindRect(point, coord_dict) == (0, 1)
 
 
@@ -82,7 +85,7 @@ def test_check_connection():
     assert check_connection(hpc[(0, 0)], hpc[0, 1], 1)
 
 
-def test_connect_cubes():
+def test_find_connected_cubes():
     z = {
         (0, 0): [4, [2.1, 3.0], [[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.1, 1.0]]],
         (0, 1): [3, [2.0, 7.0], [[0.0, 2.0], [1.0, 2.0], [1.0, 3.0]]],
@@ -92,12 +95,11 @@ def test_connect_cubes():
 
     hpc = {(0, 0): [4, [2.1, 3.0], [[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.1, 1.0]]]}
 
-    new_cubes = connect_cubes(hpc, z, s=1)
+    new_cubes = find_connected_cubes(hpc, z, s=1)
 
-    assert new_cubes == {
-        (0, 0): [4, [2.1, 3.0], [[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.1, 1.0]]],
-        (0, 1): [3, [2.0, 7.0], [[0.0, 2.0], [1.0, 2.0], [1.0, 3.0]]],
-    }
+    print(new_cubes)
+
+    assert new_cubes == {(0, 1): [3, [2.0, 7.0], [[0.0, 2.0], [1.0, 2.0], [1.0, 3.0]]]}
 
 
 def test_near_with_cube():
@@ -108,9 +110,7 @@ def test_near_with_cube():
         (3, 2): [2, [13.0, 8.0], [[6.0, 4.0], [7.0, 4.0]]],
     }
 
-    res = near_with_cube(np.array([0.2, 0.2]), z[(0, 0)], z, 1)
-
-    assert res == [
+    expected = np.array([
         [0.0, 0.0],
         [0.0, 1.0],
         [1.0, 1.0],
@@ -118,7 +118,11 @@ def test_near_with_cube():
         [0.0, 2.0],
         [1.0, 2.0],
         [1.0, 3.0],
-    ]
+    ])
+
+    res = near_with_cube(np.array([0.2, 0.2]), z[(0, 0)], z, 1)
+
+    assert (res == expected).all()
 
 
 def test_near_without_cube():
@@ -143,9 +147,7 @@ def test_near_without_cube():
         (3, 2): (5.95, 3.95, 7.95, 5.95),
     }
 
-    res = near_without_cube(np.array([0.2, 0.2]), d, z, 1)
-
-    assert res == [
+    expected = np.array([
         [0.0, 0.0],
         [0.0, 1.0],
         [1.0, 1.0],
@@ -153,7 +155,11 @@ def test_near_without_cube():
         [0.0, 2.0],
         [1.0, 2.0],
         [1.0, 3.0],
-    ]
+    ])
+
+    res = near_without_cube(np.array([0.2, 0.2]), d, z, 1)
+
+    assert (res == expected).all()
 
 
 def test_density_attractor():
