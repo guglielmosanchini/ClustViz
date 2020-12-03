@@ -563,6 +563,6 @@ def plot_birch_leaves(tree, data):
                 )
 
     # plot indexes of points in plot
-    annotate_points(annotation=range(len(data)), points=np.array(data), ax=ax)
+    annotate_points(annotations=range(len(data)), points=np.array(data), ax=ax)
 
     plt.show()

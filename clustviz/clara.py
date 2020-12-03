@@ -338,7 +338,6 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
     :param cl: cluster dictionary.
     :param full: full input dataframe.
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
-
     """
 
     fig, ax = plt.subplots(figsize=(14, 6))
@@ -374,7 +373,7 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
         )
 
     # plot indexes of points in plot
-    annotate_points(annotations=range(len(full)), points=full, ax=ax)
+    annotate_points(annotations=range(len(full)), points=np.array(full), ax=ax)
 
     if equal_axis_scale is True:
         ax.set_aspect("equal", adjustable="box")
