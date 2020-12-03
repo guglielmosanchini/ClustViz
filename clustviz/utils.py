@@ -1,29 +1,10 @@
 import math
+from typing import Dict, Tuple, Iterable
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from scipy.spatial import ConvexHull
-
-# OLD_COLOR_DICT = {
-#     0: "seagreen",
-#     1: "lightcoral",
-#     2: "yellow",
-#     3: "grey",
-#     4: "pink",
-#     5: "navy",
-#     6: "orange",
-#     7: "purple",
-#     8: "salmon",
-#     9: "olive",
-#     10: "brown",
-#     11: "tan",
-#     12: "plum",
-#     13: "red",
-#     14: "lightblue",
-#     15: "khaki",
-#     16: "gainsboro",
-#     17: "peachpuff",
-# }
 
 FONTSIZE_NORMAL = 10
 FONTSIZE_BIGGER = 12
@@ -89,11 +70,11 @@ CURE_REPS_COLORS = [
 ]
 
 
-def flatten_list(input_list):
+def flatten_list(input_list: list) -> list:
     return [item for sublist in input_list for item in sublist]
 
 
-def encircle(x, y, ax, **kwargs):
+def encircle(x, y, ax, **kwargs) -> None:
     """plot a line-boundary around a cluster (at least 3 points are required)"""
     p = np.c_[x, y]
     hull = ConvexHull(p)
@@ -101,7 +82,7 @@ def encircle(x, y, ax, **kwargs):
     ax.add_patch(poly)
 
 
-def convert_colors(dict_colors, alpha=0.5):
+def convert_colors(dict_colors: Dict[int, str], alpha: float = 0.5) -> Dict[int, Tuple[float, ...]]:
     """modify the transparency of each color of a dictionary of colors to the desired alpha"""
     new_dict_colors = {}
 
@@ -111,22 +92,22 @@ def convert_colors(dict_colors, alpha=0.5):
     return new_dict_colors
 
 
-def euclidean_distance(a, b):
+def euclidean_distance(a: Iterable, b: Iterable) -> float:
     """Returns Euclidean distance of two arrays"""
     return np.linalg.norm(np.array(a) - np.array(b))
 
 
-def dist1(x, y):
+def dist1(x: np.ndarray, y: np.ndarray) -> float:
     """Original euclidean distance"""
     return np.sqrt(np.sum((x - y) ** 2))
 
 
-def dist2(data, x, y):
+def dist2(data: dict, x, y) -> float:
     """ Euclidean distance which takes keys of a dictionary (X_dict) as inputs """
     return np.sqrt(np.sum((data[x] - data[y]) ** 2))
 
 
-def chernoffBounds(u_min, f, N, d, k):
+def chernoffBounds(u_min: int, f: float, N: int, d: float, k: int) -> float:
     """
     :param u_min: size of the smallest cluster u.
     :param f: percentage of cluster points (0 <= f <= 1).
@@ -151,3 +132,35 @@ def chernoffBounds(u_min, f, N, d, k):
     )
 
     return res
+
+
+def cluster_points(cluster_name: str) -> list:
+    """
+    Return points composing the cluster, removing brackets and hyphen from cluster name,
+    e.g. ((a)-(b))-(c) becomes [a, b, c].
+
+    :param cluster_name: name of the cluster.
+    :return: points forming the cluster.
+    """
+
+    return cluster_name.replace("(", "").replace(")", "").split("-")
+
+
+def annotate_points(annotations: Iterable, points: np.ndarray, ax) -> None:
+    """
+    Annotate the points of the axis with their name (number).
+
+    :param annotations: names of the points (their numbers).
+    :param points: array of their positions.
+    :param ax: axis of the plot.
+    """
+
+    for i, txt in enumerate(annotations):
+        ax.annotate(
+            txt,
+            (points[i, 0], points[i, 1]),
+            fontsize=FONTSIZE_NORMAL,
+            size=SIZE_NORMAL,
+            ha="center",
+            va="center",
+        )

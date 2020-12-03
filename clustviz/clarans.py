@@ -1,8 +1,11 @@
 import random
+from typing import Tuple, Dict, Any
+
 import scipy
 import itertools
 import graphviz
 import numpy as np
+import pandas as pd
 from clustviz.pam import plot_pam
 
 from pyclustering.utils import euclidean_distance_square
@@ -11,7 +14,7 @@ from pyclustering.cluster.clarans import clarans as clarans_pyclustering
 
 class clarans(clarans_pyclustering):
 
-    def process(self, plotting=False):
+    def process(self, plotting: bool = False):
         """!
         @brief Performs cluster analysis in line with rules of CLARANS algorithm.
 
@@ -189,7 +192,7 @@ class clarans(clarans_pyclustering):
         print("Medoid set changed {0} times".format(counter))
 
 
-def compute_cost_clarans(data, _cur_choice):
+def compute_cost_clarans(data: pd.DataFrame, _cur_choice: list) -> Tuple[float, Dict[Any, list]]:
     """
     A function to compute the configuration cost. (modified from that of CLARA)
 
@@ -218,7 +221,7 @@ def compute_cost_clarans(data, _cur_choice):
     return total_cost, medoids
 
 
-def plot_tree_clarans(data, k):
+def plot_tree_clarans(data: pd.DataFrame, k: int) -> None:
     """
     plot G_{k,n} as in the paper of CLARANS; only to use with small input data.
 

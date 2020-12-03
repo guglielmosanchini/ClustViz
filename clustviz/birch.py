@@ -7,16 +7,16 @@ from pyclustering.cluster import cluster_visualizer
 from pyclustering.container.cftree import leaf_node, non_leaf_node, cfnode_type, measurement_type
 from pyclustering.container.cftree import cftree as cftree_pyclustering
 
-from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import COLOR_DICT, annotate_points
 
 
 class cftree(cftree_pyclustering):
 
     def insert(self, entry):
-        """!
-        @brief Insert clustering feature to the tree.
+        """
+        Insert clustering feature to the tree.
 
-        @param[in] entry (cfentry): Clustering feature that should be inserted.
+        :param entry: clustering feature that should be inserted.
 
         """
         print("insert entry")
@@ -40,15 +40,15 @@ class cftree(cftree_pyclustering):
                 if self.__merge_nearest_successors(self.__root) is True:
                     self.__amount_nodes -= 1
 
-    def __recursive_insert(self, entry, search_node):
-        """!
-        @brief Recursive insert of the entry to the tree.
-        @details It performs all required procedures during insertion such as splitting, merging.
+    def __recursive_insert(self, entry, search_node) -> bool:
+        """
+        Recursive insert of the entry to the tree.
+        It performs all required procedures during insertion such as splitting, merging.
 
-        @param[in] entry (cfentry): Clustering feature.
-        @param[in] search_node (cfnode): Node from that insertion should be started.
+        :param entry: clustering feature.
+        :param search_node: node from that insertion should be started.
 
-        @return (bool) True if number of nodes at the below level is changed, otherwise False.
+        :return: True if number of nodes at the below level is changed, otherwise False.
 
         """
 
@@ -63,11 +63,11 @@ class cftree(cftree_pyclustering):
             return self.__insert_for_leaf_node(entry, search_node)
 
     def __insert_for_leaf_node(self, entry, search_node):
-        """!
-        @brief Recursive insert entry from leaf node to the tree.
+        """
+        Recursive insert entry from leaf node to the tree.
 
-        @param[in] entry (cfentry): Clustering feature.
-        @param[in] search_node (cfnode): None-leaf node from that insertion should be started.
+        :param entry: Clustering feature.
+        :param: search_node (cfnode): None-leaf node from that insertion should be started.
 
         @return (bool) True if number of nodes at the below level is changed, otherwise False.
 
@@ -563,14 +563,6 @@ def plot_birch_leaves(tree, data):
                 )
 
     # plot indexes of points in plot
-    for i, txt in enumerate(range(len(data))):
-        ax.annotate(
-            txt,
-            (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotation=range(len(data)), points=np.array(data), ax=ax)
 
     plt.show()

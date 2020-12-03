@@ -1,20 +1,23 @@
+from typing import Dict, Optional
+
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 import random
-from clustviz.utils import dist1, DBSCAN_COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import dist1, DBSCAN_COLOR_DICT, annotate_points
 
 
-def scan_neigh1_mod(data, point, eps):
+def scan_neigh1_mod(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> Dict[str, np.ndarray]:
     """
     Neighborhood search for a point of a given dataset-dictionary (data)
     with a fixed eps; it returns also the point itself, differently from
     scan_neigh1 of OPTICS.
 
-    :param data: input dictionary.
+    :param data: input dataset.
     :param point: point whose neighborhood is to be examined.
     :param eps: radius of search.
-    :return: dictionary of neighborhood points.
+    :return: neighborhood points.
     """
 
     neigh = {}
@@ -29,7 +32,7 @@ def scan_neigh1_mod(data, point, eps):
     return neigh
 
 
-def point_plot_mod(X, X_dict, point, eps, ClustDict):
+def point_plot_mod(X: np.ndarray, X_dict: Dict[str, np.ndarray], point, eps: float, ClustDict: dict) -> None:
     """
     Plots a scatter plot of points, where the point (x,y) is light black and
     surrounded by a red circle of radius eps, where already processed point are plotted
@@ -46,20 +49,20 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # plot scatter points in color lime
-    plt.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
+    ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
 
     # plot colors according to clusters
     for i in ClustDict:
-        plt.scatter(
+        ax.scatter(
             X_dict[i][0], X_dict[i][1], color=DBSCAN_COLOR_DICT[ClustDict[i] % (len(DBSCAN_COLOR_DICT) - 1)], s=300
         )
 
     # plot the last added point bigger and black, with a red circle surrounding it
-    plt.scatter(
+    ax.scatter(
         x=X_dict[point][0], y=X_dict[point][1], s=400, color="black", alpha=0.4
     )
 
-    circle1 = plt.Circle(
+    circle = plt.Circle(
         (X_dict[point][0], X_dict[point][1]),
         eps,
         color="r",
@@ -67,23 +70,16 @@ def point_plot_mod(X, X_dict, point, eps, ClustDict):
         linewidth=3,
         alpha=0.7,
     )
-    ax.add_artist(circle1)
+    ax.add_artist(circle)
 
     # add indexes to points in the scatterplot
-    for i, txt in enumerate([i for i in range(len(X))]):
-        ax.annotate(
-            txt,
-            (X[:, 0][i], X[:, 1][i]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(X)), points=X, ax=ax)
 
     plt.show()
 
 
-def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
+def plot_clust_DB(X: np.ndarray, ClustDict: Dict[str, int], eps: float, circle_class: Optional[str] = None,
+                  noise_circle: bool = True) -> None:
     """
     Scatter plot of the data points, colored according to the cluster they belong to; circle_class plots
     circles around some or all points, with a radius of eps; if noise_circle is True, circle are also plotted
@@ -115,7 +111,7 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
             y=[i[0][1] for i in list(new_dict.values())],
             label=[i[1] for i in list(new_dict.values())],
         ),
-        index=new_dict.keys(),
+        index=list(new_dict.keys()),
     )
 
     fig, ax1 = plt.subplots(1, 1, figsize=(18, 6))
@@ -178,20 +174,13 @@ def plot_clust_DB(X, ClustDict, eps, circle_class=None, noise_circle=True):
     ax1.set_ylabel("")
 
     # plot labels of points
-    for i, txt in enumerate([i for i in range(len(X))]):
-        ax1.annotate(
-            txt,
-            (X[:, 0][i], X[:, 1][i]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(X)), points=X, ax=ax1)
 
     plt.show()
 
 
-def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
+def DBSCAN(data: np.ndarray, eps: float, minPTS: int, plotting: bool = False,
+           print_details: bool = False) -> Dict[str, int]:
     """
     DBSCAN algorithm.
 
@@ -211,19 +200,19 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
 
     clust_id = -1
 
-    X_dict = dict(zip([str(i) for i in range(len(data))], data))
+    X = dict(zip([str(i) for i in range(len(data))], data))
 
     processed = []
 
     # for every point in the dataset
-    for point in X_dict:
+    for point in X:
 
         # if it hasnt been visited
         if point not in processed:
             # mark it as visited
             processed.append(point)
             # scan its neighborhood
-            N = scan_neigh1_mod(X_dict, X_dict[point], eps)
+            N = scan_neigh1_mod(X, X[point], eps)
 
             if print_details is True:
                 print("len(N): ", len(N))
@@ -233,7 +222,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 ClustDict.update({point: -1})
 
                 if plotting is True:
-                    point_plot_mod(data, X_dict, point, eps, ClustDict)
+                    point_plot_mod(data, X, point, eps, ClustDict)
             # else if it is a Core point
             else:
                 # increase current id of cluster
@@ -242,7 +231,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                 ClustDict.update({point: clust_id})
 
                 if plotting is True:
-                    point_plot_mod(data, X_dict, point, eps, ClustDict)
+                    point_plot_mod(data, X, point, eps, ClustDict)
                 # add it to the temporary processed list
                 processed_list = [point]
                 # remove it from the neighborhood N
@@ -266,7 +255,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                         # mark it as visited
                         processed.append(n)
                         # scan its neighborhood
-                        N_2 = scan_neigh1_mod(X_dict, X_dict[n], eps)
+                        N_2 = scan_neigh1_mod(X, X[n], eps)
 
                         if print_details is True:
                             print("len N2: ", len(N_2))
@@ -276,7 +265,7 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                             for element in N_2:
 
                                 if element not in processed_list:
-                                    N.update({element: X_dict[element]})
+                                    N.update({element: X[element]})
 
                     # if n has not been inserted into cluster dictionary or if it has previously been
                     # classified as noise, update the cluster dictionary
@@ -284,6 +273,6 @@ def DBSCAN(data, eps, minPTS, plotting=False, print_details=False):
                         ClustDict.update({n: clust_id})
 
                     if plotting is True:
-                        point_plot_mod(data, X_dict, n, eps, ClustDict)
+                        point_plot_mod(data, X, n, eps, ClustDict)
 
     return ClustDict

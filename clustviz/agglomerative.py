@@ -4,19 +4,8 @@ import pandas as pd
 from matplotlib.patches import Rectangle
 from typing import Tuple, Iterable
 
-from clustviz.utils import convert_colors, encircle, dist1, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, FONTSIZE_BIGGER, SIZE_BIGGER
-
-
-def cluster_points(cluster_name: str) -> list:
-    """ 
-    Return points composing the cluster, removing brackets and hyphen from cluster name,
-    e.g. ((a)-(b))-(c) becomes [a, b, c]
-    
-    :param cluster_name: name of the cluster
-    :return: list of the points that form the cluster
-    """
-
-    return cluster_name.replace("(", "").replace(")", "").split("-")
+from clustviz.utils import convert_colors, encircle, dist1, flatten_list, cluster_points, \
+    COLOR_DICT, FONTSIZE_BIGGER, annotate_points
 
 
 def update_mat(mat: pd.DataFrame, i: int, j: int, linkage: str) -> pd.DataFrame:
@@ -138,15 +127,7 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
             zorder=2
         )
 
-    for i, txt in enumerate(range(len(X))):
-        ax.annotate(
-            txt,
-            (X[:, 0][i], X[:, 1][i]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(X)), points=X, ax=ax)
 
     num_clust = "n° clust: " + str(len(distance_matrix))
     dist_tot = "dist_tot: " + str(round(level_txt, 5))

@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from itertools import groupby
 from collections import OrderedDict, Counter
 
-from clustviz.utils import euclidean_distance, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import euclidean_distance, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, annotate_points
 
 
 def gauss_infl_function(x, y, s, dist="euclidean"):
@@ -623,15 +623,7 @@ def plot_clust_dict(data, lab_dict):
         )
 
     # add indexes to points in plot
-    for i, txt in enumerate(range(len(data))):
-        ax.annotate(
-            txt,
-            (np.array(data)[i, 0], np.array(data)[i, 1]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(data)), points=np.array(data), ax=ax)
 
     plt.show()
 

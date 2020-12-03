@@ -1,22 +1,25 @@
 # SachinKalsi GITHUB
 # https://github.com/SachinKalsi/kmedoids/blob/master/KMedoids.py
+from typing import Optional
+
 from scipy.sparse import csr_matrix
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import random
 import pprint
-from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import COLOR_DICT, annotate_points
 
 
 class KMedoids:
     def __init__(
         self,
-        n_cluster=2,
-        max_iter=10,
-        tol=0.1,
-        start_prob=0.8,
-        end_prob=0.99,
-        random_state=42,
+        n_cluster: int = 2,
+        max_iter: int = 10,
+        tol: float = 0.1,
+        start_prob: float = 0.8,
+        end_prob: float = 0.99,
+        random_state: Optional[int] = 42,
     ):
         """ Kmedoids constructor called """
         if (
@@ -295,7 +298,7 @@ class KMedoids:
             raise ValueError("Invalid input")
 
 
-def plot_pam(data, cl, equal_axis_scale=False):
+def plot_pam(data: pd.DataFrame, cl: dict, equal_axis_scale: bool = False) -> None:
     """
     Scatterplot of data points, with colors according to cluster labels.
     Centers of mass of the clusters are marked with an X.
@@ -309,7 +312,7 @@ def plot_pam(data, cl, equal_axis_scale=False):
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # all points are plotted in white
-    plt.scatter(
+    ax.scatter(
         np.array(data)[:, 0],
         np.array(data)[:, 1],
         s=300,
@@ -319,7 +322,7 @@ def plot_pam(data, cl, equal_axis_scale=False):
 
     # plot the points with colors according to the cluster they belong to
     for i, el in enumerate(list(cl.values())):
-        plt.scatter(
+        ax.scatter(
             np.array(data)[el, 0],
             np.array(data)[el, 1],
             s=300,
@@ -329,7 +332,7 @@ def plot_pam(data, cl, equal_axis_scale=False):
 
     # plot centers of mass, marked with an X
     for i, el in enumerate(list(cl.keys())):
-        plt.scatter(
+        ax.scatter(
             np.array(data)[el, 0],
             np.array(data)[el, 1],
             s=500,
@@ -339,15 +342,7 @@ def plot_pam(data, cl, equal_axis_scale=False):
         )
 
     # add indexes to points in plot
-    for i, txt in enumerate([i for i in range(len(data))]):
-        ax.annotate(
-            txt,
-            (np.array(data)[:, 0][i], np.array(data)[:, 1][i]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(data)), points=np.array(data), ax=ax)
 
     if equal_axis_scale is True:
         ax.set_aspect("equal", adjustable="box")

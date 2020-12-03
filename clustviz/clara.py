@@ -2,10 +2,12 @@
 # https://github.com/akalino/Clustering/blob/master/clara.py
 
 import random
+from typing import Tuple, Union, Dict, Any, Iterable
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from clustviz.utils import COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL
+from clustviz.utils import COLOR_DICT, annotate_points
 
 
 class ClaraClustering:
@@ -15,7 +17,7 @@ class ClaraClustering:
     for bigger data sets.
     """
 
-    def __init__(self, max_iter=100000):
+    def __init__(self, max_iter: int = 100_000):
         """
         Class initialization.
 
@@ -24,7 +26,7 @@ class ClaraClustering:
         self.max_iter = max_iter
         self.dist_cache = dict()
 
-    def clara(self, _df, _k, _fn):
+    def clara(self, _df: pd.DataFrame, _k: int, _fn: str) -> Tuple[float, list, Union[dict, Dict[Any, list]]]:
         """
         The main clara clustering iterative algorithm.
 
@@ -34,8 +36,8 @@ class ClaraClustering:
         :return: The minimized cost, the best medoid choices and the final configuration.
         """
         size = len(_df)
-        if size > 100000:
-            niter = 1000
+        if size > 100_000:
+            niter = 1_000
             runs = 1
         else:
             niter = self.max_iter
@@ -99,7 +101,7 @@ class ClaraClustering:
 
         return min_avg_cost, best_choices, best_results
 
-    def k_medoids(self, _df, _k, _fn, _niter):
+    def k_medoids(self, _df: pd.DataFrame, _k: int, _fn: str, _niter: int) -> Tuple[float, list, Union[Dict[Any, list], dict]]:
         """
         The original k-medoids algorithm.
 
@@ -177,7 +179,7 @@ class ClaraClustering:
 
         return current_cost, best_choices, best_results
 
-    def compute_cost(self, _df, _fn, _cur_choice, cache_on=False):
+    def compute_cost(self, _df: pd.DataFrame, _fn: str, _cur_choice: list, cache_on: bool = False) -> Tuple[float, Dict[Any, list]]:
         """
         A function to compute the configuration cost.
 
@@ -226,7 +228,7 @@ class ClaraClustering:
         # print("total_cost: ", total_cost)
         return total_cost, medoids
 
-    def average_cost(self, _df, _fn, _cur_choice):
+    def average_cost(self, _df: pd.DataFrame, _fn: str, _cur_choice: list):
         """
         A function to compute the average cost.
 
@@ -239,7 +241,7 @@ class ClaraClustering:
         avg_cost = _tc / len(_m)
         return avg_cost, _m
 
-    def cheat_at_sampling(self, _df, _k, _fn, _nsamp):
+    def cheat_at_sampling(self, _df: pd.DataFrame, _k: int, _fn: str, _nsamp: int) -> Tuple[float, list]:
         """
         A function to cheat at sampling for speed ups.
 
@@ -270,7 +272,8 @@ class ClaraClustering:
         ms = medoid_holder[idx].keys()
         return score_holder[idx], list(ms)
 
-    def euclidean_distance(self, v1, v2):
+    @staticmethod
+    def euclidean_distance(v1: Iterable, v2: Iterable) -> float:
         """
         Slow function for computing euclidean distance.
 
@@ -283,7 +286,8 @@ class ClaraClustering:
             dist += abs(a1 - a2) ** 2
         return dist
 
-    def fast_euclidean(self, v1, v2):
+    @staticmethod
+    def fast_euclidean(v1: np.ndarray, v2: np.ndarray) -> float:
         """
         Faster function for euclidean distance.
 
@@ -293,7 +297,8 @@ class ClaraClustering:
         """
         return np.linalg.norm(v1 - v2)
 
-    def manhattan_distance(self, v1, v2):
+    @staticmethod
+    def manhattan_distance(v1: Iterable, v2: Iterable) -> float:
         """
         Function for manhattan distance.
 
@@ -306,7 +311,8 @@ class ClaraClustering:
             dist += abs(a1 - a2)
         return dist
 
-    def cosine_distance(self, v1, v2):
+    @staticmethod
+    def cosine_distance(v1: Iterable, v2: Iterable) -> float:
         """
         Function for cosine distance.
 
@@ -322,13 +328,13 @@ class ClaraClustering:
         return float(xy) / np.sqrt(xx * yy)
 
 
-def plot_pam_mod(data, cl, full, equal_axis_scale=False):
+def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_scale: bool = False) -> None:
     """
     Scatterplot of data points, with colors according to cluster labels. Only sampled
     points are plotted, the others are only displayed with their indexes; moreover,
     centers of mass of the clusters are marked with an X.
 
-    :param data: input data sample as dataframe.
+    :param data: input data sample.
     :param cl: cluster dictionary.
     :param full: full input dataframe.
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
@@ -368,15 +374,7 @@ def plot_pam_mod(data, cl, full, equal_axis_scale=False):
         )
 
     # plot indexes of points in plot
-    for i, txt in enumerate([i for i in range(len(full))]):
-        ax.annotate(
-            txt,
-            (full.iloc[i, 0], full.iloc[i, 1]),
-            fontsize=FONTSIZE_NORMAL,
-            size=SIZE_NORMAL,
-            ha="center",
-            va="center",
-        )
+    annotate_points(annotations=range(len(full)), points=full, ax=ax)
 
     if equal_axis_scale is True:
         ax.set_aspect("equal", adjustable="box")
