@@ -55,6 +55,10 @@ add_module_names = False
 # to ensure compatibility with ReadTheDocs
 master_doc = 'index'
 
+# TODO: make it work, there is a bug apparently right now in sphinx
+autodoc_type_aliases = {'CubeInfo': 'denclue.CubeInfo', 'Cubes': 'denclue.Cubes',
+                        'CubesCoords': 'denclue.CubesCoords'}
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
