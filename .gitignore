@@ -1,4 +1,3 @@
-/build/
 /dist/
 /.coverage
 /venv37/
@@ -7,3 +6,4 @@
 /coverage.xml
 /nb_for_logo.ipynb
 /data/test_notebook.ipynb
+/docs/build/
