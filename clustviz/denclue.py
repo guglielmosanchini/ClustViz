@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Tuple, Dict, Union, List, Optional
 
 import numpy as np
@@ -13,22 +14,35 @@ from collections import OrderedDict, Counter
 
 from clustviz.utils import euclidean_distance, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, annotate_points
 
-CubeInfo = List[Union[int, List[float], List[list]]]
+CubeInfo = Dict[str, Union[int, List[float], List[list]]]
+"""
+Info of a cube (rectangle), it is made up of the number of points contained in the cube,
+the linear sum of the x and y coordinated of the points in the cube, and of the coordinates
+of the points themselves. For example
+``{'num_points': 2, 'linear_sum': np.array([3, 4]), 'points_coords': np.array([[1, 1], [2, 3])}``.
+"""
 Cubes = Dict[Tuple[int, int], CubeInfo]
+"""
+Cubes (rectangles), having as keys the ``(row, column)`` tuple, and as values ``CubeInfo``.
+"""
 CubesCoords = Dict[Tuple[int, int], Tuple[float, float, float, float]]
-# TODO: refactor Cubes as dicts of dicts, e.g {(0,0): {'n_point':3, 'linear_sum':[...], 'points':[[]]}}
-# TODO: highlight things in docstrings with sphinx, using double quotation, see docs
+"""
+Coordinates of the cubes (rectangles), having as keys the (row, column) tuple, and as values
+the minimum x, the minimum y, the maximum x and maximum y of the cube.
+For example
+``{ (0, 0): (-0.05, -0.05, 1.95, 1.95), (1, 0): (1.95, -0.05, 3.95, 1.95), ... }``.
+"""
 
 
 def gaussian_influence(x: np.ndarray, y: np.ndarray, s: float, dist: str = "euclidean") -> float:
     """
-    Return the value of the Gaussian influence function in (x,y) with standard deviation s.
+    Return the value of the Gaussian influence function in ``(x,y)`` with standard deviation ``s``.
 
     :param x: first point.
     :param y: second point.
     :param s: standard deviation of the Gaussian.
     :param dist: distance to use in the Gaussian.
-    :return: value fo the Gaussian in (x,y) with standard deviation s.
+    :return: value for the Gaussian in ``(x,y)`` with standard deviation ``s``.
     """
 
     if dist == "euclidean":
@@ -45,8 +59,8 @@ def gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclid
     :param D: dataset.
     :param s: standard deviation of the Gaussian.
     :param dist: distance to use in the Gaussian.
-    :return: Gaussian density at point x with respect to dataset D, using a Gaussian function with
-             distance dist and standard deviation s.
+    :return: Gaussian density at point ``x`` with respect to dataset ``D``, using a Gaussian function with
+             distance dist and standard deviation ``s``.
     """
 
     res = 0
@@ -56,7 +70,7 @@ def gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclid
     return res
 
 
-def gradient_gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclidean") -> float:
+def gradient_gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclidean") -> np.ndarray:
     """
     Compute the gradient of the Gaussian density function, used to find the density-attractors, at a point.
 
@@ -64,10 +78,10 @@ def gradient_gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str 
     :param D: dataset.
     :param s: standard deviation of the Gaussian.
     :param dist: distance to use in the Gaussian.
-    :return: gradient of the Gaussian density at point x with respect to dataset D, using a Gaussian function with
-             distance dist and standard deviation s.
+    :return: gradient of the Gaussian density at point ``x`` with respect to dataset ``D``, using a Gaussian function with
+             distance ``dist`` and standard deviation ``s``.
     """
-    res = 0
+    res = np.zeros(2)
     for i in range(len(D)):
         res += gaussian_influence(x, D[i], s, dist) * (
                 np.array(D[i]) - np.array(x)
@@ -77,13 +91,13 @@ def gradient_gaussian_density(x: np.ndarray, D: np.ndarray, s: float, dist: str 
 
 def square_wave_influence(x: np.ndarray, y: np.ndarray, s: float, dist: str = "euclidean") -> int:
     """
-    Compute the square-wave influence function in (x,y) with standard deviation s.
+    Compute the square-wave influence function in ``(x,y)`` with standard deviation ``s``.
 
     :param x: first point.
     :param y: second point.
     :param s: cut-off.
     :param dist: distance to use.
-    :return: if dist(x, y) <= s, return 1, else 0.
+    :return: ``if dist(x, y) <= s, return 1, else 0.``
     """
     if dist == "euclidean":
         if euclidean_distance(x, y) <= s:
@@ -100,8 +114,8 @@ def square_wave_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euc
     :param D: dataset.
     :param s: cut-off.
     :param dist: distance to use.
-    :return: square-wave density at point x with respect to dataset D, using a square-wave function with
-             distance dist and cut-off s.
+    :return: square-wave density at point ``x`` with respect to dataset ``D``, using a square-wave function with
+             distance ``dist`` and cut-off ``s``.
     """
 
     res = 0
@@ -110,7 +124,7 @@ def square_wave_density(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euc
     return res
 
 
-def square_wave_gradient(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclidean") -> float:
+def square_wave_gradient(x: np.ndarray, D: np.ndarray, s: float, dist: str = "euclidean") -> np.ndarray:
     """
     Compute the gradient of the square-wave density function of a point with respect to a dataset.
 
@@ -118,11 +132,11 @@ def square_wave_gradient(x: np.ndarray, D: np.ndarray, s: float, dist: str = "eu
     :param D: dataset.
     :param s: cut-off.
     :param dist: distance to use.
-    :return: gradient of the square-wave density function at point x with respect to dataset D, using a square-wave
-             function with distance dist and cut-off s.
+    :return: gradient of the square-wave density function at point ``x`` with respect to dataset ``D``, using a
+             square-wave function with distance ``dist`` and cut-off ``s``.
     """
 
-    res = 0
+    res = np.zeros(2)
     for i in range(len(D)):
         res += square_wave_influence(x, D[i], s, dist) * (
                 np.array(D[i]) - np.array(x)
@@ -132,15 +146,15 @@ def square_wave_gradient(x: np.ndarray, D: np.ndarray, s: float, dist: str = "eu
 
 def FindPoint(x1: float, y1: float, x2: float, y2: float, x: float, y: float) -> bool:
     """
-    Check if the point (x,y) is inside the rectangle determined by x1, y1, x2, y2.
+    Check if the point ``(x,y)`` is inside the rectangle determined by ``x1, y1, x2, y2``.
 
-    :param x1: minimum x coordinate of the rectangle vertices.
-    :param y1: minimum y coordinate of the rectangle vertices.
-    :param x2: maximum x coordinate of the rectangle vertices.
-    :param y2: maximum y coordinate of the rectangle vertices.
-    :param x: x coordinate of the point to be examined.
-    :param y: y coordinate of the point to be examined.
-    :return: True if the point (x, y) lies inside the rectangle, False otherwise.
+    :param x1: minimum ``x`` coordinate of the rectangle vertices.
+    :param y1: minimum ``y`` coordinate of the rectangle vertices.
+    :param x2: maximum ``x`` coordinate of the rectangle vertices.
+    :param y2: maximum ``y`` coordinate of the rectangle vertices.
+    :param x: ``x`` coordinate of the point to be examined.
+    :param y: ``y`` coordinate of the point to be examined.
+    :return: ``True`` if the point ``(x, y)`` lies inside the rectangle, ``False`` otherwise.
     """
     if (x1 < x < x2) and (y1 < y < y2):
         return True
@@ -154,7 +168,7 @@ def FindRect(point: np.ndarray, coord_dict: CubesCoords) -> Optional[Tuple[int, 
 
     :param point: point whose cube (rectangle) is to be found.
     :param coord_dict: dictionary of the rectangles' coordinates.
-    :return: key of the cube, e.g. (1, 3), containing the point; if it does not exist, return None
+    :return: key of the cube, e.g. ``(1, 3)``, containing the point; if it does not exist, return ``None``.
     """
     for k, v in coord_dict.items():
         if FindPoint(v[0], v[1], v[2], v[3], point[0], point[1]) is True:
@@ -165,19 +179,22 @@ def FindRect(point: np.ndarray, coord_dict: CubesCoords) -> Optional[Tuple[int, 
 def form_populated_cubes(a: float, b: float, c: float, d: float, data: np.ndarray) -> CubeInfo:
     """
     For the given input cube (rectangle), compute how many points of the input dataset lie in it, store their
-    coordinates and compute the sum of their x and y coordinates.
+    coordinates and compute the sum of their ``x`` and ``y`` coordinates.
 
-    :param a: minimum x coordinate of the rectangle.
-    :param b: minimum y coordinate of the rectangle.
-    :param c: maximum x coordinate of the rectangle.
-    :param d: maximum y coordinate of the rectangle.
+    :param a: minimum ``x`` coordinate of the rectangle.
+    :param b: minimum ``y`` coordinate of the rectangle.
+    :param c: maximum ``x`` coordinate of the rectangle.
+    :param d: maximum ``y`` coordinate of the rectangle.
     :param data: input dataset.
-    :return: number of points lying in the cube, the linear sum of their x and y coordinates, their coordinates.
+    :return: dictionary of number of points lying in the cube, the linear sum of their ``x`` and ``y`` coordinates,
+             their coordinates.
     """
 
     num_points = 0
-    linear_sum = [0, 0]
+    linear_sum = np.zeros(2)
     points_coords = []
+    cube_info_keys = ["num_points", "linear_sum", "points_coords"]
+
     # for each point of the dataset
     for el in data:
         # if the point lies in the cube
@@ -187,7 +204,8 @@ def form_populated_cubes(a: float, b: float, c: float, d: float, data: np.ndarra
             linear_sum[1] += el[1]
             points_coords.append([el[0], el[1]])
 
-    cube_info = [num_points, linear_sum, points_coords]
+    cube_info_values = [num_points, linear_sum, np.array(points_coords)]
+    cube_info = dict(zip(cube_info_keys, cube_info_values))
 
     return cube_info
 
@@ -196,7 +214,7 @@ def plot_min_bound_rect(data: np.ndarray) -> tuple:
     """
     Plot the minimal bounding rectangle of the input dataset.
 
-    :param data: input dataset
+    :param data: input dataset.
     """
 
     fig, ax = plt.subplots(figsize=(22, 15))
@@ -230,11 +248,11 @@ def pop_cubes(data: np.ndarray, s: float) -> Tuple[Cubes, CubesCoords]:
     """
     Find the populated cubes (rectangles containing at least one point).
 
-    :param data: dataset
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :return: the (x,y) coordinates of the populated cubes, with how many points it contains, the coordinates of
+    :param data: input dataset.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :return: the ``(x,y)`` coordinates of the populated cubes, with how many points it contains, the coordinates of
              its center of mass, and the coordinates of the points belonging to it; the coordinates of the cube
-             (rectangle) itself
+             (rectangle) itself.
     """
 
     populated_cubes = {}
@@ -264,7 +282,7 @@ def pop_cubes(data: np.ndarray, s: float) -> Tuple[Cubes, CubesCoords]:
             corresp_key_coord[(w, h)] = (a, b, c, d)
 
             # if the cube contains at least one point, add it to the populated cubes list
-            if cl[0] > 0:
+            if cl["num_points"] > 0:
                 populated_cubes[(w, h)] = cl
 
     return populated_cubes, corresp_key_coord
@@ -275,7 +293,7 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
     Plot the cubes, with colors highlighting populated and highly populated cubes.
 
     :param data: input dataset.
-    :param s: sigma, determines the influence of a point in its neighborhood.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
     :param cube_kind: option to consider populated cubes of highly populated cubes.
     """
 
@@ -288,21 +306,21 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
     cl_copy = cl.copy()
 
     # compute centers of mass of each populated cube
-    coms = [center_of_mass(list(cl.values())[i]) for i in range(len(cl))]
+    coms = np.array([center_of_mass(list(cl.values())[i]) for i in range(len(cl))])
 
     if cube_kind == "highly_populated":
         # find highly populated cubes
         cl = highly_pop_cubes(cl, xi_c=3)
         # compute centers of mass of each highly populated cube
-        coms_hpc = [center_of_mass(list(cl.values())[i]) for i in range(len(cl))]
+        coms_hpc = np.array([center_of_mass(list(cl.values())[i]) for i in range(len(cl))])
 
     # draw the minimal bounding rectangle
     fig, ax = plot_min_bound_rect(data)
 
     # draw the centers of mass
     ax.scatter(
-        np.array(coms)[:, 0],
-        np.array(coms)[:, 1],
+        coms[:, 0],
+        coms[:, 1],
         s=100,
         color="red",
         edgecolor="black",
@@ -313,7 +331,7 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
         for i in range(len(coms_hpc)):
             ax.add_artist(
                 plt.Circle(
-                    (np.array(coms_hpc)[i, 0], np.array(coms_hpc)[i, 1]),
+                    (coms_hpc[i, 0], coms_hpc[i, 1]),
                     4 * s,
                     color="red",
                     fill=False,
@@ -351,7 +369,7 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
 
         # color the cube only if it is (highly) populated
         if key in list(cl.keys()):
-            color_or_not = True if cl[key][0] > 0 else False
+            color_or_not = True if cl[key]["num_points"] > 0 else False
         else:
             color_or_not = False
 
@@ -379,7 +397,7 @@ def check_border_points_rectangles(data: np.ndarray, populated_cubes: Cubes) -> 
     """
     count = 0
     for i in range(len(populated_cubes)):
-        count += list(populated_cubes.values())[i][0]
+        count += list(populated_cubes.values())[i]["num_points"]
 
     if count == len(data):
         print("No points lie on the borders of rectangles")
@@ -390,18 +408,18 @@ def check_border_points_rectangles(data: np.ndarray, populated_cubes: Cubes) -> 
 
 def highly_pop_cubes(pop_cub: Cubes, xi_c: float) -> Cubes:
     """
-    Find highly populated cubes, i.e. cubes containing at least xi_c points.
+    Find highly populated cubes, i.e. cubes containing at least ``xi_c`` points.
 
     :param pop_cub: populated cubes.
-    :param xi_c: xi_c = xi/2d, where xi determines whether a density attractor is significant.
-    :return: highly populated cubes
+    :param xi_c: ``xi_c = xi/2d``, where ``xi`` determines whether a density attractor is significant.
+    :return: highly populated cubes.
     """
     highly_populated_cubes = {}
 
     # loop through the populated cubes
     for key in list(pop_cub.keys()):
         # if the number of points contained is greater than xi_c, add the cube to the highly populated cubes
-        if pop_cub[key][0] >= xi_c:
+        if pop_cub[key]['num_points'] >= xi_c:
             highly_populated_cubes[key] = pop_cub[key]
 
     return highly_populated_cubes
@@ -409,18 +427,18 @@ def highly_pop_cubes(pop_cub: Cubes, xi_c: float) -> Cubes:
 
 def center_of_mass(cube: CubeInfo):
     """compute the center of mass of a cube (rectangle)"""
-    return np.array(cube[1]) / cube[0]
+    return np.array(cube['linear_sum']) / cube['num_points']
 
 
 def check_connection(cube1: CubeInfo, cube2: CubeInfo, s: float, dist: str = "euclidean") -> bool:
     """
-    Check if two cubes are connected (the distance between their centers of mass is not greater than 4*s).
+    Check if two cubes are connected (the distance between their centers of mass is not greater than ``4*s``).
 
     :param cube1: first cube.
     :param cube2: second cube.
-    :param s: sigma, determines the influence of a point in its neighborhood.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
     :param dist: distance to use.
-    :return: True if the cubes are connected, False otherwise.
+    :return: ``True`` if the cubes are connected,``False`` otherwise.
     """
     c1 = center_of_mass(cube1)
     c2 = center_of_mass(cube2)
@@ -435,7 +453,7 @@ def check_connection(cube1: CubeInfo, cube2: CubeInfo, s: float, dist: str = "eu
 def find_connected_cubes(hp_cubes: Cubes, cubes: Cubes, s: float, dist: str = "euclidean") -> Cubes:
     """
     Return connected cubes, i.e. cubes whose centers of mass' distances with a highly populated cube's center of mass
-    is less than 4*s.
+    is less than ``4*s``.
 
     :param hp_cubes: highly populated cubes.
     :param cubes: cubes.
@@ -464,27 +482,27 @@ def find_connected_cubes(hp_cubes: Cubes, cubes: Cubes, s: float, dist: str = "e
 
 def near_with_cube(x: np.ndarray, cube_x: CubeInfo, tot_cubes: Cubes, s: float) -> np.ndarray:
     """
-    Find points of cubes that are connected with cube_x and whose center of mass' distance from x
-    is less or equal to 4*s. The point itself is included.
+    Find points of cubes that are connected with cube_x and whose center of mass' distance from ``x``
+    is less or equal to ``4*s``. The point itself is included.
 
     :param x: examined point.
-    :param cube_x: cube which x belongs to.
+    :param cube_x: cube which ``x`` belongs to.
     :param tot_cubes: the final cubes (highly populated + connected).
     :param s: sigma, determines the influence of a point in its neighborhood.
-    :return: list of points belonging to cubes connected to cube_x and whose center of mass' distance from x
-             is less or equal to 4*s.
+    :return: list of points belonging to cubes connected to ``cube_x`` and whose center of mass' distance from ``x``
+             is less or equal to ``4*s``.
     """
 
     near_list = []
 
     # loop through the total cubes
-    for cube in list(tot_cubes.values()):
+    for cube in tot_cubes.values():
 
         d = euclidean_distance(x, center_of_mass(cube))
 
         # if the conditions are met, append all the points belonging to the cube to near_list
         if (d <= 4 * s) and (check_connection(cube_x, cube, s)):
-            near_list.append(cube[2])
+            near_list.append(cube["points_coords"])
 
     near_list = flatten_list(near_list)
 
@@ -493,15 +511,15 @@ def near_with_cube(x: np.ndarray, cube_x: CubeInfo, tot_cubes: Cubes, s: float) 
 
 def near_without_cube(x: np.ndarray, coord_dict: CubesCoords, tot_cubes: Cubes, s: float) -> np.ndarray:
     """
-    Find the cube that x belongs to, and then find the points of cubes that are connected with it and whose center
-    of mass' distance from x is less or equal to 4*s. The point itself is included.
+    Find the cube that ``x`` belongs to, and then find the points of cubes that are connected with it and whose center
+    of mass' distance from ``x`` is less or equal to ``4*s``. The point itself is included.
 
     :param x: examined point.
     :param coord_dict: dictionary of the rectangles' coordinates.
     :param tot_cubes: the final cubes (highly populated + connected).
     :param s: sigma, determines the influence of a point in its neighborhood.
-    :return: list of points belonging to cubes connected to cube_x and whose center of mass' distance from x
-             is less or equal to 4*s.
+    :return: list of points belonging to cubes connected to ``cube_x`` and whose center of mass' distance from ``x``
+             is less or equal to ``4*s``.
     """
 
     k = FindRect(x, coord_dict)
@@ -510,7 +528,7 @@ def near_without_cube(x: np.ndarray, coord_dict: CubesCoords, tot_cubes: Cubes, 
         return np.array([])
     try:
         cube_x = tot_cubes[k]
-    except:
+    except KeyError:
         return np.array([])
 
     near_list = near_with_cube(x=x, cube_x=cube_x, tot_cubes=tot_cubes, s=s)
@@ -524,9 +542,9 @@ def plot_3d_or_contour(data: np.ndarray, s: float, three: bool = False, scatter:
     plot.
 
     :param data: input dataset.
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :param three: if True, execute 3D plot and do not plot 2D countour plot.
-    :param scatter: if True, and if three is False, draw a scatter plot on top
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :param three: if ``True``, execute 3D plot and do not plot 2D countour plot.
+    :param scatter: if ``True``, and if three is ``False``, draw a scatter plot on top
                     of the countour plot.
     :param prec: precision used to compute density function.
     """
@@ -567,13 +585,13 @@ def plot_3d_or_contour(data: np.ndarray, s: float, three: bool = False, scatter:
         plt.show()
 
 
-def assign_cluster(data: np.ndarray, others: Optional[List[List[float]]], attractor: Optional[Tuple[np.ndarray, bool]],
+def assign_cluster(data: np.ndarray, others: np.ndarray, attractor: Optional[Tuple[np.ndarray, bool]],
                    clust_dict: Dict[int, np.ndarray], processed: List[int]) -> Tuple[Dict[int, np.ndarray], List[int]]:
     """
     Assign a density attractor to (a) point(s) or mark it/them as outlier(s).
 
     :param data: input dataset.
-    :param others: list of coordinates of the point(s) whose clusters have to be assigned.
+    :param others: coordinates of the point(s) whose clusters have to be assigned.
     :param attractor: coordinates of the point and flag to indicate if it is an outlier, i.e. if the density attractor
                       is significant.
     :param clust_dict: dictionary of points with the coordinates of their density attractor.
@@ -607,9 +625,10 @@ def assign_cluster(data: np.ndarray, others: Optional[List[List[float]]], attrac
 def plot_infl(data: np.ndarray, s: float, xi: float) -> None:
     """
     Plot points of the dataset, showing which of them could be density attractors.
+
     :param data: input dataset.
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :param xi: xi, determines whether a density attractor is significant.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :param xi: ``xi``, determines whether a density attractor is significant.
     """
 
     fig, ax = plt.subplots(figsize=(14, 6))
@@ -670,8 +689,8 @@ def plot_3d_both(data: np.ndarray, s: float, xi: Optional[float] = None, prec: i
     show the actual points of the dataset, colored by significance of their 'density-attractiveness'.
 
     :param data: input dataset.
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :param xi: xi, determines whether a density attractor is significant.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :param xi: ``xi``, determines whether a density attractor is significant.
     :param prec: precision used to compute density function.
     """
     from matplotlib import cm
@@ -751,7 +770,7 @@ def plot_3d_both(data: np.ndarray, s: float, xi: Optional[float] = None, prec: i
 
 def density_attractor(data: np.ndarray, x: np.ndarray, coord_dict: CubesCoords, tot_cubes: Cubes,
                       s: float, xi: float, delta: float = 0.05, max_iter: int = 100,
-                      dist: str = "euclidean") -> Union[Tuple[Tuple[float, bool], List[Optional[list]]],
+                      dist: str = "euclidean") -> Union[Tuple[Tuple[float, bool], np.ndarray],
                                                         Tuple[None, None]]:
     """
     Find the density attractor for point x with a hill-climbing procedure. To speed up computations, during the
@@ -760,10 +779,10 @@ def density_attractor(data: np.ndarray, x: np.ndarray, coord_dict: CubesCoords, 
     :param data: input dataset.
     :param x: point whose density attractors is to be found.
     :param coord_dict: dictionary of the rectangles' coordinates.
-    :param tot_cubes: all the cubes.
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :param xi: xi, determines whether a density attractor is significant.
-    :param delta: delta of gradient descent.
+    :param tot_cubes: the final cubes (highly populated + connected).
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :param xi: ``xi``, determines whether a density attractor is significant.
+    :param delta: ``delta`` of gradient descent.
     :param max_iter: maximum number of iteration for finding a density attractor.
     :param dist: distance to use.
     :return: the coordinates of the density attractor, a flag to indicate its significance, and the list of the
@@ -822,10 +841,11 @@ def density_attractor(data: np.ndarray, x: np.ndarray, coord_dict: CubesCoords, 
             else:
                 res = (attractor, False)
 
+            # probably these two last steps are useless
             other_points.sort()
             other_points = list(k for k, _ in groupby(other_points))
 
-            return res, other_points
+            return res, np.array(other_points)
 
     print(f"Max iteration number {max_iter} reached!")
     return None, None
@@ -837,8 +857,7 @@ def plot_clust_dict(data: np.ndarray, coord_df: pd.DataFrame) -> None:
     with a cross.
 
     :param data: input dataset.
-    :param coord_df:
-    :return:
+    :param coord_df: dataframe of points with cluster labels and coordinates of density attractors.
     """
     fig, ax = plt.subplots(figsize=(14, 6))
 
@@ -896,8 +915,8 @@ def extract_cluster_labels(data: np.ndarray, cld: Dict[int, np.ndarray], tol: fl
             return False
 
     cld_sorted = OrderedDict(sorted(cld.items(), key=lambda t: t[0]))
-    l = list(cld_sorted.values())
-    l_mod = [np.round(l[i], 1) for i in range(len(l))]
+    val = list(cld_sorted.values())
+    l_mod = [np.round(val[i], 1) for i in range(len(val))]
 
     lr = {i: l_mod[i] for i in range(len(l_mod)) if len(l_mod[i]) == 2}
     da_list = list(range(len(data)))
@@ -926,7 +945,6 @@ def extract_cluster_labels(data: np.ndarray, cld: Dict[int, np.ndarray], tol: fl
         df["added"] = [np.nan] * len(df)
     df.columns = ["x", "y"]
     df["label"] = fin_labels
-    # df.groupby("label").mean()
 
     return df
 
@@ -938,13 +956,13 @@ def DENCLUE(data: np.ndarray, s: float, xi: float = 3, xi_c: float = 3, tol: flo
     influence functions of the data points. Clusters can then be identified by determining density-attractors.
 
     :param data: input dataset.
-    :param s: sigma, determines the influence of a point in its neighborhood.
-    :param xi: xi, determines whether a density attractor is significant.
-    :param xi_c: xi/2d, where d=2 dimensions.
+    :param s: ``sigma``, determines the influence of a point in its neighborhood.
+    :param xi: ``xi``, determines whether a density attractor is significant.
+    :param xi_c: ``xi/2d``, where ``d=2`` is the dimension of input data.
     :param tol: tolerance for determining if two density attractors coincide.
     :param dist: distance to use.
     :param prec: precision used to compute density function.
-    :param plotting: if True, show plots.
+    :param plotting: if ``True``, show plots.
     :return: list of cluster labels.
     """
     clust_dict = {}
@@ -968,7 +986,7 @@ def DENCLUE(data: np.ndarray, s: float, xi: float = 3, xi_c: float = 3, tol: flo
 
     if len(new_cubes) != 0:
 
-        temp_points = [cube[2] for cube in list(new_cubes.values())]
+        temp_points = [cube["points_coords"] for cube in list(new_cubes.values())]
         points_to_process = flatten_list(temp_points)
 
     else:
@@ -988,13 +1006,8 @@ def DENCLUE(data: np.ndarray, s: float, xi: float = 3, xi_c: float = 3, tol: flo
                                      xi=xi, delta=delta, max_iter=600, dist=dist)
             delta = delta * 2
 
-            print(f"r: {r}")
-            print(f"o: {o}")
-
         clust_dict, proc = assign_cluster(data=data, others=o, attractor=r,
                                           clust_dict=clust_dict, processed=processed)
-        print(clust_dict)
-        print(proc)
 
     for point in initial_noise:
         point_index = np.nonzero(data == point)[0][0]
@@ -1002,11 +1015,12 @@ def DENCLUE(data: np.ndarray, s: float, xi: float = 3, xi_c: float = 3, tol: flo
 
     try:
         coord_df = extract_cluster_labels(data, clust_dict, tol)
-    except:
+    except Exception as e:
         print(
             "There was an error when extracting clusters. Increase the number of points or try with a less"
             " pathological case: look at the other plots to have an idea of why it failed."
         )
+        print(e)
 
     if plotting is True:
         plot_clust_dict(data, coord_df)
