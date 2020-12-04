@@ -115,9 +115,9 @@ def chernoffBounds(u_min: int, f: float, N: int, d: float, k: int) -> float:
     :param d: the probability that the sample contains less than f*|u| points of cluster u is less than d.
     :param k: cluster size.
 
-    If one uses as |u| the minimum cluster size we are interested in, the result is
+    If one uses as dim(u) the minimum cluster size we are interested in, the result is
     the minimum sample size that guarantees that for k clusters
-    the probability of selecting fewer than f*|u| points from any one of the clusters u is less than k*d.
+    the probability of selecting fewer than f*dim(u) points from any one of the clusters u is less than k*d.
 
     """
 

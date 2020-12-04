@@ -13,6 +13,12 @@ from collections import OrderedDict, Counter
 
 from clustviz.utils import euclidean_distance, flatten_list, COLOR_DICT, FONTSIZE_NORMAL, SIZE_NORMAL, annotate_points
 
+CubeInfo = List[Union[int, List[float], List[list]]]
+Cubes = Dict[Tuple[int, int], CubeInfo]
+CubesCoords = Dict[Tuple[int, int], Tuple[float, float, float, float]]
+# TODO: refactor Cubes as dicts of dicts, e.g {(0,0): {'n_point':3, 'linear_sum':[...], 'points':[[]]}}
+# TODO: highlight things in docstrings with sphinx, using double quotation, see docs
+
 
 def gaussian_influence(x: np.ndarray, y: np.ndarray, s: float, dist: str = "euclidean") -> float:
     """
@@ -142,8 +148,7 @@ def FindPoint(x1: float, y1: float, x2: float, y2: float, x: float, y: float) ->
         return False
 
 
-def FindRect(point: np.ndarray, coord_dict: Dict[Tuple[int, int],
-                                                 Tuple[float, float, float, float]]) -> Optional[Tuple[int, int]]:
+def FindRect(point: np.ndarray, coord_dict: CubesCoords) -> Optional[Tuple[int, int]]:
     """
     Find the key of the cube (rectangle) containing the point (if any).
 
@@ -157,8 +162,7 @@ def FindRect(point: np.ndarray, coord_dict: Dict[Tuple[int, int],
     return None
 
 
-def form_populated_cubes(a: float, b: float, c: float, d: float,
-                         data: np.ndarray) -> List[Union[int, List[int], List[list]]]:
+def form_populated_cubes(a: float, b: float, c: float, d: float, data: np.ndarray) -> CubeInfo:
     """
     For the given input cube (rectangle), compute how many points of the input dataset lie in it, store their
     coordinates and compute the sum of their x and y coordinates.
@@ -168,7 +172,7 @@ def form_populated_cubes(a: float, b: float, c: float, d: float,
     :param c: maximum x coordinate of the rectangle.
     :param d: maximum y coordinate of the rectangle.
     :param data: input dataset.
-    :return: number of points lie in the cube, their linear sum of x and y coordinates, their coordinates
+    :return: number of points lying in the cube, the linear sum of their x and y coordinates, their coordinates.
     """
 
     num_points = 0
@@ -222,9 +226,7 @@ def plot_min_bound_rect(data: np.ndarray) -> tuple:
     return fig, ax
 
 
-def pop_cubes(data: np.ndarray, s: float) -> Tuple[Dict[Tuple[int, int],
-                                                        List[Union[int, List[int], List[list]]]],
-                                                   Dict[Tuple[int, int], Tuple[float, float, float, float]]]:
+def pop_cubes(data: np.ndarray, s: float) -> Tuple[Cubes, CubesCoords]:
     """
     Find the populated cubes (rectangles containing at least one point).
 
@@ -367,9 +369,7 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
     plt.show()
 
 
-def check_border_points_rectangles(data: np.ndarray,
-                                   populated_cubes: Dict[Tuple[int, int],
-                                                         List[Union[int, List[int], List[list]]]]) -> None:
+def check_border_points_rectangles(data: np.ndarray, populated_cubes: Cubes) -> None:
     """
     Check if any of the points lie on the borders of the cubes, by checking if the sum of the number of points
     contained in each populated cube is equal to the total number of points of the dataset.
@@ -388,8 +388,7 @@ def check_border_points_rectangles(data: np.ndarray,
         print("{0} point(s) lie(s) on the border of rectangles".format(diff))
 
 
-def highly_pop_cubes(pop_cub: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
-                     xi_c: float) -> Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]]:
+def highly_pop_cubes(pop_cub: Cubes, xi_c: float) -> Cubes:
     """
     Find highly populated cubes, i.e. cubes containing at least xi_c points.
 
@@ -408,13 +407,12 @@ def highly_pop_cubes(pop_cub: Dict[Tuple[int, int], List[Union[int, List[int], L
     return highly_populated_cubes
 
 
-def center_of_mass(cube: List[Union[int, List[float], list]]):
+def center_of_mass(cube: CubeInfo):
     """compute the center of mass of a cube (rectangle)"""
     return np.array(cube[1]) / cube[0]
 
 
-def check_connection(cube1: List[Union[int, List[float], List[list]]], cube2: List[Union[int, List[float], List[list]]],
-                     s: float, dist: str = "euclidean") -> bool:
+def check_connection(cube1: CubeInfo, cube2: CubeInfo, s: float, dist: str = "euclidean") -> bool:
     """
     Check if two cubes are connected (the distance between their centers of mass is not greater than 4*s).
 
@@ -434,10 +432,7 @@ def check_connection(cube1: List[Union[int, List[float], List[list]]], cube2: Li
         return False
 
 
-def find_connected_cubes(hp_cubes: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
-                         cubes: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
-                         s: float, dist: str = "euclidean") -> Dict[Tuple[int, int],
-                                                                    List[Union[int, List[int], List[list]]]]:
+def find_connected_cubes(hp_cubes: Cubes, cubes: Cubes, s: float, dist: str = "euclidean") -> Cubes:
     """
     Return connected cubes, i.e. cubes whose centers of mass' distances with a highly populated cube's center of mass
     is less than 4*s.
@@ -467,9 +462,7 @@ def find_connected_cubes(hp_cubes: Dict[Tuple[int, int], List[Union[int, List[in
     return connected_cubes
 
 
-def near_with_cube(x: np.ndarray, cube_x: List[Union[int, List[float], List[list]]],
-                   tot_cubes: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
-                   s: float) -> np.ndarray:
+def near_with_cube(x: np.ndarray, cube_x: CubeInfo, tot_cubes: Cubes, s: float) -> np.ndarray:
     """
     Find points of cubes that are connected with cube_x and whose center of mass' distance from x
     is less or equal to 4*s. The point itself is included.
@@ -479,7 +472,7 @@ def near_with_cube(x: np.ndarray, cube_x: List[Union[int, List[float], List[list
     :param tot_cubes: the final cubes (highly populated + connected).
     :param s: sigma, determines the influence of a point in its neighborhood.
     :return: list of points belonging to cubes connected to cube_x and whose center of mass' distance from x
-    is less or equal to 4*s.
+             is less or equal to 4*s.
     """
 
     near_list = []
@@ -498,10 +491,7 @@ def near_with_cube(x: np.ndarray, cube_x: List[Union[int, List[float], List[list
     return np.array(near_list)
 
 
-def near_without_cube(x: np.ndarray,
-                      coord_dict: Dict[Tuple[int, int], Tuple[float, float, float, float]],
-                      tot_cubes: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
-                      s: float) -> np.ndarray:
+def near_without_cube(x: np.ndarray, coord_dict: CubesCoords, tot_cubes: Cubes, s: float) -> np.ndarray:
     """
     Find the cube that x belongs to, and then find the points of cubes that are connected with it and whose center
     of mass' distance from x is less or equal to 4*s. The point itself is included.
@@ -511,7 +501,7 @@ def near_without_cube(x: np.ndarray,
     :param tot_cubes: the final cubes (highly populated + connected).
     :param s: sigma, determines the influence of a point in its neighborhood.
     :return: list of points belonging to cubes connected to cube_x and whose center of mass' distance from x
-    is less or equal to 4*s.
+             is less or equal to 4*s.
     """
 
     k = FindRect(x, coord_dict)
@@ -528,12 +518,7 @@ def near_without_cube(x: np.ndarray,
     return near_list
 
 
-# %matplotlib notebook
-# %matplotlib inline
-
-
-def plot_3d_or_contour(data: np.ndarray, s: float, three: bool = False,
-                       scatter: bool = False, prec: int = 3) -> None:
+def plot_3d_or_contour(data: np.ndarray, s: float, three: bool = False, scatter: bool = False, prec: int = 3) -> None:
     """
     Plot the density function for the input dataset, either in 3D or 2D, using a contour
     plot.
@@ -764,9 +749,7 @@ def plot_3d_both(data: np.ndarray, s: float, xi: Optional[float] = None, prec: i
     plt.show()
 
 
-def density_attractor(data: np.ndarray, x: np.ndarray,
-                      coord_dict: Dict[Tuple[int, int], Tuple[float, float, float, float]],
-                      tot_cubes: Dict[Tuple[int, int], List[Union[int, List[int], List[list]]]],
+def density_attractor(data: np.ndarray, x: np.ndarray, coord_dict: CubesCoords, tot_cubes: Cubes,
                       s: float, xi: float, delta: float = 0.05, max_iter: int = 100,
                       dist: str = "euclidean") -> Union[Tuple[Tuple[float, bool], List[Optional[list]]],
                                                         Tuple[None, None]]:
@@ -895,8 +878,7 @@ def plot_clust_dict(data: np.ndarray, coord_df: pd.DataFrame) -> None:
     plt.show()
 
 
-def extract_cluster_labels(data: np.ndarray, cld: Dict[int, np.ndarray],
-                           tol: float = 2) -> pd.DataFrame:
+def extract_cluster_labels(data: np.ndarray, cld: Dict[int, np.ndarray], tol: float = 2) -> pd.DataFrame:
     """
     Extract the labels from the dictionary of points with the coordinates of their density attractors.
 
