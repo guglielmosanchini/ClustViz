@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/guglielmosanchini/ClustViz/branch/master/graph/badge.svg)](https://codecov.io/gh/guglielmosanchini/ClustViz)
 [![Documentation Status](https://readthedocs.org/projects/clustviz/badge/?version=latest)](https://clustviz.readthedocs.io/en/latest/?badge=latest)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 # ClustViz
 <img src="https://raw.githubusercontent.com/guglielmosanchini/ClustViz/master/data/clustviz_logo.png" width="200" height="200">
@@ -36,7 +37,7 @@ The following algorithms have been examined:
 
 Install with 
 ```python
-pip install -i https://test.pypi.org/simple/ clustviz
+pip install clustviz
 ```
 
 To run BIRCH algorithm, the open source visualization software Graphviz is required. 
