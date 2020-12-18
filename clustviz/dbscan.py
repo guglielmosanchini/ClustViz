@@ -19,7 +19,6 @@ def scan_neigh1_mod(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) 
     :param eps: radius of search.
     :return: neighborhood points.
     """
-
     neigh = {}
 
     for i, element in enumerate(data.values()):
@@ -45,7 +44,6 @@ def point_plot_mod(X: np.ndarray, X_dict: Dict[str, np.ndarray], point, eps: flo
     :param eps: radius of the circle to plot around the point (x,y).
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
     """
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # plot scatter points in color lime
@@ -134,10 +132,10 @@ def plot_clust_DB(X: np.ndarray, ClustDict: Dict[str, int], eps: float, circle_c
 
         df_noise = df[df.label == -1]
 
-        for i in range(len(df_noise)):
+        for _, row in df_noise.iterrows():
             ax1.add_artist(
                 plt.Circle(
-                    (df_noise["x"].iloc[i], df_noise["y"].iloc[i]),
+                    (row["x"], row["y"]),
                     eps,
                     color="r",
                     fill=False,
@@ -158,10 +156,10 @@ def plot_clust_DB(X: np.ndarray, ClustDict: Dict[str, int], eps: float, circle_c
 
                 df_temp = df[df.label == lab]
 
-                for i in range(len(df_temp)):
+                for _, row in df_temp.iterrows():
                     ax1.add_artist(
                         plt.Circle(
-                            (df_temp["x"].iloc[i], df_temp["y"].iloc[i]),
+                            (row["x"], row["y"]),
                             eps,
                             color=DBSCAN_COLOR_DICT[lab % (len(DBSCAN_COLOR_DICT) - 1)],
                             fill=False,
@@ -188,13 +186,12 @@ def DBSCAN(data: np.ndarray, eps: float, minPTS: int, plotting: bool = False,
     :param eps: radius of a point within which to search for minPTS points.
     :param minPTS: minimum number of neighbors for a point to be considered a core point.
     :param plotting: if True, executes point_plot_mod, plotting every time a points is
-                     added to a clusters
+                     added to a clusters.
     :param print_details: if True, prints the length of the "external" NearestNeighborhood
                           and of the "internal" one (in the while loop).
     :return: dictionary of the form point_index:cluster_label.
 
     """
-
     # initialize dictionary of clusters
     ClustDict = {}
 

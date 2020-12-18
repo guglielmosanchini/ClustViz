@@ -58,7 +58,6 @@ def point_plot_mod2(
     :return: if par_index is not None, returns the new indexes of par_index.
 
     """
-
     # diz is used to take the shuffling of data into account, e.g. if the first row doesn't
     # correspond to point 0: this is useful for the large dataset version of CURE, where data points
     # are randomly sampled, but the initial indices are kept to be plotted.
@@ -86,13 +85,13 @@ def point_plot_mod2(
         points = cluster_points(CURE_df.iloc[i].name)
 
         if par_index is not None:
-            X_clust = [X[diz[points[j]], 0] for j in range(len(points))]
-            Y_clust = [X[diz[points[j]], 1] for j in range(len(points))]
+            X_clust = [X[diz[p], 0] for p in points]
+            Y_clust = [X[diz[p], 1] for p in points]
 
         else:
             points = [int(i) for i in points]
-            X_clust = [X[points[j], 0] for j in range(len(points))]
-            Y_clust = [X[points[j], 1] for j in range(len(points))]
+            X_clust = [X[p, 0] for p in points]
+            Y_clust = [X[p, 1] for p in points]
 
         ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)])
 
@@ -100,7 +99,7 @@ def point_plot_mod2(
     points = cluster_points(CURE_df.iloc[-1].name)
     # finding the new center of mass the newly merged cluster
     if par_index is not None:
-        points = [diz[points[i]] for i in range(len(points))]
+        points = [diz[p] for p in points]
         com = X[points].mean(axis=0)
     else:
         points = [int(i) for i in points]
@@ -179,14 +178,14 @@ def point_plot_mod2(
         coms = []
         for ind, i in enumerate(range(0, len(CURE_df))):
             points = cluster_points(CURE_df.iloc[i].name)
-            for j in range(len(points)):
+            for p in points:
                 ax.scatter(
-                    X[diz[points[j]], 0],
-                    X[diz[points[j]], 1],
+                    X[diz[p], 0],
+                    X[diz[p], 1],
                     s=350,
                     color=COLOR_DICT[ind % len(COLOR_DICT)],
                 )
-            points = [diz[points[i]] for i in range(len(points))]
+            points = [diz[p] for p in points]
             coms.append(X[points].mean(axis=0))
 
         # flattening the last_reps values
@@ -276,11 +275,9 @@ def dist_clust_cure(rep_u: list, rep_v: list) -> float:
     Compute the distance of two clusters based on the minimum distance found between the
     representatives of one cluster and the ones of the other.
 
-    :param rep_u: list of representatives of the first cluster
-    :param rep_v: list of representatives of the second cluster
-    :return: distance between two clusters
+    :param rep_u: list of representatives of the first clustebaram rep_v: list of representatives of the second cluster.
+    :return: distance between two clusters.
     """
-
     rep_u = np.array(rep_u)
     rep_v = np.array(rep_v)
     distances = []
@@ -303,7 +300,6 @@ def update_mat_cure(mat: pd.DataFrame, i: int, j: int, rep_new: dict, name: str)
                  name of the newly merged cluster.
     :return: updated matrix with new distances
     """
-
     # taking the 2 rows to be updated
     x = mat.loc[i]
     y = mat.loc[j]
@@ -341,7 +337,6 @@ def sel_rep(clusters: dict, name: str, c: int, alpha: float) -> list:
                  collapse to the centroid.
     :return: list of representative points.
     """
-
     # if the cluster has c points or less, just take all of them as representatives and shrink them
     # according to the parameter alpha
     if len(clusters[name]) <= c:
@@ -367,7 +362,7 @@ def sel_rep(clusters: dict, name: str, c: int, alpha: float) -> list:
         com = np.mean(points, axis=0)
 
         # compute distances from the centroid
-        distances_com = {i: dist1(points[i], com) for i in range(len(points))}
+        distances_com = {i: dist1(p, com) for i, p in enumerate(points)}
         index = max(distances_com, key=distances_com.get)
 
         indexes.append(index)
@@ -381,9 +376,9 @@ def sel_rep(clusters: dict, name: str, c: int, alpha: float) -> list:
             partial_distances = {str(i): [] for i in range(len(points))}
             for i in range(len(points)):
                 if i not in indexes:
-                    for k in range(len(others)):
+                    for other in others:
                         partial_distances[str(i)].append(
-                            [dist1(points[i], np.array(others[k]))]
+                            [dist1(points[i], np.array(other))]
                         )
             partial_distances = dict(
                 (k, [np.sum(v)]) for k, v in partial_distances.items()
@@ -415,7 +410,6 @@ def sel_rep_fast(prec_reps: list, clusters: dict, name: str, c: int, alpha: floa
                  collapse to the centroid.
     :return: list of representative points.
     """
-
     com = np.mean(clusters[name], axis=0)
 
     # if the cluster has c points or less, just take all of them as representatives and shrink them
@@ -439,7 +433,7 @@ def sel_rep_fast(prec_reps: list, clusters: dict, name: str, c: int, alpha: floa
 
         points = prec_reps  # use old representatives
 
-        distances_com = {i: dist1(points[i], com) for i in range(len(points))}
+        distances_com = {i: dist1(p, com) for i, p in enumerate(points)}
         index = max(distances_com, key=distances_com.get)
 
         indexes.append(index)
@@ -451,9 +445,9 @@ def sel_rep_fast(prec_reps: list, clusters: dict, name: str, c: int, alpha: floa
             partial_distances = {str(i): [] for i in range(len(points))}
             for i in range(len(points)):
                 if i not in indexes:
-                    for k in range(len(others)):
+                    for other in others:
                         partial_distances[str(i)].append(
-                            [dist1(points[i], np.array(others[k]))]
+                            [dist1(points[i], np.array(other))]
                         )
             partial_distances = dict(
                 (k, [np.sum(v)]) for k, v in partial_distances.items()
@@ -499,7 +493,6 @@ def cure(
     :param not_sampled_ind: indexes of not_sampled points.
     :return, rep, a): returns the clusters dictionary, the dictionary of representatives, the matrix a
     """
-
     # starting from raw data
     if preprocessed_data is None:
         # building a dataframe storing the x and y coordinates of input data points
@@ -528,7 +521,7 @@ def cure(
         if partial_index is not None:
             clusters = dict(zip(partial_index, X))
         else:
-            clusters = {str(i): np.array(X[i]) for i in range(len(X))}
+            clusters = {str(i): np.array(p) for i, p in enumerate(X)}
 
         # build Xdist
         X_dist = dist_mat_gen(CURE_df_nonan)
@@ -537,7 +530,7 @@ def cure(
         if partial_index is not None:
             rep = {partial_index[i]: [X[int(i)]] for i in range(len(X))}
         else:
-            rep = {str(i): [X[i]] for i in range(len(X))}
+            rep = {str(i): [p] for i, p in enumerate(X)}
 
         # just as placeholder for while loop
         heap = [1] * len(X_dist)
@@ -637,12 +630,9 @@ def cure(
 
                     # take random representative points from the final representatives
                     final_reps = {
-                        list(rep.keys())[i]: random.sample(
-                            list(rep.values())[i],
-                            min(n_rep_finalclust, len(list(rep.values())[i])),
-                        )
-                        for i in range(len(rep))
-                    }
+                        k: random.sample(v, min(n_rep_finalclust, len(v)))
+                        for k, v in rep.items()
+                                  }
 
                     partial_index = point_plot_mod2(
                         X=X,
@@ -687,8 +677,9 @@ def plot_results_cure(clust: dict) -> None:
     fig, ax = plt.subplots(figsize=(14, 6))
 
     cl_list = []
-    for num_clust in range(len(clust)):
-        cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
+    for v in clust.values():
+        # cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
+        cl_list.append(np.array(v))
         try:
             ax.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1], s=300)
         except:
@@ -761,7 +752,6 @@ def cure_sample_part(
     :param plotting: if True, plots all intermediate steps.
     :return, rep, mat_a): returns the clusters dictionary, the dictionary of representatives, the matrix a.
     """
-
     # choose the parameters suggested by the paper if the user doesnt provide input parameters
     if u_min is None:
         u_min = round(len(X) / k)
@@ -865,9 +855,10 @@ def cure_sample_part(
     # mat CURE_df
     diz = {i: len(b_partitions[i]) for i in range(p)}
     num_freq = Counter(diz.values()).most_common(1)[0][0]
-    bad_ind = [
-        list(diz.keys())[i] for i in range(len(diz)) if diz[i] != num_freq
-    ]
+
+    # bad_ind = [list(diz.keys())[i] for i in range(len(diz)) if diz[i] != num_freq]
+
+    bad_ind = [k for k, v in diz.items() if v != num_freq]
 
     for ind in bad_ind:
         partial_CURE_df[ind]["{0}x".format(diz[ind])] = [np.nan] * k_prov
@@ -900,8 +891,7 @@ def cure_sample_part(
 
 
 def demo_parameters():
-    """Four plots showing the effects on the sample size of various parameters"""
-
+    """Four plots showing the effects on the sample size of various parameters."""
     plt.figure(figsize=(12, 10))
     plt.suptitle("Effects on sample size from different parameters")
 

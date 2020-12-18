@@ -120,7 +120,6 @@ def chernoffBounds(u_min: int, f: float, N: int, d: float, k: int) -> float:
     the probability of selecting fewer than f*dim(u) points from any one of the clusters u is less than k*d.
 
     """
-
     l = np.log(1 / d)
     res = (
             f * N + N / u_min * l + N / u_min * np.sqrt(l ** 2 + 2 * f * u_min * l)
@@ -142,7 +141,6 @@ def cluster_points(cluster_name: str) -> list:
     :param cluster_name: name of the cluster.
     :return: points forming the cluster.
     """
-
     return cluster_name.replace("(", "").replace(")", "").split("-")
 
 
@@ -154,7 +152,6 @@ def annotate_points(annotations: Iterable, points: np.ndarray, ax) -> None:
     :param points: array of their positions.
     :param ax: axis of the plot.
     """
-
     for i, txt in enumerate(annotations):
         ax.annotate(
             txt,

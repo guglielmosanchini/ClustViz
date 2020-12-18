@@ -51,7 +51,6 @@ class cftree(cftree_pyclustering):
         :return: True if number of nodes at the below level is changed, otherwise False.
 
         """
-
         # Non-leaf node
         if search_node.type == cfnode_type.CFNODE_NONLEAF:
             print("insert for non-leaf")
@@ -72,7 +71,6 @@ class cftree(cftree_pyclustering):
         @return (bool) True if number of nodes at the below level is changed, otherwise False.
 
         """
-
         node_amount_updation = False
 
         # Try to absorb by the entity
@@ -118,7 +116,6 @@ class cftree(cftree_pyclustering):
         @return (bool) True if number of nodes at the below level is changed, otherwise False.
 
         """
-
         node_amount_updation = False
 
         min_key = lambda child_node: child_node.get_distance(
@@ -179,7 +176,6 @@ class cftree(cftree_pyclustering):
         @return (bool): True if merging has been successfully performed, otherwise False.
 
         """
-
         merging_result = False
 
         if node.successors[0].type == cfnode_type.CFNODE_NONLEAF:
@@ -310,7 +306,6 @@ class birch(birch_pyclustering):
         @see get_clusters()
 
         """
-
         self.__insert_data(plotting=plotting)
         print("extracting features")
         self.__extract_features()
@@ -341,7 +336,6 @@ class birch(birch_pyclustering):
         @remark If number of maximum number of entries is exceeded than diameter is increased and tree is rebuilt.
 
         """
-
         for index_point in range(0, len(self.__pointer_data)):
             if (index_point != 0) and (plotting is True):
                 plot_tree_fin(self.__tree)
@@ -366,7 +360,6 @@ class birch(birch_pyclustering):
         @return (cftree) Rebuilt tree with encoded points till specified point from input data space.
 
         """
-
         rebuild_result = False
         increased_diameter = self.__tree.threshold * self.__diameter_multiplier
 
@@ -403,7 +396,6 @@ def plot_tree_fin(tree, info=False):
     :param tree: tree built during BIRCH algorithm execution.
     :param info: if True, tree height, number of nodes, leaves and entries are printed.
     """
-
     import graphviz
 
     height = tree.height
@@ -463,9 +455,9 @@ def plot_tree_fin(tree, info=False):
         "d e f g h i j k l m n o p q r s t u v w x y z".split(" ")
     )
     lett = []
-    for i in range(len(prov)):
-        for j in range(len(prov)):
-            lett.append(prov[i] + prov[j])
+    for l1 in prov:
+        for l2 in prov:
+            lett.append(l1 + l2)
 
     # creating the tree
     dot = graphviz.Digraph(comment="Clustering")
@@ -520,7 +512,6 @@ def plot_birch_leaves(tree, data):
     :param data: input data as array of list of list
 
     """
-
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(14, 6))

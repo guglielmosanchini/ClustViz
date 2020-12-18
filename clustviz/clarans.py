@@ -24,7 +24,6 @@ class clarans(clarans_pyclustering):
         @see get_medoids()
 
         """
-
         random.seed()
 
         # loop for a numlocal number of times
@@ -228,7 +227,6 @@ def plot_tree_clarans(data: pd.DataFrame, k: int) -> None:
     :param data: input DataFrame.
     :param k: number of points in each combination (possible set of medoids).
     """
-
     n = len(data)
     num_points = int(scipy.special.binom(n, k))
     num_neigh = k * (n - k)

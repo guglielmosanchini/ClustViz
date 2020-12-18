@@ -4,9 +4,11 @@ from collections import Counter
 
 
 def len_edges(graph, cluster):
-    """ return the number of edges that interconnect the nodes of the input cluster
+    """
+    Return the number of edges that interconnect the nodes of the input cluster.
+
     :param graph: NetworkX graph.
-    :param cluster: cluster represented by a list of nodes belonging to that cluster
+    :param cluster: cluster represented by a list of nodes belonging to that cluster.
     """
     cluster = graph.subgraph(cluster)
     edges = cluster.edges()

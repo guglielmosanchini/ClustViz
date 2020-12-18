@@ -28,7 +28,7 @@ def test_update_mat_cure():
 
     dist_mat = dist_mat_gen(b)
 
-    rep = {str(i): [X[i]] for i in range(len(X))}
+    rep = {str(i): [p] for i, p in enumerate(X)}
     rep.update({"(0)-(1)": [np.array([0, 0.05]), np.array([0, 0.95])]})
 
     res = update_mat_cure(dist_mat, "0", "1", rep, "(0)-(1)")
@@ -45,10 +45,10 @@ def test_update_mat_cure():
 def test_sel_rep():
     X = np.array([[0, 0], [0, 1], [0, 2]])
 
-    rep = {str(i): [X[i]] for i in range(len(X))}
+    rep = {str(i): [p] for i, p in enumerate(X)}
     rep.update({"(0)-(1)": [np.array([0, 0.05]), np.array([0, 0.95])]})
 
-    clusters = {str(i): np.array(X[i]) for i in range(len(X))}
+    clusters = {str(i): np.array(p) for i, p in enumerate(X)}
     w = [clusters["0"], clusters["1"]]
     del clusters["0"]
     del clusters["1"]
@@ -62,10 +62,10 @@ def test_sel_rep():
 def test_sel_rep_fast():
     X = np.array([[0, 0], [0, 1], [0, 2]])
 
-    rep = {str(i): [X[i]] for i in range(len(X))}
+    rep = {str(i): [p] for i, p in enumerate(X)}
     rep.update({"(0)-(1)": [np.array([0, 0.05]), np.array([0, 0.95])]})
 
-    clusters = {str(i): np.array(X[i]) for i in range(len(X))}
+    clusters = {str(i): np.array(p) for i, p in enumerate(X)}
     w = [clusters["0"], clusters["1"]]
     del clusters["0"]
     del clusters["1"]

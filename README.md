@@ -26,14 +26,11 @@ The following algorithms have been examined:
 *   SPECTRAL CLUSTERING
     
 *   HIERARCHICAL AGGLOMERATIVE CLUSTERING
-    
     *   single linkage
-        
     *   complete linkage
-        
     *   average linkage
-        
     *   Ward's method
+    
 *   CURE
     
 *   BIRCH
@@ -49,7 +46,6 @@ The following algorithms have been examined:
 *   CHAMELEON2
     
 *   DENCLUE
-
 
 ## Instructions
 

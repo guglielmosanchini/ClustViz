@@ -71,7 +71,7 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
 
     ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black", zorder=3)
 
-    distance_matrix = distance_matrix.dropna(1, how="all")
+    distance_matrix = distance_matrix.dropna(axis=1, how="all")
 
     color_dict_rect = convert_colors(COLOR_DICT, alpha=0.3)
 
@@ -82,8 +82,8 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
         points = cluster_points(distance_matrix.iloc[i].name)
         points = [int(i) for i in points]
 
-        X_clust = [X[points[j], 0] for j in range(len(points))]
-        Y_clust = [X[points[j], 1] for j in range(len(points))]
+        X_clust = [X[p, 0] for p in points]
+        Y_clust = [X[p, 1] for p in points]
 
         ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)], zorder=3)
 
@@ -272,7 +272,7 @@ def compute_var_sing(df: pd.DataFrame, centroids: pd.DataFrame) -> list:
         az = [az[: z1[0]]] + [
             az[z1[i]: z1[i + 1]] for i in range(len(z1) - 1)
         ]
-        az = [az[i] for i in range(len(az)) if np.isinf(az[i]).sum() != 2]
+        az = [el for el in az if np.isinf(el).sum() != 2]
 
         internal_dist = []
         for el in az:
@@ -295,7 +295,6 @@ def compute_ward_ij(data: np.ndarray, df: pd.DataFrame) -> Tuple[Tuple, float, f
              new_summ: new total intra-cluster variance
              par_var: increment in total intra-cluster variance, i.e. minimum increase in total intra-cluster variance
     """
-
     even_num = [i for i in range(2, len(data) + 1) if i % 2 == 0]
 
     (centroids, summ) = compute_var(data, df)
@@ -320,7 +319,7 @@ def compute_ward_ij(data: np.ndarray, df: pd.DataFrame) -> Tuple[Tuple, float, f
                 ]
                 d = az + bz
                 valid = [
-                    d[i] for i in range(len(d)) if np.isinf(d[i]).sum() != 2
+                    el for el in d if np.isinf(el).sum() != 2
                 ]
                 # print(valid)
                 centroid = np.mean(valid, axis=0)

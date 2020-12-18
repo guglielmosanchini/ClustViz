@@ -16,7 +16,6 @@ class ClaraClustering:
     Basically an iterative guessing version of k-medoids that makes things a lot faster
     for bigger data sets.
     """
-
     def __init__(self, max_iter: int = 100_000):
         """
         Class initialization.
@@ -119,7 +118,6 @@ class ClaraClustering:
         -- Swap m and o, recompute cost.
         -- If global cost increased, swap back.
         """
-
         # Do some smarter setting of initial cost configuration
         pc1, medoids_sample = self.cheat_at_sampling(_df, _k, _fn, 17)
         print("initial medoids sample: ", medoids_sample)
@@ -339,7 +337,6 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
     :param full: full input dataframe.
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
     """
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # just as placeholder, it actually doesnt plot anything because points are white with white edgecolor

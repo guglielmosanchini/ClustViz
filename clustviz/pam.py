@@ -308,7 +308,6 @@ def plot_pam(data: pd.DataFrame, cl: dict, equal_axis_scale: bool = False) -> No
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
 
     """
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # all points are plotted in white

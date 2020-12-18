@@ -230,8 +230,7 @@ def prepro_edge(knn_gr):
 
 
 def conn_comp(knn_gr):
-    """return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes"""
-
+    """Return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes."""
     g1 = prepro_edge(knn_gr)
 
     return list(connected_components(g1))

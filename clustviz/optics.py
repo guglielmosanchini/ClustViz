@@ -21,10 +21,9 @@ def point_plot(X: np.ndarray, X_dict: Dict[str, np.ndarray], o: str,
     :param X_dict: input dictionary version of X.
     :param o: point that is currently inspected.
     :param eps: radius of the circle to plot around the point (x,y).
-    :param processed: already processed points, to plot in col
+    :param processed: already processed points, to plot in col.
     :param col: color to use for processed points, yellow by default.
     """
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     # plot every point in color lime
@@ -58,15 +57,13 @@ def point_plot(X: np.ndarray, X_dict: Dict[str, np.ndarray], o: str,
 
 def scan_neigh1(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> Dict[str, np.ndarray]:
     """
-    Neighborhood search for a point of a given dataset-dictionary (data)
-    with a fixed eps.
+    Neighborhood search for a point of a given dataset-dictionary (data) with a fixed eps.
 
     :param data: input dictionary.
     :param point: point whose neighborhood is to be examined.
     :param eps: radius of search.
     :return: dictionary of neighborhood points.
     """
-
     neigh = {}
 
     for i, element in enumerate(data.values()):
@@ -89,7 +86,6 @@ def scan_neigh2(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> L
     :param eps: radius of search.
     :return: keys of dictionary of neighborhood points, ordered by distance.
     """
-
     distances = {}
 
     for i, element in enumerate(data.values()):
@@ -106,16 +102,14 @@ def scan_neigh2(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> L
 
 def minPTSdist(data: Dict[str, np.ndarray], o: str, minPTS: int, eps: float) -> Union[float, Any]:
     """
-    Returns the minPTS-distance of a point if it is a core point,
-    else it returns np.inf
+    Returns the minPTS-distance of a point if it is a core point, else it returns np.inf.
 
     :param data: input dictionary.
     :param o: key of point of interest.
     :param minPTS: minimum number of neighbors for a point to be considered a core point.
-    :param eps: radius of a point within which to search for minPTS points
-    :return: minPTS-distance of data[o] or np.inf
+    :param eps: radius of a point within which to search for minPTS points.
+    :return: minPTS-distance of data[o] or np.inf.
     """
-
     S = scan_neigh2(data, data[o], eps)
 
     if len(S) >= minPTS - 1:
@@ -129,32 +123,28 @@ def minPTSdist(data: Dict[str, np.ndarray], o: str, minPTS: int, eps: float) -> 
 
 def reach_dist(data: Dict[str, np.ndarray], x: str, y: str, minPTS: int, eps: float) -> Union[float, Any]:
     """
-    Reachability distance
-    (even if it is not a distance because it isn't symmetrical)
+    Reachability distance (even if it is not a distance because it isn't symmetrical).
 
     :param data: input dictionary.
     :param x: first point.
     :param y: second point.
     :param minPTS: minimum number of neighbors for a point to be considered a core point.
     :param eps: radius of a point within which to search for minPTS points.
-    :return: reachability distance of x and y
+    :return: reachability distance of x and y.
 
     """
-
     return max(dist2(data, x, y), minPTSdist(data, y, minPTS, eps))
 
 
 def reach_plot(data: Dict[str, np.ndarray], ClustDist: Dict[str, float], eps: float) -> None:
     """
     Plots the reachability plot, along with a horizontal line denoting eps,
-    from the ClustDist produced by OPTICS
+    from the ClustDist produced by OPTICS.
 
     :param data: input dictionary.
     :param ClustDist: output of OPTICS function, dictionary of the form point_index:reach_dist.
     :param eps: radius of a point within which to search for minPTS points.
-
     """
-
     height_factor_noise = 1.15
     epsilon_stringcode = "\u03B5"
 
@@ -200,15 +190,14 @@ def OPTICS(X: np.ndarray, eps: float, minPTS: int, plot: bool = True,
     """
     Executes the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.
 
-    :param X: input array
+    :param X: input array.
     :param eps: radius of a point within which to search for minPTS points.
     :param minPTS: minimum number of neighbors for a point to be considered a core point.
     :param plot: if True, the scatter plot of the function point_plot is displayed at each step.
     :param plot_reach: if True, the reachability plot is displayed at each step.
     :return: ClustDist, a dictionary of the form point_index:reach_dist, and
-             CoreDist, a dictionary of the form point_index:core_dist
+             CoreDist, a dictionary of the form point_index:core_dist.
     """
-
     ClustDist = {}
     CoreDist = {}
     Seed = {}
@@ -278,15 +267,13 @@ def OPTICS(X: np.ndarray, eps: float, minPTS: int, plot: bool = True,
 
 def ExtractDBSCANclust(ClustDist: Dict[str, float], CoreDist: Dict[str, float], eps_db: float) -> Dict[str, int]:
     """
-    Extracts cluster in a DBSCAN fashion; one can use any eps_db <= eps of OPTICS
+    Extracts cluster in a DBSCAN fashion; one can use any eps_db <= eps of OPTICS.
 
-    :param ClustDist: ClustDist of OPTICS, a dictionary of the form point_index:reach_dist
-    :param CoreDist: CoreDist of OPTICS, a dictionary of the form point_index:core_dist
-    :param eps_db: the eps to choose for DBSCAN
-    :return: dictionary of clusters, of the form point_index:cluster_label
-
+    :param ClustDist: ClustDist of OPTICS, a dictionary of the form point_index:reach_dist.
+    :param CoreDist: CoreDist of OPTICS, a dictionary of the form point_index:core_dist.
+    :param eps_db: the eps to choose for DBSCAN.
+    :return: dictionary of clusters, of the form point_index:cluster_label.
     """
-
     Clust_Dict = {}
 
     noise = -1
@@ -319,16 +306,14 @@ def plot_clust(X: np.ndarray, ClustDist: Dict[str, float], CoreDist: Dict[str, f
     """
     Plot a scatter plot on the left, where points are colored according to the cluster they belong to,
     and a reachability plot on the right, where colors correspond to the clusters, and the two horizontal
-    lines represent eps and eps_db
+    lines represent eps and eps_db.
 
-    :param X: input array
-    :param ClustDist: ClustDist of OPTICS, a dictionary of the form point_index:reach_dist
-    :param CoreDist: CoreDist of OPTICS, a dictionary of the form point_index:core_dist
-    :param eps: the eps used to run OPTICS
-    :param eps_db: the eps to choose for DBSCAN
-
+    :param X: input array.
+    :param ClustDist: ClustDist of OPTICS, a dictionary of the form point_index:reach_dist.
+    :param CoreDist: CoreDist of OPTICS, a dictionary of the form point_index:core_dist.
+    :param eps: the eps used to run OPTICS.
+    :param eps_db: the eps to choose for DBSCAN.
     """
-
     if eps_db > eps:
         raise ValueError(f"eps_db: {eps_db} must be less than eps: {eps}")
 
