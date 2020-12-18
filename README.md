@@ -18,22 +18,38 @@ The aim of ```ClustViz``` is to visualize every step of each clustering algorith
 The following algorithms have been examined:
 
 *   OPTICS
+    
 *   DBSCAN
+    
 *   HDBSCAN
+    
 *   SPECTRAL CLUSTERING
+    
 *   HIERARCHICAL AGGLOMERATIVE CLUSTERING
+    
     *   single linkage
+        
     *   complete linkage
+        
     *   average linkage
+        
     *   Ward's method
 *   CURE
+    
 *   BIRCH
+    
 *   PAM
+    
 *   CLARA
+    
 *   CLARANS
+    
 *   CHAMELEON
+    
 *   CHAMELEON2
+    
 *   DENCLUE
+
 
 ## Instructions
 
@@ -109,25 +125,25 @@ For many other examples, take a look at the detailed [clustviz_example](https://
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
 
-* HDBSCAN
+*   HDBSCAN
 https://hdbscan.readthedocs.io/en/latest/
   
-* SPECTRAL CLUSTERING
+*   SPECTRAL CLUSTERING
 http://dx.doi.org/10.1007/s11222-007-9033-z
   
-* BIRCH
+*   BIRCH
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/birch.py
   
-* PAM
+*   PAM
 https://github.com/SachinKalsi/kmedoids/blob/master/KMedoids.py
   
-* CLARA
+*   CLARA
 https://github.com/akalino/Clustering/blob/master/clara.py
   
-* CLARANS
+*   CLARANS
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/clarans.py
   
-* CHAMELEON
+*   CHAMELEON
 https://github.com/Moonpuck/chameleon_cluster
 
 The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius (https://github.com/dariomonici), 
@@ -145,4 +161,3 @@ the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.
 *   add package update
 *   for the deployment phase: brew install ruby, brew install travis
 *   added empty conftest.py in clustviz folder for tests in Windows version
-

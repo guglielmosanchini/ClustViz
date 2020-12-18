@@ -10,7 +10,7 @@ There are some slight differences with respect to the official papers; moreover,
 
 ## References
 
-  - Karypis, George, Eui-Hong Han, and Vipin Kumar. "Chameleon: Hierarchical clustering using dynamic modeling." *Computer* 32.8 (1999): 68-75.
+-   Karypis, George, Eui-Hong Han, and Vipin Kumar. "Chameleon: Hierarchical clustering using dynamic modeling." *Computer* 32.8 (1999): 68-75.
 http://ieeexplore.ieee.org/abstract/document/781637/
 
-  - Tomas Barton, Tomas Bruna, and Pavel Kordik. 2019. Chameleon 2: An Improved Graph-Based Clustering Algorithm. ACM Trans. Knowl. Discov. Data 13, 1, Article 10 (January 2019), 27 pages. DOI: https://doi.org/10.1145/3299876 
+-   Tomas Barton, Tomas Bruna, and Pavel Kordik. 2019. Chameleon 2: An Improved Graph-Based Clustering Algorithm. ACM Trans. Knowl. Discov. Data 13, 1, Article 10 (January 2019), 27 pages. DOI: https://doi.org/10.1145/3299876 
