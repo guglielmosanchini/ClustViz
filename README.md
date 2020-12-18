@@ -1,6 +1,9 @@
 [![Build Status](https://travis-ci.com/guglielmosanchini/ClustViz.svg?branch=master)](https://travis-ci.com/guglielmosanchini/ClustViz)
 [![codecov](https://codecov.io/gh/guglielmosanchini/ClustViz/branch/master/graph/badge.svg)](https://codecov.io/gh/guglielmosanchini/ClustViz)
 [![Documentation Status](https://readthedocs.org/projects/clustviz/badge/?version=latest)](https://clustviz.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/clustviz.svg)](https://badge.fury.io/py/clustviz)
+[![Downloads](https://pepy.tech/badge/clustviz)](https://pepy.tech/project/clustviz)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7df9761faaab4c3cbe9c64aeca44ef48)](https://www.codacy.com/gh/guglielmosanchini/ClustViz/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guglielmosanchini/ClustViz&amp;utm_campaign=Badge_Grade)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -9,27 +12,27 @@
 
 ## 2D Clustering Algorithms Visualization
 
-#### Check out [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI), too!
+### Check out [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI), too!
 The aim of ```ClustViz``` is to visualize every step of each clustering algorithm, in the case of 2D input data.
 
 The following algorithms have been examined:
-- OPTICS
-- DBSCAN
-- HDBSCAN
-- SPECTRAL CLUSTERING
-- HIERARCHICAL AGGLOMERATIVE CLUSTERING
-  - single linkage
-  - complete linkage
-  - average linkage
-  - Ward's method
-- CURE
-- BIRCH
-- PAM
-- CLARA
-- CLARANS
-- CHAMELEON
-- CHAMELEON2
-- DENCLUE
+  - OPTICS
+  - DBSCAN
+  - HDBSCAN
+  - SPECTRAL CLUSTERING
+  - HIERARCHICAL AGGLOMERATIVE CLUSTERING
+    - single linkage
+    - complete linkage
+    - average linkage
+    - Ward's method
+  - CURE
+  - BIRCH
+  - PAM
+  - CLARA
+  - CLARANS
+  - CHAMELEON
+  - CHAMELEON2
+  - DENCLUE
 
 ## Instructions
 
@@ -96,31 +99,33 @@ For many other examples, take a look at the detailed [clustviz_example](https://
 
 ## Repository structure
 
-1) The folder ```data/DOCUMENTS``` contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
-
-2) The folder ```clustviz``` contains the scripts necessary to run the clustering algorithms.
-
-3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
-
-4) The folder ```docs``` contains the necessary files to build the documentation using Sphinx and ReadTheDocs.
-
-5) The folder ```tests``` contains pytest tests.
+ 1) The folder ```data/DOCUMENTS``` contains all the official papers, powerpoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
+ 2) The folder ```clustviz``` contains the scripts necessary to run the clustering algorithms.
+ 3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
+ 4) The folder ```docs``` contains the necessary files to build the documentation using Sphinx and ReadTheDocs.
+ 5) The folder ```tests``` contains pytest tests.
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
 
 - HDBSCAN
 https://hdbscan.readthedocs.io/en/latest/
+  
 - SPECTRAL CLUSTERING
 http://dx.doi.org/10.1007/s11222-007-9033-z
+  
 - BIRCH
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/birch.py
+  
 - PAM
 https://github.com/SachinKalsi/kmedoids/blob/master/KMedoids.py
+  
 - CLARA
 https://github.com/akalino/Clustering/blob/master/clara.py
+  
 - CLARANS
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/clarans.py
+  
 - CHAMELEON
 https://github.com/Moonpuck/chameleon_cluster
 
@@ -128,15 +133,14 @@ The other algorithms have been implemented from scratch following the relative p
 the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI).
 
 ## Possible improvements
-- add more clustering algorithms
-- comment every code block and improve code quality
-- pymetis doesnt work on Windows, but could be an option for MacOS
-- add highlights to docstrings using ``
-- show aliases typehints using Sphinx (open issue)
+  - add more clustering algorithms
+  - comment every code block and improve code quality
+  - pymetis doesnt work on Windows, but could be an option for MacOS
+  - add highlights to docstrings using ``
+  - show aliases typehints using Sphinx (open issue)
 
 ## TravisCI path
-- if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use
-```yamllint``` to correct it
-- add package update
-- for the deployment phase: brew install ruby, brew install travis
-- added empty conftest.py in clustviz folder for tests in windows version
+  - if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use ```yamllint``` to correct it
+  - add package update
+  - for the deployment phase: brew install ruby, brew install travis
+  - added empty conftest.py in clustviz folder for tests in windows version

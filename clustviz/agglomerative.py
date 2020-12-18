@@ -18,9 +18,7 @@ def update_mat(mat: pd.DataFrame, i: int, j: int, linkage: str) -> pd.DataFrame:
     :param j: column index.
     :param linkage: linkage method; can be single, complete, average.
     :return: updated distance dataframe.
-
     """
-
     x = mat.iloc[i]
     y = mat.iloc[j]
 
@@ -70,7 +68,6 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
     :param level_txt: dist_tot displayed.
     :param level2_txt: dist_incr displayed.
     """
-
     fig, ax = plt.subplots(figsize=(14, 6))
 
     ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black", zorder=3)
@@ -149,9 +146,7 @@ def dist_mat(df: pd.DataFrame, linkage: str) -> pd.DataFrame:
                the second column corresponding to y-coordinates of data points.
     :param linkage: linkage method; can be single, complete, average.
     :return: distance matrix.
-
     """
-
     even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     distance_matrix = pd.DataFrame()
     ind = list(df.index)
@@ -193,7 +188,6 @@ def dist_mat(df: pd.DataFrame, linkage: str) -> pd.DataFrame:
 
 def dist_mat_gen(df: pd.DataFrame) -> pd.DataFrame:
     """Variation of dist_mat, uses only single_linkage method"""
-
     even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     distance_matrix = pd.DataFrame()
     ind = list(df.index)
@@ -236,7 +230,6 @@ def compute_var(X: np.ndarray, df: pd.DataFrame) -> Tuple[pd.DataFrame, float]:
     :return: centroids dataframe with their coordinates and the single variances of the corresponding
              clusters, and the total intra-cluster variance.
     """
-
     cleaned_index = [cluster_points(i) for i in df.index]
 
     cent_x_tot = []
@@ -272,7 +265,6 @@ def compute_var_sing(df: pd.DataFrame, centroids: pd.DataFrame) -> list:
                 coordinates of each point.
     :param centroids: dataframe of the centroids of clusters, with their x and y coordinates.
     :return: list of intra-cluster variances.
-
     """
     even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     var_int = []
@@ -356,7 +348,7 @@ def compute_ward_ij(data: np.ndarray, df: pd.DataFrame) -> Tuple[Tuple, float, f
 
 
 def sl_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for single_linkage method, i.e. min[dist(x,y)] for x in a & y in b """
+    """Distance for single_linkage method, i.e. min[dist(x,y)] for x in a & y in b"""
     distances = []
     for i in a:
         for j in b:
@@ -366,7 +358,7 @@ def sl_dist(a: Iterable, b: Iterable) -> float:
 
 
 def cl_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a & y in b """
+    """Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a & y in b"""
     distances = []
     for i in a:
         for j in b:
@@ -380,7 +372,7 @@ def cl_dist(a: Iterable, b: Iterable) -> float:
 
 
 def avg_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for average_linkage method, i.e. mean[dist(x,y)] for x in a & y in b """
+    """Distance for average_linkage method, i.e. mean[dist(x, y)] for x in a & y in b"""
     distances = []
     for i in a:
         for j in b:
@@ -402,7 +394,6 @@ def agg_clust(X: np.ndarray, linkage: str, plotting: bool = True) -> None:
     :param linkage: linkage method; can be single, complete, average or ward.
     :param plotting: if True, execute plots.
     """
-
     levels = []
     levels2 = []
     ind_list = []
