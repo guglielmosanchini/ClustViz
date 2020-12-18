@@ -10,8 +10,7 @@ from clustviz.utils import convert_colors, encircle, dist1, flatten_list, cluste
 
 def update_mat(mat: pd.DataFrame, i: int, j: int, linkage: str) -> pd.DataFrame:
     """
-    Update the input distance matrix in the position (i, j), according to the provided
-    linkage method.
+    Update the input distance matrix in the position (i, j), according to the provided linkage method.
 
     :param mat: distance dataframe.
     :param i: row index.
@@ -58,8 +57,8 @@ def update_mat(mat: pd.DataFrame, i: int, j: int, linkage: str) -> pd.DataFrame:
 
 def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: float, level2_txt: float = None) -> None:
     """
-    Scatter plot of data points, colored according to the cluster they belong to. The most recently
-    merged cluster is enclosed in a rectangle of the same color as its points, with red borders.
+    Scatter plot of data points, colored according to the cluster they belong to. The most recently merged cluster is
+    enclosed in a rectangle of the same color as its points, with red borders.
     In the top right corner, the total distance is shown, along with the current number of clusters.
     When using Ward linkage, also the increment in distance is shown.
 
@@ -139,8 +138,8 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
 
 def dist_mat(df: pd.DataFrame, linkage: str) -> pd.DataFrame:
     """
-    take as input the dataframe created by agg_clust and output the distance matrix;
-    it is actually an upper triangular matrix, the symmetrical values are replaced with np.inf.
+    Take as input the dataframe created by agg_clust and output the distance matrix.
+    It is actually an upper triangular matrix, the symmetrical values are replaced with np.inf.
 
     :param df: input dataframe, with the first column corresponding to x-coordinates and
                the second column corresponding to y-coordinates of data points.
@@ -187,7 +186,7 @@ def dist_mat(df: pd.DataFrame, linkage: str) -> pd.DataFrame:
 
 
 def dist_mat_gen(df: pd.DataFrame) -> pd.DataFrame:
-    """Variation of dist_mat, uses only single_linkage method"""
+    """Variation of dist_mat, uses only single_linkage method."""
     even_num = [i for i in range(2, len(df) + 1) if i % 2 == 0]
     distance_matrix = pd.DataFrame()
     ind = list(df.index)
@@ -258,8 +257,7 @@ def compute_var(X: np.ndarray, df: pd.DataFrame) -> Tuple[pd.DataFrame, float]:
 
 def compute_var_sing(df: pd.DataFrame, centroids: pd.DataFrame) -> list:
     """
-    Compute every internal variance in clusters; clusters are found in df,
-    whereas centroids are saved in centroids.
+    Compute every internal variance in clusters; clusters are found in df, whereas centroids are saved in centroids.
 
     :param df:  input dataframe built by agg_clust, listing the cluster and the x and y
                 coordinates of each point.
@@ -348,7 +346,7 @@ def compute_ward_ij(data: np.ndarray, df: pd.DataFrame) -> Tuple[Tuple, float, f
 
 
 def sl_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for single_linkage method, i.e. min[dist(x,y)] for x in a & y in b"""
+    """Distance for single_linkage method, i.e. min[dist(x,y)] for x in a & y in b."""
     distances = []
     for i in a:
         for j in b:
@@ -358,7 +356,7 @@ def sl_dist(a: Iterable, b: Iterable) -> float:
 
 
 def cl_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a & y in b"""
+    """Distance for complete_linkage method, i.e. max[dist(x,y)] for x in a & y in b."""
     distances = []
     for i in a:
         for j in b:
@@ -372,7 +370,7 @@ def cl_dist(a: Iterable, b: Iterable) -> float:
 
 
 def avg_dist(a: Iterable, b: Iterable) -> float:
-    """Distance for average_linkage method, i.e. mean[dist(x, y)] for x in a & y in b"""
+    """Distance for average_linkage method, i.e. mean[dist(x, y)] for x in a & y in b."""
     distances = []
     for i in a:
         for j in b:
@@ -390,7 +388,7 @@ def agg_clust(X: np.ndarray, linkage: str, plotting: bool = True) -> None:
     Perform hierarchical agglomerative clustering with the provided linkage method, plotting every step
     of cluster aggregation.
 
-    :param X: input data array
+    :param X: input data array.
     :param linkage: linkage method; can be single, complete, average or ward.
     :param plotting: if True, execute plots.
     """

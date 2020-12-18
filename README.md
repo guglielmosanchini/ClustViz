@@ -12,27 +12,27 @@
 
 ## 2D Clustering Algorithms Visualization
 
-### Check out [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI), too!
+### Check out [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI), too
 The aim of ```ClustViz``` is to visualize every step of each clustering algorithm, in the case of 2D input data.
 
 The following algorithms have been examined:
-  - OPTICS
-  - DBSCAN
-  - HDBSCAN
-  - SPECTRAL CLUSTERING
-  - HIERARCHICAL AGGLOMERATIVE CLUSTERING
-    - single linkage
-    - complete linkage
-    - average linkage
-    - Ward's method
-  - CURE
-  - BIRCH
-  - PAM
-  - CLARA
-  - CLARANS
-  - CHAMELEON
-  - CHAMELEON2
-  - DENCLUE
+* OPTICS
+* DBSCAN
+* HDBSCAN
+* SPECTRAL CLUSTERING
+* HIERARCHICAL AGGLOMERATIVE CLUSTERING
+  * single linkage
+  * complete linkage
+  * average linkage
+  * Ward's method
+* CURE
+* BIRCH
+* PAM
+* CLARA
+* CLARANS
+* CHAMELEON
+* CHAMELEON2
+* DENCLUE
 
 ## Instructions
 
@@ -108,39 +108,39 @@ For many other examples, take a look at the detailed [clustviz_example](https://
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
 
-- HDBSCAN
+* HDBSCAN
 https://hdbscan.readthedocs.io/en/latest/
   
-- SPECTRAL CLUSTERING
+* SPECTRAL CLUSTERING
 http://dx.doi.org/10.1007/s11222-007-9033-z
   
-- BIRCH
+* BIRCH
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/birch.py
   
-- PAM
+* PAM
 https://github.com/SachinKalsi/kmedoids/blob/master/KMedoids.py
   
-- CLARA
+* CLARA
 https://github.com/akalino/Clustering/blob/master/clara.py
   
-- CLARANS
+* CLARANS
 https://github.com/annoviko/pyclustering/blob/master/pyclustering/cluster/clarans.py
   
-- CHAMELEON
+* CHAMELEON
 https://github.com/Moonpuck/chameleon_cluster
 
 The other algorithms have been implemented from scratch following the relative papers. Thanks to Darius (https://github.com/dariomonici), 
 the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI).
 
 ## Possible improvements
-  - add more clustering algorithms
-  - comment every code block and improve code quality
-  - pymetis doesnt work on Windows, but could be an option for MacOS
-  - add highlights to docstrings using ``
-  - show aliases typehints using Sphinx (open issue)
+* add more clustering algorithms
+* comment every code block and improve code quality
+* pymetis doesnt work on Windows, but could be an option for MacOS
+* add highlights to docstrings using ``
+* show aliases typehints using Sphinx (open issue)
 
 ## TravisCI path
-  - if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use ```yamllint``` to correct it
-  - add package update
-  - for the deployment phase: brew install ruby, brew install travis
-  - added empty conftest.py in clustviz folder for tests in windows version
+* if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use ```yamllint``` to correct it
+* add package update
+* for the deployment phase: brew install ruby, brew install travis
+* added empty conftest.py in clustviz folder for tests in windows version
