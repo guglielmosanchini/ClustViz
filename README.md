@@ -17,39 +17,23 @@ The aim of ```ClustViz``` is to visualize every step of each clustering algorith
 
 The following algorithms have been examined:
 
-* OPTICS
-  
-* DBSCAN
-  
-* HDBSCAN
-  
-* SPECTRAL CLUSTERING
-  
-* HIERARCHICAL AGGLOMERATIVE CLUSTERING
-  
-  * single linkage
-    
-  * complete linkage
-    
-  * average linkage
-    
-  * Ward's method
-    
-* CURE
-  
-* BIRCH
-  
-* PAM
-  
-* CLARA
-  
-* CLARANS
-  
-* CHAMELEON
-  
-* CHAMELEON2
-
-* DENCLUE
+*   OPTICS
+*   DBSCAN
+*   HDBSCAN
+*   SPECTRAL CLUSTERING
+*   HIERARCHICAL AGGLOMERATIVE CLUSTERING
+    *   single linkage
+    *   complete linkage
+    *   average linkage
+    *   Ward's method
+*   CURE
+*   BIRCH
+*   PAM
+*   CLARA
+*   CLARANS
+*   CHAMELEON
+*   CHAMELEON2
+*   DENCLUE
 
 ## Instructions
 
@@ -116,15 +100,11 @@ For many other examples, take a look at the detailed [clustviz_example](https://
 
 ## Repository structure
 
- 1) The folder ```data/DOCUMENTS``` contains all the official papers, PowerPoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
-    
- 2) The folder ```clustviz``` contains the scripts necessary to run the clustering algorithms.
-    
- 3) The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
-    
- 4) The folder ```docs``` contains the necessary files to build the documentation using Sphinx and ReadTheDocs.
-    
- 5) The folder ```tests``` contains pytest tests.
+1)  The folder ```data/DOCUMENTS``` contains all the official papers, PowerPoint presentations and other PDFs regarding all the algorithms involved and clustering in general.
+2)  The folder ```clustviz``` contains the scripts necessary to run the clustering algorithms.
+3)  The notebook ```data/clustviz_example.ipynb``` lets the user run every algorithm on 2D datasets; it contains a subsection for every algorithm, with the necessary modules and functions imported and some commented lines of code which can be uncommented to run the algorithms.
+4)  The folder ```docs``` contains the necessary files to build the documentation using Sphinx and ReadTheDocs.
+5)  The folder ```tests``` contains pytest tests.
 
 ## Credits for some algorithms
 I did not start to write the scripts for each algorithm from scratch; in some cases I modified some Python libraries, in other cases I took some publicly available GitHub repositories and modified the scripts contained there. The following list provides all the sources used when I did not write all the code by myself:
@@ -154,23 +134,15 @@ The other algorithms have been implemented from scratch following the relative p
 the GUI Meister, for the help with PyQt5, used for [ClustVizGUI](https://github.com/guglielmosanchini/ClustVizGUI).
 
 ## Possible improvements
-* add more clustering algorithms
-  
-* comment every code block and improve code quality
-  
-* pymetis doesnt work on Windows, but could be an option for macOS
-  
-* add highlights to docstrings using ``
-  
-* show aliases typehints using Sphinx (open issue)
-
+*   add more clustering algorithms
+*   comment every code block and improve code quality
+*   pymetis doesnt work on Windows, but could be an option for macOS
+*   add highlights to docstrings using ``
+*   show aliases typehints using Sphinx (open issue)
 
 ## TravisCI path
-* if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use ```yamllint``` to correct it
-  
-* add package update
-  
-* for the deployment phase: brew install ruby, brew install travis
-  
-* added empty conftest.py in clustviz folder for tests in Windows version
+*   if Travis CI doesn't trigger, it is probably because ```.travis.yml``` isn't properly formatted. Use ```yamllint``` to correct it
+*   add package update
+*   for the deployment phase: brew install ruby, brew install travis
+*   added empty conftest.py in clustviz folder for tests in Windows version
 
