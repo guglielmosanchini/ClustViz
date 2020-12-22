@@ -21,7 +21,7 @@ class KMedoids:
         end_prob: float = 0.99,
         random_state: Optional[int] = 42,
     ):
-        """ Kmedoids constructor called """
+        """Kmedoids constructor called."""
         if (
             start_prob < 0
             or start_prob >= 1
@@ -77,9 +77,7 @@ class KMedoids:
             print("\n")
             print("iteration n°: ", i)
             # compute distance obtained by swapping medoids in the clusters
-            cluster_dist_with_new_medoids = (
-                self.__swap_and_recalculate_clusters()
-            )
+            cluster_dist_with_new_medoids = (self.__swap_and_recalculate_clusters())
             # if the new sum of cluster_distances is smaller than the old one
             if (
                 self.__is_new_cluster_dist_small(cluster_dist_with_new_medoids)
@@ -103,8 +101,13 @@ class KMedoids:
                 break
 
     def __is_new_cluster_dist_small(self, cluster_dist_with_new_medoids):
-        """returns True if the new sum of cluster_distances is smaller than the previous one, and updates the
-        medoids, else returns False """
+        """
+        Return True if the new sum of cluster_distances is smaller than the previous one, and update the
+        medoids, else return False.
+
+        :param cluster_dist_with_new_medoids: cluster distances with new medoids.
+        :return: True if the new sum of cluster_distances is smaller than the previous one, else False.
+        """
         # compute the existing sum of cluster_distances
         existance_dist = self.calculate_distance_of_clusters()
         print("present dist: ", existance_dist)
@@ -125,8 +128,13 @@ class KMedoids:
         return False
 
     def calculate_distance_of_clusters(self, cluster_dist=None):
-        """if no argument is provided, just sum the distances of the existing cluster_distances, else sum the distances
-        of the input cluster_distances """
+        """
+        If no argument is provided, just sum the distances of the existing cluster_distances, else sum the distances
+        of the input cluster_distances.
+
+        :param cluster_dist: if not None, cluster distances.
+        :return: sum of cluster distances.
+        """
         if cluster_dist is None:
             cluster_dist = self.cluster_distances
         dist = 0
@@ -136,7 +144,7 @@ class KMedoids:
 
     def __swap_and_recalculate_clusters(self):
         # http://www.math.le.ac.uk/people/ag153/homepage/KmeansKmedoids/Kmeans_Kmedoids.html
-        """returns dictionary of new cluster_distances obtained by swapping medoids in each cluster"""
+        """Return dictionary of new cluster_distances obtained by swapping medoids in each cluster."""
         print("swap and recompute")
         cluster_dist = {}
         for medoid in self.medoids:  # for each medoid
@@ -169,15 +177,14 @@ class KMedoids:
         return cluster_dist
 
     def calculate_inter_cluster_distance(self, medoid, cluster_list):
-        """computes the average distance of points in a cluster from their medoid"""
+        """Compute the average distance of points in a cluster from their medoid."""
         distance = 0
         for data_index in cluster_list:
             distance += self.__get_distance(medoid, data_index)
         return distance / len(cluster_list)
 
     def __calculate_clusters(self, medoids):
-        """returns the clusters and the relative distances (average distance of each element of the cluster from the
-        medoid) """
+        """Return the clusters and the relative distances (average distance of each element of the cluster from the medoid)."""
         clusters = (
             {}
         )  # it will be of the form {medoid0: [elements of cluster0], medoid1: [elements of cluster1], ...}
@@ -205,7 +212,7 @@ class KMedoids:
         return clusters, cluster_distances
 
     def __get_shortest_distance_to_medoid(self, row_index, medoids):
-        """returns closest medoid and relative distance from the input row (point)"""
+        """Return closest medoid and relative distance from the input row (point)."""
         min_distance = float("inf")
         current_medoid = None
 
@@ -223,7 +230,7 @@ class KMedoids:
         return current_medoid, min_distance
 
     def __initialize_medoids(self):
-        """Kmeans++ initialisation"""
+        """Kmeans++ initialisation."""
         print("initializing medoids with kmeans++")
         random.seed(self.__random_state)
 
@@ -239,7 +246,7 @@ class KMedoids:
             )  # choose as next medoid the most distant from the previously chosen ones
 
     def __find_distant_medoid(self):
-        """returns a row corresponding to a point which is considerably distant from its closest medoid"""
+        """Return a row corresponding to a point which is considerably distant from its closest medoid."""
         distances = []
         indices = []
         for row in range(self.__rows):  # for every row in data
@@ -258,7 +265,7 @@ class KMedoids:
         ]  # row corresponding to the chosen distance
 
     def __select_distant_medoid(self, distances_index):
-        """returns a random index of the distances_index between start and end"""
+        """Return a random index of the distances_index between start and end."""
         start_index = round(
             self.start_prob * len(distances_index)
         )  # normally 0.8*len(dist)
@@ -270,7 +277,7 @@ class KMedoids:
         return distances_index[random.randint(start_index, end_index)]
 
     def __get_distance(self, x1, x2):
-        """computes euclidean distance, with an initial transformation based on input data"""
+        """Compute euclidean distance, with an initial transformation based on input data."""
         a = (
             self.__data[x1].toarray()
             if self.__is_csr is True
@@ -284,7 +291,7 @@ class KMedoids:
         return np.linalg.norm(a - b)
 
     def __set_data_type(self):
-        """to check whether the given input is of type list or csr """
+        """To check whether the given input is of type list or csr."""
         print("setting data type")
         if isinstance(self.__data, csr_matrix):
             self.__is_csr = True
@@ -306,9 +313,8 @@ def plot_pam(data: pd.DataFrame, cl: dict, equal_axis_scale: bool = False) -> No
     :param data: input data sample as dataframe.
     :param cl: cluster dictionary.
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
-
     """
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # all points are plotted in white
     ax.scatter(

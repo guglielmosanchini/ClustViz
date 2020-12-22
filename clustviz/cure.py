@@ -35,10 +35,6 @@ def point_plot_mod2(
     of last merged cluster are also plotted in red, along with the center of mass, plotted as a
     red cross. The current number of clusters and current distance are also displayed in the right
     upper corner.
-    In the last phase of CURE algorithm variation for large datasets, arrows are
-    displayed from every not sampled point to its closest representative point; moreover, representative
-    points are surrounded by small circles, to make them more visible. Representative points of different
-    clusters are plotted in different nuances of red.
 
     :param X: input data array.
     :param CURE_df: input dataframe built by CURE algorithm, listing the cluster and the x and y
@@ -56,15 +52,14 @@ def point_plot_mod2(
     :param n_rep_fin: number of representatives to use for each cluster in the final assignment phase in the large
                       dataset version.
     :return: if par_index is not None, returns the new indexes of par_index.
-
     """
     # diz is used to take the shuffling of data into account, e.g. if the first row doesn't
     # correspond to point 0: this is useful for the large dataset version of CURE, where data points
     # are randomly sampled, but the initial indices are kept to be plotted.
     if par_index is not None:
-        diz = dict(zip(par_index, [i for i in range(len(par_index))]))
+        diz = dict(zip(par_index, list(range(len(par_index)))))
 
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # points that still need to be processed are plotted in lime color
     ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
@@ -165,102 +160,12 @@ def point_plot_mod2(
 
     plt.show()
 
-    # everything down from here refers to the last phase of the large dataset version, the assignment phase
+    # last phase of the large dataset version
     if last_reps is not None:
-
-        fig, ax = plt.subplots(figsize=(14, 6))
-
-        # plot all the points in color lime
-        ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
-
-        # find the centers of mass of the clusters using the matrix a to find which points belong to
-        # which cluster
-        coms = []
-        for ind, i in enumerate(range(0, len(CURE_df))):
-            points = cluster_points(CURE_df.iloc[i].name)
-            for p in points:
-                ax.scatter(
-                    X[diz[p], 0],
-                    X[diz[p], 1],
-                    s=350,
-                    color=COLOR_DICT[ind % len(COLOR_DICT)],
-                )
-            points = [diz[p] for p in points]
-            coms.append(X[points].mean(axis=0))
-
-        # flattening the last_reps values
-        flat_reps = flatten_list(list(last_reps.values()))
-
-        # plotting the representatives, surrounded by small circles, and the centers of mass, marked with X
-        for i in range(len(last_reps)):
-            len_rep = len(list(last_reps.values())[i])
-
-            x = [
-                list(last_reps.values())[i][j][0]
-                for j in range(min(n_rep_fin, len_rep))
-            ]
-            y = [
-                list(last_reps.values())[i][j][1]
-                for j in range(min(n_rep_fin, len_rep))
-            ]
-
-            ax.scatter(
-                x, y, s=400, color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)], edgecolor="black"
-            )
-            ax.scatter(
-                coms[i][0],
-                coms[i][1],
-                s=400,
-                color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
-                marker="X",
-                edgecolor="black",
-            )
-
-            for num in range(min(n_rep_fin, len_rep)):
-                ax.add_artist(
-                    plt.Circle(
-                        (x[num], y[num]),
-                        xwidth * 0.03,
-                        color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
-                        fill=False,
-                        linewidth=3,
-                        alpha=0.7,
-                    )
-                )
-
-            ax.scatter(
-                not_sampled[:, 0],
-                not_sampled[:, 1],
-                s=400,
-                color="lime",
-                edgecolor="black",
-            )
-
-        # find the closest representative for not sampled points, and draw an arrow connecting the points
-        # to its closest representative
-        for ind in range(len(not_sampled)):
-            dist_int = []
-            for el in flat_reps:
-                dist_int.append(dist1(not_sampled[ind], el))
-            ind_min = np.argmin(dist_int)
-
-            ax.arrow(
-                not_sampled[ind][0],
-                not_sampled[ind][1],
-                flat_reps[ind_min][0] - not_sampled[ind][0],
-                flat_reps[ind_min][1] - not_sampled[ind][1],
-                length_includes_head=True,
-                head_width=0.03,
-                head_length=0.05,
-            )
-
-        # plotting the indexes for each point
-        annotate_points(annotations=initial_ind, points=X, ax=ax)
-
-        if not_sampled_ind is not None:
-            annotate_points(annotations=not_sampled_ind, points=not_sampled, ax=ax)
-
-        plt.show()
+        assignment_phase_large_cure(X=X, CURE_df=CURE_df, diz=diz,initial_ind=initial_ind,
+                                    last_reps=last_reps, not_sampled=not_sampled,
+                                    not_sampled_ind=not_sampled_ind, n_rep_fin=n_rep_fin,
+                                    xwidth=xwidth)
 
     # if par_index is not None, diz is updated with the last merged cluster and its keys are returned
     if par_index is not None:
@@ -270,12 +175,129 @@ def point_plot_mod2(
         return list_keys_diz
 
 
+def assignment_phase_large_cure(X, CURE_df, diz, initial_ind, last_reps, not_sampled,
+                                not_sampled_ind, n_rep_fin, xwidth):
+    """
+    In the last phase of CURE algorithm variation for large datasets, arrows are
+    displayed from every not sampled point to its closest representative point; moreover, representative
+    points are surrounded by small circles, to make them more visible. Representative points of different
+    clusters are plotted in different nuances of red.
+
+    :param X: input data array.
+    :param diz: indexes of data points, to take shuffling into account.
+    :param CURE_df: input dataframe built by CURE algorithm, listing the cluster and the x and y
+              coordinates of each point.
+    :param initial_ind: initial partial index.
+    :param last_reps: dictionary of last representative points.
+    :param not_sampled: coordinates of points that have not been initially sampled, in the large dataset version.
+    :param not_sampled_ind: indexes of not_sampled point_indices.
+    :param n_rep_fin: number of representatives to use for each cluster in the final assignment phase in the large
+                      dataset version.
+    :param xwidth:
+    """
+
+    fig, ax = plt.subplots(figsize=(14, 6))
+
+    # plot all the points in color lime
+    ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
+
+    # find the centers of mass of the clusters using the matrix X to find which points belong to
+    # which cluster
+    coms = []
+    for ind, i in enumerate(range(0, len(CURE_df))):
+        points = cluster_points(CURE_df.iloc[i].name)
+        for p in points:
+            ax.scatter(
+                X[diz[p], 0],
+                X[diz[p], 1],
+                s=350,
+                color=COLOR_DICT[ind % len(COLOR_DICT)],
+            )
+        points = [diz[p] for p in points]
+        coms.append(X[points].mean(axis=0))
+
+    # flattening the last_reps values
+    flat_reps = flatten_list(list(last_reps.values()))
+
+    # plotting the representatives, surrounded by small circles, and the centers of mass, marked with X
+    for i in range(len(last_reps)):
+        len_rep = len(list(last_reps.values())[i])
+
+        x = [
+            list(last_reps.values())[i][j][0]
+            for j in range(min(n_rep_fin, len_rep))
+        ]
+        y = [
+            list(last_reps.values())[i][j][1]
+            for j in range(min(n_rep_fin, len_rep))
+        ]
+
+        ax.scatter(
+            x, y, s=400, color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)], edgecolor="black"
+        )
+        ax.scatter(
+            coms[i][0],
+            coms[i][1],
+            s=400,
+            color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
+            marker="X",
+            edgecolor="black",
+        )
+
+        for num in range(min(n_rep_fin, len_rep)):
+            ax.add_artist(
+                plt.Circle(
+                    (x[num], y[num]),
+                    xwidth * 0.03,
+                    color=CURE_REPS_COLORS[i % len(CURE_REPS_COLORS)],
+                    fill=False,
+                    linewidth=3,
+                    alpha=0.7,
+                )
+            )
+
+        ax.scatter(
+            not_sampled[:, 0],
+            not_sampled[:, 1],
+            s=400,
+            color="lime",
+            edgecolor="black",
+        )
+
+    # find the closest representative for not sampled points, and draw an arrow connecting the points
+    # to its closest representative
+    for ns_point in not_sampled:
+        dist_int = []
+        for el in flat_reps:
+            dist_int.append(dist1(ns_point, el))
+        ind_min = np.argmin(dist_int)
+
+        ax.arrow(
+            ns_point[0],
+            ns_point[1],
+            flat_reps[ind_min][0] - ns_point[0],
+            flat_reps[ind_min][1] - ns_point[1],
+            length_includes_head=True,
+            head_width=0.03,
+            head_length=0.05,
+        )
+
+    # plotting the indexes for each point
+    annotate_points(annotations=initial_ind, points=X, ax=ax)
+
+    if not_sampled_ind is not None:
+        annotate_points(annotations=not_sampled_ind, points=not_sampled, ax=ax)
+
+    plt.show()
+
+
 def dist_clust_cure(rep_u: list, rep_v: list) -> float:
     """
     Compute the distance of two clusters based on the minimum distance found between the
     representatives of one cluster and the ones of the other.
 
-    :param rep_u: list of representatives of the first clustebaram rep_v: list of representatives of the second cluster.
+    :param rep_u: representatives of the first cluster.
+    :param rep_v: representatives of the second cluster.
     :return: distance between two clusters.
     """
     rep_u = np.array(rep_u)
@@ -371,23 +393,20 @@ def sel_rep(clusters: dict, name: str, c: int, alpha: float) -> list:
         )  # first point is the farthest from the centroid
 
         # selecting the other c-1 points
-        for step in range(min(c - 1, len(points) - 1)):
+        for _ in range(min(c - 1, len(points) - 1)):
             # here we store the distances of the current point from the alredy selected representatives
             partial_distances = {str(i): [] for i in range(len(points))}
-            for i in range(len(points)):
+            for i, p in enumerate(points):
                 if i not in indexes:
                     for other in others:
-                        partial_distances[str(i)].append(
-                            [dist1(points[i], np.array(other))]
-                        )
+                        partial_distances[str(i)].append([dist1(p, np.array(other))])
             partial_distances = dict(
                 (k, [np.sum(v)]) for k, v in partial_distances.items()
             )
             index2 = max(partial_distances, key=partial_distances.get)
             indexes.append(int(index2))
-            others.append(
-                points[int(index2)]
-            )  # other points are the farthest from the already selected representatives
+            # other points are the farthest from the already selected representatives
+            others.append(points[int(index2)])
 
         # perform the shrinking according to the parameter alpha
         for i in range(len(others)):
@@ -676,14 +695,12 @@ def plot_results_cure(clust: dict) -> None:
     """
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    cl_list = []
     for v in clust.values():
-        # cl_list.append(np.array(clust[list(clust.keys())[num_clust]]))
-        cl_list.append(np.array(v))
-        try:
-            ax.scatter(cl_list[-1][:, 0], cl_list[-1][:, 1], s=300)
-        except:
-            ax.scatter(cl_list[-1][0], cl_list[-1][1], s=300)
+        v = np.array(v)
+        if v.ndim > 1:
+            ax.scatter(v[:, 0], v[:, 1], s=300)
+        else:
+            ax.scatter(v[0], v[1], s=300)
 
     plt.show()
 

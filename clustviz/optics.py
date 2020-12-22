@@ -12,10 +12,9 @@ from clustviz.utils import dist1, dist2, DBSCAN_COLOR_DICT, annotate_points
 def point_plot(X: np.ndarray, X_dict: Dict[str, np.ndarray], o: str,
                eps: float, processed: Optional[Iterable] = None, col: str = "yellow") -> None:
     """
-    Plots a scatter plot of points, where the point (x,y) is light black and
-    surrounded by a red circle of radius eps, where processed point are plotted
-    in col (yellow by default) and without edgecolor, whereas still-to-process points are green
-    with black edgecolor.
+    Plot a scatter plot of points, where the point (x,y) is light black and surrounded by a red circle of radius eps,
+    where processed point are plotted in col (yellow by default) and without edgecolor, whereas still-to-process points
+    are green with black edgecolor.
 
     :param X: input array.
     :param X_dict: input dictionary version of X.
@@ -24,7 +23,7 @@ def point_plot(X: np.ndarray, X_dict: Dict[str, np.ndarray], o: str,
     :param processed: already processed points, to plot in col.
     :param col: color to use for processed points, yellow by default.
     """
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # plot every point in color lime
     ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
@@ -102,7 +101,7 @@ def scan_neigh2(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> L
 
 def minPTSdist(data: Dict[str, np.ndarray], o: str, minPTS: int, eps: float) -> Union[float, Any]:
     """
-    Returns the minPTS-distance of a point if it is a core point, else it returns np.inf.
+    Return the minPTS-distance of a point if it is a core point, else it returns np.inf.
 
     :param data: input dictionary.
     :param o: key of point of interest.
@@ -138,7 +137,7 @@ def reach_dist(data: Dict[str, np.ndarray], x: str, y: str, minPTS: int, eps: fl
 
 def reach_plot(data: Dict[str, np.ndarray], ClustDist: Dict[str, float], eps: float) -> None:
     """
-    Plots the reachability plot, along with a horizontal line denoting eps,
+    Plot the reachability plot, along with a horizontal line denoting eps,
     from the ClustDist produced by OPTICS.
 
     :param data: input dictionary.
@@ -167,7 +166,7 @@ def reach_plot(data: Dict[str, np.ndarray], ClustDist: Dict[str, float], eps: fl
     for m_k in missing_keys:
         plot_dic[m_k] = 0
 
-    fig, ax = plt.subplots(1, 1, figsize=(12, 5))
+    _, ax = plt.subplots(1, 1, figsize=(12, 5))
 
     # bar plot of reachability
     ax.bar(plot_dic.keys(), plot_dic.values(), color="lightblue")
@@ -188,7 +187,7 @@ def reach_plot(data: Dict[str, np.ndarray], ClustDist: Dict[str, float], eps: fl
 def OPTICS(X: np.ndarray, eps: float, minPTS: int, plot: bool = True,
            plot_reach: bool = False) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
-    Executes the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.
+    Execute the OPTICS algorithm. Similar to DBSCAN, but uses a priority queue.
 
     :param X: input array.
     :param eps: radius of a point within which to search for minPTS points.
@@ -338,7 +337,7 @@ def plot_clust(X: np.ndarray, ClustDist: Dict[str, float], CoreDist: Dict[str, f
     )
 
     # first plot: scatter plot of points colored according to the cluster they belong to
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
 
     grouped = df.groupby("label")
     for key, group in grouped:

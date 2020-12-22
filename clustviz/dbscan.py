@@ -10,9 +10,8 @@ from clustviz.utils import dist1, DBSCAN_COLOR_DICT, annotate_points
 
 def scan_neigh1_mod(data: Dict[str, np.ndarray], point: np.ndarray, eps: float) -> Dict[str, np.ndarray]:
     """
-    Neighborhood search for a point of a given dataset-dictionary (data)
-    with a fixed eps; it returns also the point itself, differently from
-    scan_neigh1 of OPTICS.
+    Neighborhood search for a point of a given dataset-dictionary (data) with a fixed eps; it returns also the point
+    itself, differently from scan_neigh1 of OPTICS.
 
     :param data: input dataset.
     :param point: point whose neighborhood is to be examined.
@@ -44,7 +43,7 @@ def point_plot_mod(X: np.ndarray, X_dict: Dict[str, np.ndarray], point, eps: flo
     :param eps: radius of the circle to plot around the point (x,y).
     :param ClustDict: dictionary of the form point_index:cluster_label, built by DBSCAN
     """
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # plot scatter points in color lime
     ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
@@ -112,7 +111,7 @@ def plot_clust_DB(X: np.ndarray, ClustDict: Dict[str, int], eps: float, circle_c
         index=list(new_dict.keys()),
     )
 
-    fig, ax1 = plt.subplots(1, 1, figsize=(18, 6))
+    _, ax1 = plt.subplots(1, 1, figsize=(18, 6))
 
     lista_lab = list(df.label.value_counts().index)
 

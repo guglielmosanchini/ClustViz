@@ -11,16 +11,16 @@ from clustviz.utils import COLOR_DICT, annotate_points
 
 
 class ClaraClustering:
+
     """
     The clara clustering algorithm.
-    Basically an iterative guessing version of k-medoids that makes things a lot faster
-    for bigger data sets.
+    Basically an iterative guessing version of k-medoids that makes things a lot faster for bigger data sets.
     """
     def __init__(self, max_iter: int = 100_000):
         """
         Class initialization.
 
-        :param max_iter: The default number of max iterations
+        :param max_iter: The default number of max iterations.
         """
         self.max_iter = max_iter
         self.dist_cache = dict()
@@ -119,7 +119,7 @@ class ClaraClustering:
         -- If global cost increased, swap back.
         """
         # Do some smarter setting of initial cost configuration
-        pc1, medoids_sample = self.cheat_at_sampling(_df, _k, _fn, 17)
+        _, medoids_sample = self.cheat_at_sampling(_df, _k, _fn, 17)
         print("initial medoids sample: ", medoids_sample)
         prior_cost, medoids = self.compute_cost(_df, _fn, medoids_sample)
 
@@ -337,7 +337,7 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
     :param full: full input dataframe.
     :param equal_axis_scale: if True, axis are plotted with the same scaling.
     """
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # just as placeholder, it actually doesnt plot anything because points are white with white edgecolor
     plt.scatter(
@@ -349,7 +349,7 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
     )
 
     # plot the sampled point, with colors according to the cluster they belong to
-    for i, el in enumerate(list(cl.values())):
+    for i, el in enumerate(cl.values()):
         plt.scatter(
             data.loc[el, 0],
             data.loc[el, 1],
@@ -359,7 +359,7 @@ def plot_pam_mod(data: pd.DataFrame, cl: dict, full: pd.DataFrame, equal_axis_sc
         )
 
     # plot centers of mass, marked with an X
-    for i, el in enumerate(list(cl.keys())):
+    for i, el in enumerate(cl.keys()):
         plt.scatter(
             data.loc[el, 0],
             data.loc[el, 1],

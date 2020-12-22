@@ -17,7 +17,6 @@ class cftree(cftree_pyclustering):
         Insert clustering feature to the tree.
 
         :param entry: clustering feature that should be inserted.
-
         """
         print("insert entry")
         if self.__root is None:
@@ -107,14 +106,13 @@ class cftree(cftree_pyclustering):
         return node_amount_updation
 
     def __insert_for_noneleaf_node(self, entry, search_node):
-        """!
+        """
         @brief Recursive insert entry from none-leaf node to the tree.
 
         @param[in] entry (cfentry): Clustering feature.
         @param[in] search_node (cfnode): None-leaf node from that insertion should be started.
 
         @return (bool) True if number of nodes at the below level is changed, otherwise False.
-
         """
         node_amount_updation = False
 
@@ -294,7 +292,7 @@ class birch(birch_pyclustering):
         self.__tree = cftree(branching_factor, max_node_entries, diameter, type_measurement)
 
     def return_tree(self):
-        """return the tree built by the algorithm"""
+        """Return the tree built by the algorithm."""
         return self.__tree
 
     def process(self, plotting=False):
@@ -415,7 +413,7 @@ def plot_tree_fin(tree, info=False):
     def feat_create(level_nodes):
         """
         Auxiliary function that returns for each node level the features, the number
-        of points and the successors
+        of points and the successors.
         """
         features = []
         features_num = []
@@ -426,7 +424,7 @@ def plot_tree_fin(tree, info=False):
             features_num.append(f.number_points)
             try:
                 succ_num.append(len(el.successors))
-            except:
+            except AttributeError:
                 pass
 
         return features, features_num, succ_num
@@ -514,7 +512,7 @@ def plot_birch_leaves(tree, data):
     """
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     # plot every point in white
     plt.scatter(

@@ -75,7 +75,7 @@ def flatten_list(input_list: list) -> list:
 
 
 def encircle(x, y, ax, **kwargs) -> None:
-    """plot a line-boundary around a cluster (at least 3 points are required)"""
+    """Plot a line-boundary around a cluster (at least 3 points are required)."""
     p = np.c_[x, y]
     hull = ConvexHull(p)
     poly = plt.Polygon(p[hull.vertices, :], **kwargs)
@@ -83,7 +83,7 @@ def encircle(x, y, ax, **kwargs) -> None:
 
 
 def convert_colors(dict_colors: Dict[int, str], alpha: float = 0.5) -> Dict[int, Tuple[float, ...]]:
-    """modify the transparency of each color of a dictionary of colors to the desired alpha"""
+    """Modify the transparency of each color of a dictionary of colors to the desired alpha."""
     new_dict_colors = {}
 
     for i, col in enumerate(dict_colors.values()):
@@ -93,17 +93,17 @@ def convert_colors(dict_colors: Dict[int, str], alpha: float = 0.5) -> Dict[int,
 
 
 def euclidean_distance(a: Iterable, b: Iterable) -> float:
-    """Returns Euclidean distance of two arrays"""
+    """Return Euclidean distance of two arrays."""
     return np.linalg.norm(np.array(a) - np.array(b))
 
 
 def dist1(x: np.ndarray, y: np.ndarray) -> float:
-    """Original euclidean distance"""
+    """Original euclidean distance."""
     return np.sqrt(np.sum((x - y) ** 2))
 
 
 def dist2(data: dict, x, y) -> float:
-    """ Euclidean distance which takes keys of a dictionary (X_dict) as inputs """
+    """Euclidean distance which takes keys of a dictionary (X_dict) as inputs."""
     return np.sqrt(np.sum((data[x] - data[y]) ** 2))
 
 
@@ -118,7 +118,6 @@ def chernoffBounds(u_min: int, f: float, N: int, d: float, k: int) -> float:
     If one uses as dim(u) the minimum cluster size we are interested in, the result is
     the minimum sample size that guarantees that for k clusters
     the probability of selecting fewer than f*dim(u) points from any one of the clusters u is less than k*d.
-
     """
     l = np.log(1 / d)
     res = (

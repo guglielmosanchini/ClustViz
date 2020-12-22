@@ -307,7 +307,7 @@ def plot_grid_rect(data: np.ndarray, s: float, cube_kind: str = "populated") -> 
         coms_hpc = np.array([center_of_mass(v) for v in cl.values()])
 
     # draw the minimal bounding rectangle
-    fig, ax = plot_min_bound_rect(data)
+    _, ax = plot_min_bound_rect(data)
 
     # draw the centers of mass
     ax.scatter(
@@ -538,7 +538,7 @@ def plot_3d_or_contour(data: np.ndarray, s: float, three: bool = False, scatter:
                     of the countour plot.
     :param prec: precision used to compute density function.
     """
-    fig, ax = plt.subplots(figsize=(14, 6))
+    _, ax = plt.subplots(figsize=(14, 6))
 
     x_data = [data[:, 0].min(), data[:, 0].max()]
     y_data = [data[:, 1].min(), data[:, 1].max()]
@@ -723,11 +723,11 @@ def plot_3d_both(data: np.ndarray, s: float, xi: Optional[float] = None, prec: i
     offset = -15
 
     if xi is not None:
-        plane = ax.plot_surface(xx, yy, z_xi, cmap=cm.ocean, alpha=0.9)
+        _ = ax.plot_surface(xx, yy, z_xi, cmap=cm.ocean, alpha=0.9)
 
     surf = ax.plot_surface(xx, yy, z, alpha=0.8, cmap=cm.ocean)
 
-    cset = ax.contourf(xx, yy, z, zdir="z", offset=offset, cmap=cm.ocean)
+    _ = ax.contourf(xx, yy, z, zdir="z", offset=offset, cmap=cm.ocean)
 
     if xi is not None:
         color_plot = xi_data
