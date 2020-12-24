@@ -2,8 +2,10 @@ import math
 from typing import Dict, Tuple, Iterable
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import colors
+from matplotlib.patches import Rectangle
 from scipy.spatial import ConvexHull
 
 FONTSIZE_NORMAL = 10
@@ -159,4 +161,81 @@ def annotate_points(annotations: Iterable, points: np.ndarray, ax) -> None:
             size=SIZE_NORMAL,
             ha="center",
             va="center",
+        )
+
+
+def build_initial_matrices(X: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Build the initial dataframe, adding as many columns of the type 0x,0y,1x,1y,2x,2y,...
+    as there are points in the input dataset, filling them with NaNs, and build the same
+    dataframe without NaNs columns.
+
+    :param X: input data array.
+    :return: initial cluster dataframe, where each row represents a cluster and each pair of
+             columns represents the x and y coordinates of each point belonging to that cluster,
+             and its version without NaNs.
+    """
+    double_index = [[i, i] for i in range(len(X))]
+    flat_list = flatten_list(double_index)
+    col = [
+        str(el) + "x" if i % 2 == 0 else str(el) + "y"
+        for i, el in enumerate(flat_list)
+    ]
+    df = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
+    df["0x"] = X.T[0]
+    df["0y"] = X.T[1]
+
+    df_nonan = df.dropna(axis=1, how="all")
+
+    return df, df_nonan
+
+
+def draw_rectangle_or_encircle(X: np.ndarray, points: list, X_clust: list,
+                               Y_clust: list, ax, ind: int) -> None:
+    """
+    Draw a rectangle or link the points forming the cluster, if the number of points exceeds two.
+
+    :param X: input data array.
+    :param points: points forming the cluster.
+    :param X_clust: x coordinates of points forming the cluster.
+    :param Y_clust: y coordinates of points forming the cluster.
+    :param ax: axis of the plot.
+    :param ind: index for coloring the cluster.
+    """
+    color_dict_rect = convert_colors(COLOR_DICT, alpha=0.3)
+
+    # finding the right measures for the rectangle
+    rect_min = X[points].min(axis=0)
+    rect_diff = X[points].max(axis=0) - rect_min
+
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    xwidth = xmax - xmin
+    ywidth = ymax - ymin
+
+    # adding the rectangle, using two rectangles one above the other to use different colors
+    # for the border and for the inside
+    if len(X_clust) <= 2:
+
+        ax.add_patch(
+            Rectangle(
+                (rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
+                rect_diff[0] + xwidth * 0.04,
+                rect_diff[1] + ywidth * 0.08,
+                fill=True,
+                color=color_dict_rect[ind % len(COLOR_DICT)],
+                linewidth=3,
+                ec="red",
+                zorder=2
+            )
+        )
+    else:
+        encircle(
+            X_clust,
+            Y_clust,
+            ax=ax,
+            color=color_dict_rect[ind % len(COLOR_DICT)],
+            linewidth=3,
+            ec="red",
+            zorder=2
         )

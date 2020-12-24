@@ -1,11 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.patches import Rectangle
 from typing import Tuple, Iterable
 
-from clustviz.utils import convert_colors, encircle, dist1, flatten_list, cluster_points, \
-    COLOR_DICT, FONTSIZE_BIGGER, annotate_points
+from clustviz.utils import convert_colors, dist1, cluster_points, \
+    COLOR_DICT, FONTSIZE_BIGGER, annotate_points, build_initial_matrices, draw_rectangle_or_encircle
 
 
 def update_mat(mat: pd.DataFrame, i: int, j: int, linkage: str) -> pd.DataFrame:
@@ -89,39 +88,8 @@ def point_plot_mod(X: np.ndarray, distance_matrix: pd.DataFrame, level_txt: floa
 
     points = cluster_points(distance_matrix.iloc[-1].name)
     points = [int(i) for i in points]
-    rect_min = X[points].min(axis=0)
-    rect_diff = X[points].max(axis=0) - rect_min
 
-    xmin, xmax = ax.get_xlim()
-    ymin, ymax = ax.get_ylim()
-    # xmin, xmax, ymin, ymax = plt.axis()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    if len(X_clust) <= 2:
-
-        ax.add_patch(
-            Rectangle(
-                (rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
-                rect_diff[0] + xwidth * 0.04,
-                rect_diff[1] + ywidth * 0.08,
-                fill=True,
-                color=color_dict_rect[ind % len(COLOR_DICT)],
-                linewidth=3,
-                ec="red",
-                zorder=2
-            )
-        )
-    else:
-        encircle(
-            X_clust,
-            Y_clust,
-            ax=ax,
-            color=color_dict_rect[ind % len(COLOR_DICT)],
-            linewidth=3,
-            ec="red",
-            zorder=2
-        )
+    draw_rectangle_or_encircle(X, points, X_clust, Y_clust, ax, ind)
 
     annotate_points(annotations=range(len(X)), points=X, ax=ax)
 
@@ -396,19 +364,7 @@ def agg_clust(X: np.ndarray, linkage: str, plotting: bool = True) -> None:
     ind_list = []
 
     # build matrix df, used to store points of clusters with their coordinates
-    double_index = [[i, i] for i in range(len(X))]
-    flat_list = flatten_list(double_index)
-    col = [
-        str(el) + "x" if i % 2 == 0 else str(el) + "y"
-        for i, el in enumerate(flat_list)
-    ]
-
-    df = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
-
-    df["0x"] = X.T[0]
-    df["0y"] = X.T[1]
-
-    df_nonan = df.dropna(axis=1, how="all")
+    df, df_nonan = build_initial_matrices(X)
 
     # initial distance matrix
     distance_matrix = dist_mat_gen(df_nonan)
@@ -445,7 +401,7 @@ def agg_clust(X: np.ndarray, linkage: str, plotting: bool = True) -> None:
         df = df.drop([new_clust.iloc[0].name], 0)
         df = df.drop([new_clust.iloc[1].name], 0)
 
-        dim1 = int(new_clust.iloc[0].notna().sum())
+        shift_dim = int(new_clust.iloc[0].notna().sum())
 
         new_cluster_name = (
                 "("
@@ -457,7 +413,7 @@ def agg_clust(X: np.ndarray, linkage: str, plotting: bool = True) -> None:
 
         df.loc[new_cluster_name, :] = new_clust.iloc[0].fillna(
             0
-        ) + new_clust.iloc[1].shift(dim1, fill_value=0)
+        ) + new_clust.iloc[1].shift(shift_dim, fill_value=0)
 
         if plotting is True:
 

@@ -5,13 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from clustviz.agglomerative import dist_mat_gen
-from matplotlib.patches import Rectangle
 from collections import Counter, OrderedDict
 from copy import deepcopy
 import random
 
-from clustviz.utils import dist1, encircle, convert_colors, chernoffBounds, flatten_list, cluster_points, \
-    COLOR_DICT, CURE_REPS_COLORS, FONTSIZE_BIGGER, annotate_points
+from clustviz.utils import dist1, convert_colors, chernoffBounds, flatten_list, cluster_points, \
+    COLOR_DICT, CURE_REPS_COLORS, FONTSIZE_BIGGER, annotate_points, build_initial_matrices, draw_rectangle_or_encircle
 
 
 def point_plot_mod2(
@@ -62,7 +61,7 @@ def point_plot_mod2(
     _, ax = plt.subplots(figsize=(14, 6))
 
     # points that still need to be processed are plotted in lime color
-    ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black")
+    ax.scatter(X[:, 0], X[:, 1], s=300, color="lime", edgecolor="black", zorder=3)
 
     # drops the totally null columns, so that the number of columns goes to 2*(cardinality of biggest cluster)
     CURE_df = CURE_df.dropna(1, how="all")
@@ -88,7 +87,7 @@ def point_plot_mod2(
             X_clust = [X[p, 0] for p in points]
             Y_clust = [X[p, 1] for p in points]
 
-        ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)])
+        ax.scatter(X_clust, Y_clust, s=350, color=COLOR_DICT[ind % len(COLOR_DICT)], zorder=3)
 
     # last merged cluster, so the last element of matrix CURE_df
     points = cluster_points(CURE_df.iloc[-1].name)
@@ -101,46 +100,14 @@ def point_plot_mod2(
         com = X[points].mean(axis=0)
 
     # plotting the center of mass, marked with an X
-    plt.scatter(com[0], com[1], s=400, color="r", marker="X", edgecolor="black")
+    ax.scatter(com[0], com[1], s=400, color="r", marker="X", edgecolor="black", zorder=3)
 
     # plotting representative points in red
     x_reps = [i[0] for i in reps]
     y_reps = [i[1] for i in reps]
-    plt.scatter(x_reps, y_reps, s=360, color="r", edgecolor="black")
+    ax.scatter(x_reps, y_reps, s=360, color="r", edgecolor="black", zorder=3)
 
-    # finding the right measures for the rectangle
-    rect_min = X[points].min(axis=0)
-    rect_diff = X[points].max(axis=0) - rect_min
-
-    xmin, xmax = ax.get_xlim()
-    ymin, ymax = ax.get_ylim()
-    xwidth = xmax - xmin
-    ywidth = ymax - ymin
-
-    # adding the rectangle, using two rectangles one above the other to use different colors
-    # for the border and for the inside
-    if len(points) <= 2:
-
-        ax.add_patch(
-            Rectangle(
-                (rect_min[0] - xwidth * 0.02, rect_min[1] - ywidth * 0.04),
-                rect_diff[0] + xwidth * 0.04,
-                rect_diff[1] + ywidth * 0.08,
-                fill=True,
-                color=color_dict_rect[ind % len(COLOR_DICT)],
-                linewidth=3,
-                ec="red",
-            )
-        )
-    else:
-        encircle(
-            X_clust,
-            Y_clust,
-            ax=ax,
-            color=color_dict_rect[ind % len(COLOR_DICT)],
-            linewidth=3,
-            ec="red",
-        )
+    draw_rectangle_or_encircle(X, points, X_clust, Y_clust, ax, ind)
 
     # adding labels to points in the plot
     if initial_ind is not None:
@@ -162,7 +129,10 @@ def point_plot_mod2(
 
     # last phase of the large dataset version
     if last_reps is not None:
-        assignment_phase_large_cure(X=X, CURE_df=CURE_df, diz=diz,initial_ind=initial_ind,
+        xmin, xmax = ax.get_xlim()
+        xwidth = xmax - xmin
+
+        assignment_phase_large_cure(X=X, CURE_df=CURE_df, diz=diz, initial_ind=initial_ind,
                                     last_reps=last_reps, not_sampled=not_sampled,
                                     not_sampled_ind=not_sampled_ind, n_rep_fin=n_rep_fin,
                                     xwidth=xwidth)
@@ -193,7 +163,7 @@ def assignment_phase_large_cure(X, CURE_df, diz, initial_ind, last_reps, not_sam
     :param not_sampled_ind: indexes of not_sampled point_indices.
     :param n_rep_fin: number of representatives to use for each cluster in the final assignment phase in the large
                       dataset version.
-    :param xwidth:
+    :param xwidth: plot width.
     """
 
     fig, ax = plt.subplots(figsize=(14, 6))
@@ -776,16 +746,7 @@ def cure_sample_part(
     if n_rep_finalclust is None:
         n_rep_finalclust = c
 
-    double_index = [[i, i] for i in range(len(X))]
-    flat_list = flatten_list(double_index)
-    col = [
-        str(el) + "x" if i % 2 == 0 else str(el) + "y"
-        for i, el in enumerate(flat_list)
-    ]
-    df = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
-    df["0x"] = X.T[0]
-    df["0y"] = X.T[1]
-    df_nonan = df.dropna(axis=1, how="all")
+    _, df_nonan = build_initial_matrices(X)
 
     # this is done to ensure that the algorithm starts even when input params are bad
     while True:
@@ -912,6 +873,17 @@ def demo_parameters():
     plt.figure(figsize=(12, 10))
     plt.suptitle("Effects on sample size from different parameters")
 
+    def compute_res(u_size, f, N, k, d):
+        res = k * (
+                f * N
+                + N / u_size * np.log(1 / d)
+                + N
+                / u_size
+                * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
+        )
+
+        return res
+
     ax0 = plt.subplot(2, 2, 1)
     # plt.plot(d, k*res)
     u_size = 6000
@@ -919,14 +891,9 @@ def demo_parameters():
     N = 20000
     k = 4
     d = np.linspace(0.0000001, 1, 100)
+    res = compute_res(u_size, f, N, k, d)
     ax0.set_title("u_min: {0}, f:{1}, k:{2}".format(u_size, f, k))
-    res = k * (
-        f * N
-        + N / u_size * np.log(1 / d)
-        + N
-        / u_size
-        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
-    )
+
     plt.axhline(N, color="r")
     plt.plot(d, res)
     plt.xlabel("d")
@@ -938,17 +905,10 @@ def demo_parameters():
     f = 0.2
     N = 20000
     d = 0.1
-    k = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    k = list(range(1, 13))
     ax1.set_title("u_min: {0}, f:{1}, d:{2}".format(u_size, f, d))
     res = [
-        k[i]
-        * (
-            f * N
-            + N / u_size * np.log(1 / d)
-            + N
-            / u_size
-            * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
-        )
+        compute_res(u_size, f, N, k[i], d)
         for i in range(len(k))
     ]
     plt.axhline(N, color="r")
@@ -963,13 +923,7 @@ def demo_parameters():
     d = 0.1
     k = 4
     ax2.set_title("u_min: {0}, d:{1}, k:{2}".format(u_size, d, k))
-    res = k * (
-        f * N
-        + N / u_size * np.log(1 / d)
-        + N
-        / u_size
-        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
-    )
+    res = compute_res(u_size, f, N, k, d)
     plt.axhline(N, color="r")
     plt.plot(f, res)
     plt.xlabel("f")
@@ -983,13 +937,7 @@ def demo_parameters():
     d = 0.1
     k = 4
     ax3.set_title("f: {0}, d:{1}, k:{2}".format(f, d, k))
-    res = k * (
-        f * N
-        + N / u_size * np.log(1 / d)
-        + N
-        / u_size
-        * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
-    )
+    res = compute_res(u_size, f, N, k, d)
     plt.axhline(N, color="r")
     plt.plot(u_size, res)
     plt.xlabel("u_min")
