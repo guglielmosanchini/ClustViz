@@ -1,5 +1,5 @@
 import math
-from typing import Dict, Tuple, Iterable
+from typing import Dict, Tuple, Iterable, Optional
 
 import numpy as np
 import pandas as pd
@@ -164,13 +164,15 @@ def annotate_points(annotations: Iterable, points: np.ndarray, ax) -> None:
         )
 
 
-def build_initial_matrices(X: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def build_initial_matrices(X: np.ndarray, partial_index: Optional[list] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Build the initial dataframe, adding as many columns of the type 0x,0y,1x,1y,2x,2y,...
     as there are points in the input dataset, filling them with NaNs, and build the same
     dataframe without NaNs columns.
 
     :param X: input data array.
+    :param partial_index: if not None, it is used as index of the matrix_a, of cluster points and of representatives,
+                          for CURE algorithm.
     :return: initial cluster dataframe, where each row represents a cluster and each pair of
              columns represents the x and y coordinates of each point belonging to that cluster,
              and its version without NaNs.
@@ -181,7 +183,13 @@ def build_initial_matrices(X: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
         str(el) + "x" if i % 2 == 0 else str(el) + "y"
         for i, el in enumerate(flat_list)
     ]
-    df = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
+
+    # using the original indexes if necessary
+    if partial_index is not None:
+        df = pd.DataFrame(index=partial_index, columns=col)
+    else:
+        df = pd.DataFrame(index=[str(i) for i in range(len(X))], columns=col)
+
     df["0x"] = X.T[0]
     df["0y"] = X.T[1]
 

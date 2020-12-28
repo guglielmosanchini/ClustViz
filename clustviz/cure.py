@@ -250,6 +250,7 @@ def assignment_phase_large_cure(X, CURE_df, diz, initial_ind, last_reps, not_sam
             length_includes_head=True,
             head_width=0.03,
             head_length=0.05,
+            color="black"
         )
 
     # plotting the indexes for each point
@@ -454,6 +455,36 @@ def sel_rep_fast(prec_reps: list, clusters: dict, name: str, c: int, alpha: floa
         return others
 
 
+def form_new_cluster(clusters: dict, u: str, u_cl: str) -> list:
+    """
+    Form a new cluster from the input ones.
+
+    :param clusters: existing clusters.
+    :param u: first cluster.
+    :param u_cl: second cluster.
+    :return: new cluster obtained by merging the first and second cluster.
+    """
+
+    if (np.array(clusters[u]).shape == (2,)) and (
+        np.array(clusters[u_cl]).shape == (2,)
+    ):
+        new_cluster = [clusters[u], clusters[u_cl]]
+    elif (np.array(clusters[u]).shape != (2,)) and (
+        np.array(clusters[u_cl]).shape == (2,)
+    ):
+        clusters[u].append(clusters[u_cl])
+        new_cluster = clusters[u]
+    elif (np.array(clusters[u]).shape == (2,)) and (
+        np.array(clusters[u_cl]).shape != (2,)
+    ):
+        clusters[u_cl].append(clusters[u])
+        new_cluster = clusters[u_cl]
+    else:
+        new_cluster = clusters[u] + clusters[u_cl]
+
+    return new_cluster
+
+
 def cure(
     X: np.ndarray,
     k: int,
@@ -476,7 +507,7 @@ def cure(
     :param alpha: parameter that regulates the shrinking of representative points toward the centroid.
     :param plotting: if True, plots all intermediate steps.
     :param preprocessed_data: if not None, must be of the form (clusters,representatives,matrix_a,X_dist1), which is used to perform a warm start.
-    :param partial_index: if not None, is is used as index of the matrix_a, of cluster points and of representatives.
+    :param partial_index: if not None, it is used as index of the matrix_a, of cluster points and of representatives.
     :param n_rep_finalclust: the final representative points used to classify the not_sampled points.
     :param not_sampled: points not sampled in the initial phase.
     :param not_sampled_ind: indexes of not_sampled points.
@@ -485,26 +516,7 @@ def cure(
     # starting from raw data
     if preprocessed_data is None:
         # building a dataframe storing the x and y coordinates of input data points
-        double_index = [[i, i] for i in range(len(X))]
-        flat_list = flatten_list(double_index)
-        col = [
-            str(el) + "x" if i % 2 == 0 else str(el) + "y"
-            for i, el in enumerate(flat_list)
-        ]
-
-        # using the original indexes if necessary
-        if partial_index is not None:
-            CURE_df = pd.DataFrame(index=partial_index, columns=col)
-        else:
-            CURE_df = pd.DataFrame(
-                index=[str(i) for i in range(len(X))], columns=col
-            )
-
-        # adding the real coordinates
-        CURE_df["0x"] = X.T[0]
-        CURE_df["0y"] = X.T[1]
-
-        CURE_df_nonan = CURE_df.dropna(axis=1, how="all")
+        CURE_df, CURE_df_nonan = build_initial_matrices(X, partial_index)
 
         # initial clusters
         if partial_index is not None:
@@ -561,31 +573,15 @@ def cure(
         u_cl = X_dist.columns[closest[u]]
         del closest[u]
 
-        # form the new cluster
-        if (np.array(clusters[u]).shape == (2,)) and (
-            np.array(clusters[u_cl]).shape == (2,)
-        ):
-            w = [clusters[u], clusters[u_cl]]
-        elif (np.array(clusters[u]).shape != (2,)) and (
-            np.array(clusters[u_cl]).shape == (2,)
-        ):
-            clusters[u].append(clusters[u_cl])
-            w = clusters[u]
-        elif (np.array(clusters[u]).shape == (2,)) and (
-            np.array(clusters[u_cl]).shape != (2,)
-        ):
-            clusters[u_cl].append(clusters[u])
-            w = clusters[u_cl]
-        else:
-            w = clusters[u] + clusters[u_cl]
+        new_cluster = form_new_cluster(clusters, u, u_cl)
 
-        # delete old cluster
+        # delete old clusters
         del clusters[u]
         del clusters[u_cl]
 
         # set new name
         name = "(" + u + ")" + "-" + "(" + u_cl + ")"
-        clusters[name] = w
+        clusters[name] = new_cluster
 
         # update representatives
         rep[name] = sel_rep_fast(rep[u] + rep[u_cl], clusters, name, c, alpha)
@@ -682,7 +678,6 @@ def dist_mat_gen_cure(reps: dict) -> pd.DataFrame:
     :param reps: dictionary of representative points, the only ones used to compute distances
                        between clusters.
     :return: distance matrix as dataframe
-
     """
     distance_matrix = pd.DataFrame()
     ind = list(reps.keys())
@@ -739,6 +734,9 @@ def cure_sample_part(
     :param plotting: if True, plots all intermediate steps.
     :return, rep, mat_a): returns the clusters dictionary, the dictionary of representatives, the matrix a.
     """
+    if ((p is None) and (q is not None)) or ((q is None) and (p is not None)):
+        raise ValueError("p and q must be both specified if not None.")
+
     # choose the parameters suggested by the paper if the user doesnt provide input parameters
     if u_min is None:
         u_min = round(len(X) / k)
@@ -750,16 +748,15 @@ def cure_sample_part(
 
     # this is done to ensure that the algorithm starts even when input params are bad
     while True:
-        try:
-            print("new f: ", f)
-            print("new d: ", d)
-            n = math.ceil(
-                chernoffBounds(u_min=u_min, f=f, N=len(X), k=k, d=d)
-            )
+        print("new f: ", f)
+        print("new d: ", d)
+        n = math.ceil(chernoffBounds(u_min=u_min, f=f, N=len(X), k=k, d=d))
+
+        if n <= len(df_nonan):
             b_sampled = df_nonan.sample(n, random_state=42)
             break
 
-        except:
+        else:
             if f >= 0.19:
                 f = f - 0.1
             else:
@@ -785,19 +782,20 @@ def cure_sample_part(
         print("q: ", q)
 
     if (n / (p * q)) < 2 * k:
-        print("n/pq is less than 2k, results could be wrong")
+        print("n/pq is less than 2k, results could be wrong.")
+
+    if k * d >= 1:
+        print("k*d is greater or equal to 1, results could be wrong.")
 
     # form the partitions
     lin_sp = np.linspace(0, n, p + 1, dtype="int")
     # lin_sp
     b_partitions = []
     for num_p in range(p):
-        try:
-            b_partitions.append(
-                b_sampled.iloc[lin_sp[num_p]: lin_sp[num_p + 1]]
-            )
-        except:
-            b_partitions.append(b_sampled.iloc[lin_sp[num_p]:])
+        # try:
+        b_partitions.append(b_sampled.iloc[lin_sp[num_p]: lin_sp[num_p + 1]])
+        # except:
+        # b_partitions.append(b_sampled.iloc[lin_sp[num_p]:])
 
     k_prov = round(n / (p * q))
 
@@ -834,19 +832,16 @@ def cure_sample_part(
     diz = {i: len(b_partitions[i]) for i in range(p)}
     num_freq = Counter(diz.values()).most_common(1)[0][0]
 
-    # bad_ind = [list(diz.keys())[i] for i in range(len(diz)) if diz[i] != num_freq]
-
     bad_ind = [k for k, v in diz.items() if v != num_freq]
 
     for ind in bad_ind:
         partial_CURE_df[ind]["{0}x".format(diz[ind])] = [np.nan] * k_prov
         partial_CURE_df[ind]["{0}y".format(diz[ind])] = [np.nan] * k_prov
 
-    for i in range(len(partial_CURE_df) - 1):
-        if i == 0:
-            CURE_df_tot = partial_CURE_df[i].append(partial_CURE_df[i + 1])
-        else:
-            CURE_df_tot = CURE_df_tot.append(partial_CURE_df[i + 1])
+    CURE_df_tot = partial_CURE_df[0].append(partial_CURE_df[1])
+    for i in range(1, len(partial_CURE_df) - 1):
+        CURE_df_tot = CURE_df_tot.append(partial_CURE_df[i + 1])
+
     # mat Xdist
     X_dist_tot = dist_mat_gen_cure(rep_tot)
 
@@ -881,11 +876,10 @@ def demo_parameters():
                 / u_size
                 * np.sqrt(np.log(1 / d) ** 2 + 2 * f * u_size * np.log(1 / d))
         )
-
         return res
 
     ax0 = plt.subplot(2, 2, 1)
-    # plt.plot(d, k*res)
+
     u_size = 6000
     f = 0.20
     N = 20000

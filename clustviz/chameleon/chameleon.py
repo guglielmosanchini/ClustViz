@@ -61,6 +61,7 @@ def relative_closeness(graph, cluster_i, cluster_j):
     # Ci,Cj = len_edges(graph, cluster_i), len_edges(graph, cluster_j)
     bis_weight_i = bisection_weights(graph, cluster_i)
     bis_weight_j = bisection_weights(graph, cluster_j)
+
     if len(bis_weight_i) == 0 or len(bis_weight_j) == 0:
         return np.nan
     else:
@@ -91,7 +92,7 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
         i, j = combination
         if i != j:
             if verbose:
-                print("Checking c%d c%d" % (i, j))
+                print(f"Checking c_{i} c_{j}")
             gi = get_cluster(graph, [i])
             gj = get_cluster(graph, [j])
             edges = connecting_edges((gi, gj), graph)
@@ -99,17 +100,17 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
                 continue
             ms = merge_score(graph, gi, gj, a)
             if verbose:
-                print("Merge score: %f" % ms)
+                print(f"Merge score: {ms}")
             if ms > max_score:
                 if verbose:
-                    print("Better than: %f" % max_score)
+                    print(f"Better than: {max_score}")
                 max_score = ms
                 ci, cj = i, j
 
     if max_score > 0:
         if verbose2:
-            print("Merging c%d and c%d" % (ci, cj))
-            print("score: ", max_score)
+            print(f"Merging c_{ci} and c_{cj}")
+            print(f"score: {max_score}")
 
         df.loc[df["cluster"] == cj, "cluster"] = ci
         for i, p in enumerate(graph.nodes()):
@@ -118,7 +119,7 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
     else:
         if verbose:
             print("No Merging")
-            print("score: ", max_score)
+            print(f"score: {max_score}")
             print("early stopping")
 
     return df, max_score, ci
@@ -139,7 +140,7 @@ def cluster(
         k = 1
 
     if verbose0:
-        print("Building kNN graph (k = %d)..." % knn)
+        print(f"Building kNN graph (k = {knn})...")
 
     graph = knn_graph(df, knn, verbose1)
 
@@ -156,7 +157,7 @@ def cluster(
     m = len(Counter(cl_dict.values()))
 
     if verbose0:
-        print("actual init_clust: {}".format(m))
+        print(f"actual init_clust: {m}")
 
     dendr_height = OrderedDict({})
     iterm = (
