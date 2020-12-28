@@ -1,5 +1,13 @@
+import numpy as np
+import pandas as pd
 import itertools
-from clustviz.chameleon.graphtools import *
+import networkx as nx
+from collections import OrderedDict, deque
+from tqdm import tqdm
+from typing import List, Union, Tuple, Generator, Dict
+
+from clustviz.chameleon.graphtools import connecting_edges, get_weights, plot2d_data, plot2d_graph, knn_graph, \
+    pre_part_graph
 from clustviz.chameleon.chameleon import (
     internal_closeness,
     get_cluster,
@@ -7,12 +15,30 @@ from clustviz.chameleon.chameleon import (
     rebuild_labels,
 )
 
+NxGraph = nx.Graph
 
-def w_int_closeness(graph, cluster):
+
+def w_int_closeness(graph: NxGraph, cluster: List[int]) -> float:
+    """
+    Compute the internal closeness of the input cluster weighted by the number of its internal edges.
+
+    :param graph: kNN graph.
+    :param cluster: cluster represented by a list of nodes belonging to it.
+    :return: weighted internal closeness.
+    """
     return internal_closeness(graph, cluster) / len_edges(graph, cluster)
 
 
-def relative_closeness2(graph, cluster_i, cluster_j, m_fact):
+def relative_closeness2(graph: NxGraph, cluster_i: List[int], cluster_j: List[int], m_fact: float) -> float:
+    """
+    Compute the relative closeness of the two input clusters.
+
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :param m_fact: multiplicative factor for clusters composed of a single node.
+    :return: relative closeness of the two input clusters.
+    """
     edges = connecting_edges((cluster_i, cluster_j), graph)
 
     if not edges:
@@ -42,22 +68,36 @@ def relative_closeness2(graph, cluster_i, cluster_j, m_fact):
         ) * ratio
 
 
-def relative_interconnectivity2(graph, cluster_i, cluster_j, b):
-    if (len_edges(graph, cluster_i) == 0) or (
-        len_edges(graph, cluster_j) == 0
-    ):
+def relative_interconnectivity2(graph: NxGraph, cluster_i: List[int], cluster_j: List[int],
+                                beta: float) -> float:
+    """
+    Compute the relative interconnectivity of the two input clusters.
 
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :param beta: exponent of the rho factor; the larger, the less encouraged the merging of clusters connected
+                 by a large number of edges relative to the number of edges inside the cluster.
+    :return: relative interconnectivity of the two input clusters.
+    """
+    if (len_edges(graph, cluster_i) == 0) or (len_edges(graph, cluster_j) == 0):
         return 1.0
-
     else:
-
         edges = connecting_edges((cluster_i, cluster_j), graph)
         denom = min(len_edges(graph, cluster_i), len_edges(graph, cluster_j))
 
-    return (len(edges) / denom) * np.power(rho(graph, cluster_i, cluster_j), b)
+    return (len(edges) / denom) * np.power(rho(graph, cluster_i, cluster_j), beta)
 
 
-def rho(graph, cluster_i, cluster_j):
+def rho(graph: NxGraph, cluster_i: List[int], cluster_j: List[int]) -> float:
+    """
+    Compute the rho factor, which discourages the algorithm from merging clusters with different densities.
+
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :return: rho factor.
+    """
     s_Ci, s_Cj = (
         w_int_closeness(graph, cluster_i),
         w_int_closeness(graph, cluster_j),
@@ -66,16 +106,45 @@ def rho(graph, cluster_i, cluster_j):
     return min(s_Ci, s_Cj) / max(s_Ci, s_Cj)
 
 
-def merge_score2(g, ci, cj, a, b, m_fact):
-    ri = relative_interconnectivity2(g, ci, cj, b)
-    rc_pot = np.power(relative_closeness2(g, ci, cj, m_fact), a)
+def merge_score2(graph: NxGraph, ci: List[int], cj: List[int], alpha: float, beta: float, m_fact: float) -> float:
+    """
+    Compute the score associated with the merging of the two clusters.
+
+    :param graph: kNN graph.
+    :param ci: first cluster.
+    :param cj: second cluster.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :param beta: exponent of the rho factor; the larger, the less encouraged the merging of clusters connected
+                 by a large number of edges relative to the number of edges inside the cluster.
+    :param m_fact: multiplicative factor for clusters composed of a single node.
+    :return: merging score
+    """
+    ri = relative_interconnectivity2(graph, ci, cj, beta)
+    rc_pot = np.power(relative_closeness2(graph, ci, cj, m_fact), alpha)
     if (ri != 0) and (rc_pot != 0):
         return ri * rc_pot
     else:
         return ri + rc_pot
 
 
-def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
+def merge_best2(graph: NxGraph, df: pd.DataFrame, alpha: float, beta: float, m_fact: float,
+                k: int, verbose: bool = False, verbose2: bool = True) -> Union[Tuple[pd.DataFrame, float, int], bool]:
+    """
+    Find the two clusters with the highest score and merge them.
+
+    :param graph: kNN graph.
+    :param df: input dataframe.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :param beta: exponent of the rho factor; the larger, the less encouraged the merging of clusters connected
+                 by a large number of edges relative to the number of edges inside the cluster.
+    :param m_fact: multiplicative factor for clusters composed of a single node.
+    :param k: desired number of clusters.
+    :param verbose: if True, print additional infos.
+    :param verbose2: if True, print labels of merging clusters and their score.
+    :return: input dataframe with clustering label column, maximum merging score and newly merged cluster label.
+    """
     clusters = np.unique(df["cluster"])
     max_score = 0
     ci, cj = -1, -1
@@ -86,61 +155,68 @@ def merge_best2(graph, df, a, b, m_fact, k, verbose=False, verbose2=True):
         i, j = combination
         if i != j:
             if verbose:
-                print("Checking c%d c%d" % (i, j))
-            gi = get_cluster(graph, [i])
-            gj = get_cluster(graph, [j])
+                print(f"Checking c{i} c{j}.")
+            gi = get_cluster(graph, i)
+            gj = get_cluster(graph, j)
             edges = connecting_edges((gi, gj), graph)
             if not edges:
                 continue
-            ms = merge_score2(graph, gi, gj, a, b, m_fact)
+            ms = merge_score2(graph, gi, gj, alpha, beta, m_fact)
             if verbose:
-                print("Merge score: %f" % ms)
+                print(f"Merge score: {ms}.")
             if ms > max_score:
                 if verbose:
-                    print("Better than: %f" % max_score)
+                    print(f"Better than: {max_score}.")
                 max_score = ms
                 ci, cj = i, j
 
     if max_score > 0:
         if verbose2:
-            print("Merging c%d and c%d" % (ci, cj))
-            print("score: ", max_score)
+            print(f"Merging c{ci} and c{cj}.")
+            print(f"score: {max_score}.")
 
         df.loc[df["cluster"] == cj, "cluster"] = ci
         for i, p in enumerate(graph.nodes()):
             if graph.nodes[p]["cluster"] == cj:
                 graph.nodes[p]["cluster"] = ci
     else:
-        print("No Merging")
-        print("score: ", max_score)
-        print("early stopping")
-        print("increase k of k-NN if you want to perform each merging step")
+        print("No Merging.")
+        print(f"score: {max_score}.")
+        print("Early stopping.")
+        print("Increase k of kNN to perform each merging step.")
 
     return df, max_score, ci
 
 
-def cluster2(
-    df,
-    k=None,
-    knn=None,
-    m=30,
-    alpha=2.0,
-    beta=1,
-    m_fact=1e3,
-    verbose=False,
-    verbose1=True,
-    verbose2=True,
-    plot=True,
-    auto_extract=False,
-):
+def cluster2(df: pd.DataFrame, k: int = None, knn: int = None, m: int = 30, alpha: float = 2.0, beta: float = 1,
+             m_fact: float = 1e3, verbose: bool = False, verbose1: bool = True, verbose2: bool = True,
+             plot: bool = True, auto_extract: bool = False) -> Tuple[pd.DataFrame, Dict[int, float]]:
+    """
+
+    :param df: input dataframe.
+    :param k: desired number of clusters.
+    :param knn: parameter k of K-nearest_neighbors.
+    :param m: number of clusters to reach in the initial clustering phase.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :param beta: exponent of the rho factor; the larger, the less encouraged the merging of clusters connected
+                 by a large number of edges relative to the number of edges inside the cluster.
+    :param m_fact: multiplicative factor for clusters composed of a single node.
+    :param verbose:
+    :param verbose1:
+    :param verbose2:
+    :param plot: if True, show plots.
+    :param auto_extract:
+    :return:
+    """
     if knn is None:
         knn = int(round(2 * np.log(len(df))))
 
     if k is None:
         k = 1
     if verbose:
-        print("Building kNN graph (k = %d)..." % knn)
-    graph_knn = knn_graph_sym(df, knn, verbose1)
+        print(f"Building symmetrical kNN graph (k = {knn})...")
+    graph_knn = knn_graph(df=df, k=knn, symmetrical=True, verbose=verbose1)
 
     if plot:
         plot2d_graph(graph_knn, print_clust=False)
@@ -153,12 +229,12 @@ def cluster2(
 
     m = increased_m
     if verbose:
-        print("new m: ", m)
+        print(f"new m: {m}")
 
     if plot:
         plot2d_graph(graph_ff, print_clust=False)
 
-    dendr_height = {}
+    merging_similarities = {}
     iterm = (
         tqdm(enumerate(range(m - k)), total=m - k)
         if verbose1
@@ -174,28 +250,30 @@ def cluster2(
         if ms == 0:
             break
 
-        dendr_height[m - (i + 1)] = ms
+        merging_similarities[m - (i + 1)] = ms
 
         if plot:
             plot2d_data(df, ci)
     if verbose:
-        print("dendr_height", dendr_height)
+        print(f"merging_similarities: {merging_similarities}")
     res = rebuild_labels(df)
 
     if auto_extract is True:
-        extract_optimal_n_clust(dendr_height, m)
+        extract_optimal_n_clust(merging_similarities, m)
 
-    return res, dendr_height
+    return res, merging_similarities
 
 
-def connected_components(graph):
-    """return generator of connected component of a graph"""
-    from collections import deque
+def connected_components(connected_points: dict) -> Generator:
+    """
+    Find connected components from a dictionary of connected nodes.
 
+    :param connected_points: (symmetrically) connected points.
+    :return: connected components.
+    """
     seen = set()
 
-    # for root in range(len(graph)):
-    for root in list(graph.keys()):
+    for root in list(connected_points.keys()):
         if root not in seen:
             seen.add(root)
             component = []
@@ -204,15 +282,23 @@ def connected_components(graph):
             while queue:
                 node = queue.popleft()
                 component.append(node)
-                for neighbor in graph[node]:
+                for neighbor in connected_points[node]:
                     if neighbor not in seen:
                         seen.add(neighbor)
                         queue.append(neighbor)
             yield component
 
 
-def prepro_edge(knn_gr):
-    z = np.array((knn_gr.edges()))
+def prepro_edge(graph: nx.Graph) -> OrderedDict:
+    """
+    Build a dictionary having points as keys and all the points that are symmetrically
+    connected through edges to the key point as values, i.e. 0: [5, 7] means that there are edges 0->5 and 0->7, but
+    also 5->0 and 7->0.
+
+    :param graph: kNN graph.
+    :return: dictionary of symmetrically connected points.
+    """
+    z = np.array((graph.edges()))
     g = pd.DataFrame(z, columns=["a", "b"])
     g_bis = pd.concat([g["b"], g["a"]], axis=1, keys=["a", "b"])
     g = g.append(g_bis, ignore_index=True)
@@ -222,41 +308,57 @@ def prepro_edge(knn_gr):
     for k in list(g1.index):
         g1[k] = [int(i) for i in g1[k]]
     g1 = dict(g1)
-    for i in range(len(knn_gr)):
+    for i in range(len(graph)):
         if i not in list(g1.keys()):
             g1[i] = []
     g1 = OrderedDict(sorted(g1.items(), key=lambda t: t[0]))
     return g1
 
 
-def conn_comp(knn_gr):
-    """Return list of lists of connected component, e.g. [[0,2], [1,3]], with numbers corresponding to nodes."""
-    g1 = prepro_edge(knn_gr)
+# def conn_comp(graph: nx.Graph) -> List[list]:
+#     """
+#     Find the connected components of the input graph, e.g. [[0,2], [1,3]], with numbers corresponding to nodes.
+#
+#     :param graph: kNN graph.
+#     :return: list of connected componenents, each one identified by its nodes.
+#     """
+#     sym_connected_points = prepro_edge(graph)
+#
+#     return list(connected_components(sym_connected_points))
 
-    return list(connected_components(g1))
 
+def flood_fill(preprocessed_graph: NxGraph, knn_graph: NxGraph, df: pd.DataFrame) -> Tuple[NxGraph, int]:
+    """
+    Find clusters composed by more than one connected component and divide them accordingly. Adjust
+    the parameter m, which indicates the number of clusters to reach in the initial phase.
 
-def flood_fill(graph, knn_gr, df):
+    :param preprocessed_graph: clustered kNN graph.
+    :param knn_graph: kNN graph.
+    :param df: input dataframe.
+    :return: preprocessed graph with updated cluster labels, new m parameter.
+    """
     len_0_clusters = 0
     cl_dict = {
-        list(graph.nodes)[i]: graph.nodes[i]["cluster"]
-        for i in range(len(graph))
+        list(preprocessed_graph.nodes)[i]: preprocessed_graph.nodes[i]["cluster"]
+        for i in range(len(preprocessed_graph))
     }
     new_cl_ind = max(cl_dict.values()) + 1
-    dic_edge = prepro_edge(knn_gr)
+    dic_edge = prepro_edge(knn_graph)
+
+    # print(cl_dict)
+    # print("******"*10)
+    # print(dic_edge)
 
     for num in range(max(cl_dict.values()) + 1):
-        points = [
-            i for i in list(cl_dict.keys()) if list(cl_dict.values())[i] == num
-        ]
-        restr_dict = {list(dic_edge.keys())[i]: dic_edge[i] for i in points}
+        points = [k for k, v in cl_dict.items() if v == num]
+        restr_dict = {p: dic_edge[p] for p in points}
         r_dict = {}
 
-        for i in list(restr_dict.keys()):
-            r_dict[i] = [i for i in restr_dict[i] if i in points]
+        for k in restr_dict.keys():
+            r_dict[k] = [i for i in restr_dict[k] if i in points]
 
         cc_list = list(connected_components(r_dict))
-        print("num_cluster: {0}, len: {1}".format(num, len(cc_list)))
+        print("cluster_label: {0}, #_connected_components: {1}".format(num, len(cc_list)))
         if len(cc_list) == 1:
             continue
         elif len(cc_list) == 0:
@@ -264,72 +366,110 @@ def flood_fill(graph, knn_gr, df):
         else:
             # skip the first
             for component in cc_list[1:]:
-                print("new index for the component: ", new_cl_ind)
+                print(f"new index for the component: {new_cl_ind}")
                 for el in component:
                     cl_dict[el] = new_cl_ind
                 new_cl_ind += 1
 
     df["cluster"] = list(cl_dict.values())
 
-    for i in range(len(graph)):
-        graph.nodes[i]["cluster"] = cl_dict[i]
+    for i in range(len(preprocessed_graph)):
+        preprocessed_graph.nodes[i]["cluster"] = cl_dict[i]
 
     increased_m = max(cl_dict.values()) + 1 - len_0_clusters
 
-    return graph, increased_m
+    return preprocessed_graph, increased_m
 
 
-def tree_height(h, m):
-    sim = {m - 1: (1 / h[m - 1])}
-    for i in list(h.keys())[:-1]:
-        sim[i - 1] = sim[i] + 1 / h[i - 1]
-    return sim
+def dendrogram_height(merging_similarities: Dict[int, float], m: int) -> Dict[int, float]:
+    """
+    Find dendrogram height, defined with a recursive sum of the reciprocal of the merging scores.
+
+    :param merging_similarities: merging scores of the algorithm.
+    :param m: initial number of clusters.
+    :return: dendrogram height.
+    """
+    dh = {m - 1: (1 / merging_similarities[m - 1])}
+
+    for i in list(merging_similarities.keys())[:-1]:
+        dh[i - 1] = dh[i] + 1 / merging_similarities[i - 1]
+
+    return dh
 
 
-def find_bigger_jump(th, jump):
-    lower = list(th.values())[int(len(th) / 2) + 1]
-    for i in list(range(int(len(th) / 2), len(th))):
-        upper = list(th.values())[i]
+def find_bigger_jump(dh: Dict[int, float], jump: float) -> float:
+    """
+    Find a bigger jump in the dendrogram levels.
+
+    :param dh: dendrogram height.
+    :param jump: threshold to exceed.
+    :return: best level where to cut off th dendrogram if found, else 0.
+    """
+    lower = list(dh.values())[int(len(dh) / 2) + 1]
+    for i in list(range(int(len(dh) / 2), len(dh))):
+        upper = list(dh.values())[i]
         if upper - lower > jump:
             return lower + (upper - lower) / 2
         lower = upper
     return 0
 
 
-def first_jump_cutoff(th, mult, factor, m):
-    half = int(round(len(th) / 2))
+def first_jump_cutoff(dh: Dict[int, float], mult: float, eta: float, m: int) -> float:
+    """
+    Find the first large gap between tree level, which heuristically is the best level where clusters should be
+    divided.
+
+    :param dh: dendrogram height.
+    :param mult: additional factor.
+    :param eta: decrease coefficient.
+    :param m: initial number of clusters.
+    :return: best level where to cut off dendrogram.
+    """
+    half = int(round(len(dh) / 2))
     l = reversed(range(m - 1 - half, m - 1))
-    half_dict = {j: th[j] for j in l}
+    half_dict = {j: dh[j] for j in l}
     avg = np.mean(list(half_dict.values()))
     res = 0
 
     while mult > 0:
-        res = find_bigger_jump(th, mult * avg)
+        res = find_bigger_jump(dh, mult * avg)
         if res != 0:
             return res
         else:
-            mult = mult / factor
+            mult /= eta
 
 
-def find_nearest_height(th, value):
-    idx = np.searchsorted(list(th.values()), value, side="left")
-    el = list(th.values())[idx]
-    key_list = [k for (k, v) in th.items() if v == el]
+def find_nearest_height(dh: Dict[int, float], value: float) -> int:
+    """
+    Find nearest height to cutoff value.
+
+    :param dh: dendrogram height.
+    :param value: first_jump cutoff value.
+    :return: nearest dendrogram height to cutoff value.
+    """
+    idx = np.searchsorted(list(dh.values()), value, side="left")
+    el = list(dh.values())[idx]
+    key_list = [k for (k, v) in dh.items() if v == el]
     return key_list[0]
 
 
-def extract_optimal_n_clust(h, m, f=1000, eta=2):
-    th = tree_height(h, m)
+def extract_optimal_n_clust(merging_similarities: Dict[int, float], m: int, f: float = 1000, eta: float = 2) -> None:
+    """
+    Extract the optimal number of clusters using the dendrogram.
 
-    if len(th) <= 3:
-        print(
-            "insufficient merging steps to perform auto_extract; decrease k and/or increase m"
-        )
+    :param merging_similarities: merging scores of the algorithm.
+    :param m: initial number of clusters.
+    :param f: threshold parameter to determine if jump is large enough.
+    :param eta: decrease coefficient.
+    """
+    dh = dendrogram_height(merging_similarities, m)
 
+    if len(dh) <= 3:
+        print("Insufficient merging steps to perform auto_extract; decrease k and/or increase m.")
         return
 
-    fjc = first_jump_cutoff(th, f, eta, m)
+    fjc = first_jump_cutoff(dh, f, eta, m)
 
-    opt_n_clust = find_nearest_height(th, fjc)
+    opt_n_clust = find_nearest_height(dh, fjc)
 
-    print("Optimal number of clusters: ", opt_n_clust)
+    print(f"Optimal number of clusters: {opt_n_clust}")

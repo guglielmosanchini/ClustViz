@@ -1,27 +1,50 @@
+import numpy as np
+import pandas as pd
 import itertools
-from clustviz.chameleon.graphtools import *
-from collections import Counter
+from collections import Counter, OrderedDict
+from tqdm import tqdm
+import networkx as nx
+from typing import List, Tuple, Union
+
+from clustviz.chameleon.graphtools import bisection_weights, connecting_edges, get_weights, get_cluster, knn_graph, \
+    plot2d_graph, pre_part_graph, plot2d_data
+
+NxGraph = nx.Graph
 
 
-def len_edges(graph, cluster):
+def len_edges(graph: NxGraph, cluster: List[int]) -> int:
     """
-    Return the number of edges that interconnect the nodes of the input cluster.
+    Compute the number of edges that interconnect the nodes of the input cluster.
 
-    :param graph: NetworkX graph.
-    :param cluster: cluster represented by a list of nodes belonging to that cluster.
+    :param graph: kNN graph.
+    :param cluster: cluster represented by a list of nodes belonging to it.
+    :return: number of edges interconnecting the nodes of the input graph.
     """
-    cluster = graph.subgraph(cluster)
-    edges = cluster.edges()
+    cluster_graph = graph.subgraph(cluster)
+    edges = cluster_graph.edges()
     return len(edges)
 
 
-def internal_interconnectivity(graph, cluster):
-    """the weighted sum of edges that partition the graph into two roughly equal parts"""
+def internal_interconnectivity(graph, cluster: List[int]) -> float:
+    """
+    Compute the weighted sum of edges that partition the graph into two roughly equal parts.
+
+    :param graph: kNN graph.
+    :param cluster: cluster represented by a list of nodes belonging to it.
+    :return: sum of the bisection weights.
+    """
     return np.sum(bisection_weights(graph, cluster))
 
 
-def relative_interconnectivity(graph, cluster_i, cluster_j):
-    """return the relative interconnectivity of two clusters of a graph, measured on the connecting edges"""
+def relative_interconnectivity(graph: NxGraph, cluster_i: List[int], cluster_j: List[int]) -> float:
+    """
+    Compute the relative interconnectivity of two clusters of a graph, measured on the connecting edges.
+
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :return: relative interconnectivity of the two input clusters.
+    """
     edges = connecting_edges((cluster_i, cluster_j), graph)
     if not edges:
         return 0.0
@@ -40,14 +63,29 @@ def relative_interconnectivity(graph, cluster_i, cluster_j):
     return rel_int
 
 
-def internal_closeness(graph, cluster):
-    cluster = graph.subgraph(cluster)
-    edges = cluster.edges()
-    weights = get_weights(cluster, edges)
+def internal_closeness(graph: NxGraph, cluster: List[int]) -> float:
+    """
+    Compute the internal closeness of the input cluster, i.e. the sum of weights of the edges fully contained in it.
+
+    :param graph: kNN graph.
+    :param cluster: cluster represented by a list of nodes belonging to it.
+    :return: internal closeness of the input cluster.
+    """
+    cluster_graph = graph.subgraph(cluster)
+    edges = cluster_graph.edges()
+    weights = get_weights(cluster_graph, edges)
     return np.sum(weights)
 
 
-def relative_closeness(graph, cluster_i, cluster_j):
+def relative_closeness(graph: NxGraph, cluster_i: List[int], cluster_j: List[int]) -> float:
+    """
+    Compute the relative closeness of two clusters of a graph, measured on the connecting edges.
+
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :return: relative closeness of the two input clusters.
+    """
     edges = connecting_edges((cluster_i, cluster_j), graph)
     if not edges:
         return 0.0
@@ -70,18 +108,39 @@ def relative_closeness(graph, cluster_i, cluster_j):
         return SEC / ((Ci / (Ci + Cj) * SECci) + (Cj / (Ci + Cj) * SECcj))
 
 
-def merge_score(g, ci, cj, a):
-    ri = relative_interconnectivity(g, ci, cj)
-    rc_pot = np.power(relative_closeness(g, ci, cj), a)
-    # print("relative_interconnectivity: ", ri)
-    # print("relative_closeness^alpha: ", rc_pot)
+def merge_score(graph: NxGraph, cluster_i: List[int], cluster_j: List[int], alpha: float) -> float:
+    """
+    Compute the score associated with the merging of the two clusters.
+
+    :param graph: kNN graph.
+    :param cluster_i: first cluster.
+    :param cluster_j: second cluster.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :return: merging score.
+    """
+    ri = relative_interconnectivity(graph, cluster_i, cluster_j)
+    rc_pot = np.power(relative_closeness(graph, cluster_i, cluster_j), alpha)
+
     if (ri != 0) and (rc_pot != 0):
         return ri * rc_pot
     else:
         return ri + rc_pot
 
 
-def merge_best(graph, df, a, k, verbose=False, verbose2=True):
+def merge_best(graph, df, alpha, k, verbose=False, verbose2=True) -> Union[Tuple[pd.DataFrame, float, int], bool]:
+    """
+    Find the two clusters with the highest score and merge them.
+
+    :param graph: kNN graph.
+    :param df: input dataframe.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :param k: desired number of clusters.
+    :param verbose: if True, print additional infos.
+    :param verbose2: if True, print labels of merging clusters and their score.
+    :return: input dataframe with clustering label column, maximum merging score and newly merged cluster label.
+    """
     clusters = np.unique(df["cluster"])
     max_score = 0
     ci, cj = -1, -1
@@ -93,12 +152,12 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
         if i != j:
             if verbose:
                 print(f"Checking c_{i} c_{j}")
-            gi = get_cluster(graph, [i])
-            gj = get_cluster(graph, [j])
+            gi = get_cluster(graph, i)
+            gj = get_cluster(graph, j)
             edges = connecting_edges((gi, gj), graph)
             if not edges:
                 continue
-            ms = merge_score(graph, gi, gj, a)
+            ms = merge_score(graph, gi, gj, alpha)
             if verbose:
                 print(f"Merge score: {ms}")
             if ms > max_score:
@@ -120,31 +179,37 @@ def merge_best(graph, df, a, k, verbose=False, verbose2=True):
         if verbose:
             print("No Merging")
             print(f"score: {max_score}")
-            print("early stopping")
+            print("Early stopping")
 
     return df, max_score, ci
 
 
-def cluster(
-    df,
-    k,
-    knn=10,
-    m=30,
-    alpha=2.0,
-    verbose0=False,
-    verbose1=True,
-    verbose2=True,
-    plot=True,
-):
+def cluster(df: pd.DataFrame, k: int, knn: int = 10, m: int = 30, alpha: float = 2.0, verbose0: bool = False,
+            verbose1: bool = False, verbose2: bool = True, plot: bool = True) -> Tuple[pd.DataFrame, OrderedDict]:
+    """
+    Chameleon clustering: build the K-NN graph, partition it into m clusters
+
+    :param df: input dataframe.
+    :param k: desired number of clusters.
+    :param knn: parameter k of K-nearest_neighbors.
+    :param m: number of clusters to reach in the initial clustering phase.
+    :param alpha: exponent of relative closeness; the larger, the more important relative closeness is than
+                  relative interconnectivity.
+    :param verbose0: if True, print general infos.
+    :param verbose1: if True, print infos about the prepartitioning phase.
+    :param verbose2: if True, print labels of merging clusters and their scores in the merging phase.
+    :param plot: if True, show plots.
+    :return: dataframe with cluster labels and dictionary of merging scores (similarities).
+    """
     if k is None:
         k = 1
 
     if verbose0:
         print(f"Building kNN graph (k = {knn})...")
 
-    graph = knn_graph(df, knn, verbose1)
+    graph = knn_graph(df=df, k=knn, symmetrical=False, verbose=verbose1)
 
-    if plot:
+    if plot is True:
         plot2d_graph(graph, print_clust=False)
 
     graph = pre_part_graph(graph, m, df, verbose1, plotting=plot)
@@ -159,12 +224,8 @@ def cluster(
     if verbose0:
         print(f"actual init_clust: {m}")
 
-    dendr_height = OrderedDict({})
-    iterm = (
-        tqdm(enumerate(range(m - k)), total=m - k)
-        if verbose1
-        else enumerate(range(m - k))
-    )
+    merging_similarities = OrderedDict({})
+    iterm = (tqdm(enumerate(range(m - k)), total=m - k) if verbose1 else enumerate(range(m - k)))
 
     for i, _ in iterm:
 
@@ -173,21 +234,28 @@ def cluster(
         if ms == 0:
             break
 
-        dendr_height[m - (i + 1)] = ms
+        merging_similarities[m - (i + 1)] = ms
 
         if plot:
             plot2d_data(df, ci)
 
     res = rebuild_labels(df)
 
-    return res, dendr_height
+    return res, merging_similarities
 
 
-def rebuild_labels(df):
-    ans = df.copy()
-    clusters = list(pd.DataFrame(df["cluster"].value_counts()).index)
+def rebuild_labels(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Clean the clustering labels of the input dataframe, i.e. bring them into the range starting from 1.
+    For example, if they range from 6 to 10, bring them to the range 1 to 5.
+
+    :param df: dataframe obtained from the merging phase of the algorithm.
+    :return: dataframe with cleaned labels.
+    """
+    cleaned_df = df.copy()
+    clusters = df["cluster"].unique()  # list(pd.DataFrame(df["cluster"].value_counts()).index)
     c = 1
     for i in clusters:
-        ans.loc[df["cluster"] == i, "cluster"] = c
+        cleaned_df.loc[df["cluster"] == i, "cluster"] = c
         c = c + 1
-    return ans
+    return cleaned_df

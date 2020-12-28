@@ -1,6 +1,5 @@
 from clustviz.chameleon.graphtools import (
     knn_graph,
-    knn_graph_sym,
     pre_part_graph,
     get_cluster,
     connecting_edges,
@@ -25,7 +24,7 @@ def test_knn_graph():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2]])
     k = 2
 
-    graph = knn_graph(df, k, verbose=False)
+    graph = knn_graph(df, k, symmetrical=False, verbose=False)
 
     condition0 = list(graph.edges) == [
         (0, 4),
@@ -44,7 +43,7 @@ def test_knn_graph_sym():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2]])
     k = 2
 
-    graph = knn_graph_sym(df, k, verbose=False)
+    graph = knn_graph(df, k, symmetrical=True, verbose=False)
 
     condition0 = list(graph.edges) == [(0, 4), (0, 3), (1, 2), (3, 4)]
     condition1 = list(graph.nodes) == [0, 1, 2, 3, 4]
@@ -56,7 +55,7 @@ def test_pre_part_graph():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
     k = 3
 
-    pregraph = knn_graph(df, k, verbose=False)
+    pregraph = knn_graph(df, k, symmetrical=False, verbose=False)
     _ = pre_part_graph(pregraph, 2, df, verbose=False)
     print(df["cluster"].values)
     assert (df["cluster"].values == np.array([0, 1, 1, 0, 0, 1, 1])).all()
@@ -67,10 +66,10 @@ def test_merge_best():
     df = pd.DataFrame(make_blobs(60, random_state=42)[0])
     knn = 6
 
-    pregraph = knn_graph(df, knn, verbose=False)
+    pregraph = knn_graph(df, knn, symmetrical=False, verbose=False)
     graph = pre_part_graph(pregraph, 10, df, verbose=False)
     df, max_score, ci = merge_best(
-        graph=graph, df=df, a=2, k=3, verbose=False, verbose2=False
+        graph=graph, df=df, alpha=2, k=3, verbose=False, verbose2=False
     )
 
     condition0 = round(max_score) == 1
@@ -97,58 +96,10 @@ def test_cluster():
         verbose2=False,
     )
 
-    condition0 = sorted(list(res["cluster"].values)) == [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        3,
-        3,
-        3,
-        3,
-        3,
-        4,
-        4,
-        4,
-        4,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        6,
-        6,
-        6,
-        6,
-        7,
-        7,
-        7,
-        7,
-        8,
-        8,
-        8,
-        8,
-        9,
-        9,
-        9,
-    ]
+    condition0 = sorted(list(res["cluster"].values)) == [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3,
+                                                         3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                                                         4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6,
+                                                         6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9]
 
     condition1 = round(dendr_height[9], 1) == 0.8
 
@@ -158,23 +109,23 @@ def test_cluster():
 def test_rebuild_labels():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
 
-    pregraph = knn_graph(df, 3, verbose=False)
+    pregraph = knn_graph(df, 3, symmetrical=False, verbose=False)
     _ = pre_part_graph(pregraph, 10, df, verbose=False)
 
     df_bis = rebuild_labels(df)
 
-    assert sorted(list(df_bis["cluster"])) == [1, 1, 1, 1, 2, 2, 2]
+    assert sorted(list(df_bis["cluster"])) == [1, 1, 1, 2, 2, 2, 2]
 
 
 def test_get_cluster():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
     k = 3
 
-    pregraph = knn_graph(df, 3, verbose=False)
+    pregraph = knn_graph(df, 3, symmetrical=False, verbose=False)
     graph = pre_part_graph(pregraph, k, df, verbose=False)
 
-    condition0 = get_cluster(graph, [0]) == [0, 3, 4]
-    condition1 = get_cluster(graph, [k - 1]) == [1, 2, 5, 6]
+    condition0 = get_cluster(graph, 0) == [0, 3, 4]
+    condition1 = get_cluster(graph, k - 1) == [1, 2, 5, 6]
 
     assert condition0 & condition1
 
@@ -182,7 +133,7 @@ def test_get_cluster():
 def test_len_edges():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
 
-    pregraph = knn_graph(df, 3, verbose=False)
+    pregraph = knn_graph(df, 3, symmetrical=False, verbose=False)
     graph = pre_part_graph(pregraph, 10, df, verbose=False)
 
     condition0 = len_edges(graph, [0, 3, 4]) == 3
@@ -194,7 +145,7 @@ def test_len_edges():
 def test_connecting_edges():
     df = pd.DataFrame([[1, 1], [6, 5], [6, 6], [0, 0], [1, 2], [5, 5], [7, 2]])
 
-    pregraph = knn_graph(df, 3, verbose=False)
+    pregraph = knn_graph(df, 3, symmetrical=False, verbose=False)
     graph = pre_part_graph(pregraph, 10, df, verbose=False)
 
     assert connecting_edges(([0, 3, 4], [1, 2, 5, 6]), graph) == [
