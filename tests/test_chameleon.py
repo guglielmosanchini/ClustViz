@@ -79,7 +79,7 @@ def test_merge_best():
 
 
 @pytest.mark.skipif(
-    sys.platform == "linux", reason="provides slightly different result"
+    (sys.platform == "linux") or ("win" in sys.platform), reason="provides slightly different result"
 )
 def test_cluster():
     df = pd.DataFrame(make_blobs(50, random_state=42)[0])
