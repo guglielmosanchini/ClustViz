@@ -202,12 +202,12 @@ def cluster2(df: pd.DataFrame, k: int = None, knn: int = None, m: int = 30, alph
     :param beta: exponent of the rho factor; the larger, the less encouraged the merging of clusters connected
                  by a large number of edges relative to the number of edges inside the cluster.
     :param m_fact: multiplicative factor for clusters composed of a single node.
-    :param verbose:
-    :param verbose1:
-    :param verbose2:
+    :param verbose: if True, print general infos.
+    :param verbose1: if True, print infos about the prepartitioning phase.
+    :param verbose2: if True, print labels of merging clusters and their scores in the merging phase.
     :param plot: if True, show plots.
-    :param auto_extract:
-    :return:
+    :param auto_extract: if True, try to extract the optimal number of clusters and print it.
+    :return: dataframe with cluster labels and dictionary of merging scores (similarities).
     """
     if knn is None:
         knn = int(round(2 * np.log(len(df))))
