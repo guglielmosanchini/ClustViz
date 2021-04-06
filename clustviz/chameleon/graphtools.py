@@ -96,7 +96,7 @@ def part_graph(graph: NxGraph, df: Optional[pd.DataFrame] = None) -> NxGraph:
     for i, p in enumerate(graph.nodes()):
         graph.nodes[p]["cluster"] = parts[i]
     if df is not None:
-        df["cluster"] = nx.get_node_attributes(graph, "cluster").values()
+        df.loc[:, "cluster"] = nx.get_node_attributes(graph, "cluster").values()
     return graph
 
 
@@ -149,7 +149,7 @@ def pre_part_graph(graph: NxGraph, k: int, df: Optional[pd.DataFrame] = None, ve
 
     # add clustering details to df
     if df is not None:
-        df["cluster"] = nx.get_node_attributes(graph, "cluster").values()
+        df.loc[:, "cluster"] = nx.get_node_attributes(graph, "cluster").values()
     return graph
 
 
