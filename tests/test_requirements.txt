@@ -11,7 +11,7 @@ graphviz==0.13.2
 # PyQt5==5.14.0
 scikit_learn>=0.22.1
 # proper testing packages
-pytest==5.4.3
+pytest==9.0.3
 pytest-cov==2.10.1
 pytest-flake8==1.0.6
 coveralls==2.0.0
